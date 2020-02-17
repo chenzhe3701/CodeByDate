@@ -1,6 +1,12 @@
 % 2020-02-14
 % Try RDR for a small sample area
 
+% Grain #1-9 in Hank's map have:
+% ID = [80, 226, 185, 221, 83, 95, 189, 130, 176] in my EBSD data
+clear;clc;
+addChenFunction;
+addpath('D:\p\m\CodeByDate');
+
 % How to choose nDataPtsRange ========================================== 
 % Assume DIC subsetSize = 2k+1, stepSize = s, filterSize = 2f+1
 % A subset centered at ceil(k/s) will not be affected by the slipTraceLine 
@@ -8,12 +14,6 @@
 % Therefore, the non-affected subset center is ceil(k/s)+f data points away, or k+s*f pixels away. 
 % In this study, nDataPtsRange > ceil(12/2)+2, so 10 seems fine.
 nDataPtsRange = 10; % number of data points to cover on the horizontal line  
-
-% Grain #1-9 in Hank's map have:
-% ID = [80, 226, 185, 221, 83, 95, 189, 130, 176] in my EBSD data
-clear;clc;
-addChenFunction;
-addpath('D:\p\m\CodeByDate');
 
 % How to choose nDataPtsRange ========================================== 
 % Assume DIC subsetSize = 2k+1, stepSize = s, filterSize = 2f+1
