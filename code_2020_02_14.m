@@ -27,13 +27,10 @@ nDataPtsRange = 10; % number of data points to cover on the horizontal line
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_organized.mat', 'gID','gPhi1','gPhi','gPhi2','ID','eulerAligned'); 
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat', 'X','Y','boundaryTF')
 % Select area of interest (r4c5, r7c5, ...) ============================
-<<<<<<< HEAD
-ir=7;
-=======
-ir=4;
->>>>>>> origin/master
-ic=5;
-filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S7_r',num2str(ir),'c',num2str(ic),'.mat']
+ir = 7;
+ic = 5;
+iE = 1;
+filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
 load(filename, 'x','y','exx','u','v','sigma');
 exx(sigma==-1) = nan;
 u(sigma==-1) = nan;
@@ -44,11 +41,7 @@ myplot(X,Y,ID,boundaryTF);
 label_map_with_ID(X,Y,ID,gcf,gID);
 
 %% Plot map. For select grain (e.g., grain 9), predict theoretical RDR, and show selected slip traces 
-<<<<<<< HEAD
 ID_current = 226;
-=======
-ID_current = 176;
->>>>>>> origin/master
 ind = (gID==ID_current);
 euler = [gPhi1(ind),gPhi(ind),gPhi2(ind)];
 [ssa, c_a, nss, ntwin, ssGroup] = define_SS('Ti','pyii'); % [plane normal; slip direction] 
@@ -67,11 +60,7 @@ for iss = 1:nss
 end
 
 % Plot map, draw theoretical slip traces for this grain to compare
-<<<<<<< HEAD
 ss_to_compare = [4,5];  % selected slip systems to draw trace and compare  
-=======
-ss_to_compare = [4,6,26];  % selected slip systems to draw trace and compare  
->>>>>>> origin/master
 close all;
 
 myplot(x,y,exx);
@@ -218,7 +207,7 @@ myplot(x,y,rdrLineMap);
 %% repeat for each strain level, get rdr evolution at different strain levels  
 clear rdrLine;
 for iE = 1:7
-    filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r4c5\Ti7Al_E1_S',num2str(iE),'_r4c5.mat'];
+    filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
     load(filename, 'x','y','exx','u','v','sigma')
     exx(sigma==-1) = nan;
     u(sigma==-1) = nan;
@@ -261,7 +250,6 @@ for iE = 1:7
             row_mean = nanmean(uvLocal,2);
             uvLocal = uvLocal - row_mean;
             uv2 = [uv2,uvLocal];
-<<<<<<< HEAD
 
         end
         lmd = fitlm(uv2(2,:),uv2(1,:));
@@ -272,18 +260,6 @@ for iE = 1:7
 
 end
 
-=======
-
-        end
-        lmd = fitlm(uv2(2,:),uv2(1,:));
-        rdr_exp = lmd.Coefficients{2,1};
-        
-        rdrLine{iLine}(iE) = rdr_exp;
-    end
-
-end
-
->>>>>>> origin/master
 % plot
 figure; hold on;
 for iLine = 1:length(rdrLine)
