@@ -29,7 +29,7 @@ load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAn
 % Select area of interest (r4c5, r7c5, ...) ============================
 ir = 7;
 ic = 5;
-iE = 1;
+iE = 7;
 filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
 load(filename, 'x','y','exx','u','v','sigma');
 exx(sigma==-1) = nan;
@@ -67,7 +67,7 @@ myplot(x,y,exx);
 colormap(summer);
 stressTensor = [1 0 0; 0 0 0; 0 0 0];
 sampleMaterial = 'Ti';
-label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,gca);    
+label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,'pyii',gca);    
 tbl = array2table([[1:nss]',atand(traceDir(:,2)./traceDir(:,1)),rdr_t(:)]);
 tbl.Properties.VariableNames = {'ss#','traceDir','rdr_theoretical'};
 disp(tbl);

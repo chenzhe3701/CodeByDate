@@ -7,7 +7,7 @@
 % chenzhe, 2020-02-14
 % modify for sample Ti7Al_E1 (sample collaborated with MSU BYU).
 
-function [sfs,angles] = label_map_with_trace_for_Ti7Al_E1(X,Y,ID,ID_targets,ss_target,ha)
+function [sfs,angles] = label_map_with_trace_for_Ti7Al_E1(X,Y,ID,ID_targets,ss_target,twin_or_pyii,ha)
 
 gID = evalin('base','gID;');
 gPhi1 = evalin('base','gPhi1;');
@@ -37,10 +37,10 @@ for ii=1:length(ID_targets)
     % (1) label basal slip trace
     if (1==eulerAligned)
         % g = euler_to_transformation(euler,[0,0,0],[0,0,0]);
-        [abs_schmid_factor, sorted_schmid_factor, burgersXY] = trace_analysis_TiMgAl(euler, [0,0,0], [0,0,0], stressTensor, sampleMaterial, 'twin');
+        [abs_schmid_factor, sorted_schmid_factor, burgersXY] = trace_analysis_TiMgAl(euler, [0,0,0], [0,0,0], stressTensor, sampleMaterial, twin_or_pyii);
     else
         % g = euler_to_transformation(euler,[-90,180,0],[0,0,0]); % setting-2
-        [abs_schmid_factor, sorted_schmid_factor, burgersXY] = trace_analysis_TiMgAl(euler, [-90,180,0], [0,0,0], stressTensor, sampleMaterial, 'twin'); % setting-2
+        [abs_schmid_factor, sorted_schmid_factor, burgersXY] = trace_analysis_TiMgAl(euler, [-90,180,0], [0,0,0], stressTensor, sampleMaterial, twin_or_pyii); % setting-2
     end
     
     % [max_basal_sf, ind_ss] = max(abs_schmid_factor(ss_target(:),2));
