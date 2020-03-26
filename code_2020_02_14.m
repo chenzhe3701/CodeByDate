@@ -27,9 +27,9 @@ nDataPtsRange = 10; % number of data points to cover on the horizontal line
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_organized.mat', 'gID','gPhi1','gPhi','gPhi2','ID','eulerAligned'); 
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat', 'X','Y','boundaryTF')
 % Select area of interest (r4c5, r7c5, ...) ============================
-ir = 7;
+ir = 4;
 ic = 5;
-iE = 1;
+iE = 7;
 filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
 load(filename, 'x','y','exx','u','v','sigma');
 exx(sigma==-1) = nan;
@@ -41,7 +41,7 @@ myplot(X,Y,ID,boundaryTF);
 label_map_with_ID(X,Y,ID,gcf,gID);
 
 %% Plot map. For select grain (e.g., grain 9), predict theoretical RDR, and show selected slip traces 
-ID_current = 226;
+ID_current = 176;
 ind = (gID==ID_current);
 euler = [gPhi1(ind),gPhi(ind),gPhi2(ind)];
 [ssa, c_a, nss, ntwin, ssGroup] = define_SS('Ti','pyii'); % [plane normal; slip direction] 
@@ -60,14 +60,14 @@ for iss = 1:nss
 end
 
 % Plot map, draw theoretical slip traces for this grain to compare
-ss_to_compare = [4,5];  % selected slip systems to draw trace and compare  
+ss_to_compare = [4,6];  % selected slip systems to draw trace and compare  
 close all;
 
 myplot(x,y,exx);
 colormap(summer);
 stressTensor = [1 0 0; 0 0 0; 0 0 0];
 sampleMaterial = 'Ti';
-label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,gca);    
+label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,'pyii',gca);    
 tbl = array2table([[1:nss]',atand(traceDir(:,2)./traceDir(:,1)),rdr_t(:)]);
 tbl.Properties.VariableNames = {'ss#','traceDir','rdr_theoretical'};
 disp(tbl);
