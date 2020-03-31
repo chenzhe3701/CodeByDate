@@ -113,10 +113,10 @@ if ~exist('eulerAligned','var')
     error('check eulerAligned before continue')
 end
 
-save('E:\Mg4Al_S1_insitu\Summary\Mg4Al_S1_EBSD_organized.mat','ID','gID','gPhi1','gPhi','gPhi2','phi1','phi','phi2','eulerAligned');
+save('E:\Mg4Al_S1_insitu\Summary\Mg4Al_S1_EBSD_organized.mat','ID','gID','gPhi1','gPhi','gPhi2','phi1','phi','phi2','eulerAligned','-v7.3');
 
-% --> maybe can also choose to save variantMapCleanedCell
-
+%% maybe can also choose to save variantMapCleanedCell
+save('E:\Mg4Al_S1_insitu\Summary\twinVariantMapCell.mat','variantMapCleanedCell','-v7.3');
 
 
 
