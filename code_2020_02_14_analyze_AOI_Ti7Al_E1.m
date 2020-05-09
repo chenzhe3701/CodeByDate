@@ -15,14 +15,6 @@ addpath('D:\p\m\CodeByDate');
 % In this study, nDataPtsRange > ceil(12/2)+2, so 10 seems fine.
 nDataPtsRange = 10; % number of data points to cover on the horizontal line  
 
-% How to choose nDataPtsRange ========================================== 
-% Assume DIC subsetSize = 2k+1, stepSize = s, filterSize = 2f+1
-% A subset centered at ceil(k/s) will not be affected by the slipTraceLine 
-% Due to averaging by filter, the non-affected subset center extended away from the slipTraceLine further by f data points
-% Therefore, the non-affected subset center is ceil(k/s)+f data points away, or k+s*f pixels away. 
-% In this study, nDataPtsRange > ceil(12/2)+2, so 10 seems fine.
-nDataPtsRange = 10; % number of data points to cover on the horizontal line 
-
 % Load orientation data
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_organized.mat', 'gID','gPhi1','gPhi','gPhi2','ID','eulerAligned'); 
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat', 'X','Y','boundaryTF')
@@ -30,7 +22,7 @@ load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAn
 ir = 7;
 ic = 5;
 iE = 7;
-filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
+filename = ['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
 load(filename, 'x','y','exx','u','v','sigma');
 exx(sigma==-1) = nan;
 u(sigma==-1) = nan;

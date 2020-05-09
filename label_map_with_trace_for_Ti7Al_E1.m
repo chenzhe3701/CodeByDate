@@ -61,27 +61,27 @@ for ii=1:length(ID_targets)
             is = ss_target(ii);
             
             angle = angles(is);
-            dx = x_range/4;
-            dy = x_range/4 * tand(angle);
-            if abs(dy) > y_range/4
-                factor = y_range/4 / dy;
+            dx = x_range/5;
+            dy = x_range/5 * tand(angle);
+            if abs(dy) > y_range/5
+                factor = y_range/5 / dy;
                 dy = dy * factor;
                 dx = dx * factor;
             end
             
             if is<=3
-                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',1,'color', 'r');
+                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'r');
             elseif is<=6
-                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',1,'color', 'b');
+                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'b');
             elseif is<=12
-                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',1,'color', 'g');
+                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'g');
             elseif is<=18
-                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',1,'color', 'k');
+                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'k');
             else
-                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',1,'color', 'm');
+                plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'm');
             end
 %             text(x_this_nb, y_this_nb, 50, num2str(ID_target));
-            text(x_this_nb - dx, y_this_nb - dy, 50, ['ss:',num2str(ss_target(ii)),char(10),'m=',num2str(sfs(ss_target(ii)),3)]);
+            text(x_this_nb - dx, y_this_nb - dy, 50, ['ss#',num2str(ss_target(ii)),char(10),'m=',num2str(sfs(ss_target(ii)),3)],'fontsize',18);
         end
     catch
         disp(['error in finding ID: ',num2str(ID_target)]);
