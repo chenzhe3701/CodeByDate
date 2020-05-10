@@ -18,8 +18,9 @@ nDataPtsRange = 10; % number of data points to cover on the horizontal line
 % Load orientation data
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_organized.mat', 'gID','gPhi1','gPhi','gPhi2','ID','eulerAligned'); 
 load('E:\Ti7Al_E1_insitu_tension\Analysis_by_Matlab\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat', 'X','Y','boundaryTF')
-% Select area of interest (r4c5, r7c5, ...) ============================
-ir = 7;
+load('D:\p\m\DIC_Analysis\setting_for_real_samples\Ti7Al_E1_setting.mat','strainPauses_DIC');
+% Select area of interest (r4c5, r7c5, r6c5 ...) ============================
+ir = 6;
 ic = 5;
 iE = 7;
 filename = ['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
@@ -31,6 +32,9 @@ v(sigma==-1) = nan;
 %% Illustrate ID map
 myplot(X,Y,ID,boundaryTF);
 label_map_with_ID(X,Y,ID,gcf,gID);
+
+%% Can load local boundary map
+load('E:\Ti7Al_E1_insitu_tension\Analysis_r6c5\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat','boundaryTF')
 
 %% Plot map. For select grain (e.g., grain 9), predict theoretical RDR, and show selected slip traces 
 ID_current = 226;
@@ -55,7 +59,7 @@ end
 ss_to_compare = [4,5];  % selected slip systems to draw trace and compare  
 close all;
 
-myplot(x,y,exx);
+myplot(x,y,exx,boundaryTF);
 colormap(summer);
 stressTensor = [1 0 0; 0 0 0; 0 0 0];
 sampleMaterial = 'Ti';
@@ -138,10 +142,23 @@ colormap(summer);
 drawline(gca,'Position',pos);
 
 %% save savedLines
-save(['E:\Ti7Al_E1_insitu_tension\Selected Area\selected_slip_trace_line_r',num2str(ir),'c',num2str(ic),'.mat'],'savedLines');
+save(['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\selected_slip_trace_line_r',num2str(ir),'c',num2str(ic),'.mat'],'savedLines');
 %% load savedLines
-load(['E:\Ti7Al_E1_insitu_tension\Selected Area\selected_slip_trace_line_r',num2str(ir),'c',num2str(ic),'.mat'],'savedLines');
+load(['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\selected_slip_trace_line_r',num2str(ir),'c',num2str(ic),'.mat'],'savedLines');
 %% Load all saved lines for analysis, and repeat the above analysis to generate a map of rdr for each line on the slip trace line  
+
+myplot(x,y,exx,boundaryTF);title('\epsilon_x_x','fontweight','normal');
+colormap(summer);
+set(gca,'fontsize',18,'XTick',[0:1000:4000],'YTick',[0:1000:4000]);
+xlabel('X (pixels)');
+ylabel('Y (pixels)');
+
+% This is for r6c5
+ir_aoi = 1060;
+ic_aoi = 280;
+rectangle('position',[2*ic_aoi,2*ir_aoi,2*340,2*340],'linewidth',2);
+label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,'pyii',gca);   
+
 
 rdrLineMap = zeros(size(x));
 rdrPtMap = zeros(size(x));
@@ -187,7 +204,8 @@ for iLine = 1:length(savedLines)
     end
     lmd = fitlm(uv2(2,:),uv2(1,:));
     rdr_exp = lmd.Coefficients{2,1};
-    text(pos(1,1)+100,pos(1,2),['Line ',num2str(iLine),', rdr=',num2str(rdr_exp,3)],'color','r');
+%     text(pos(1,1)+100,pos(1,2),['Line ',num2str(iLine),', rdr=',num2str(rdr_exp,3)],'color','r','fontsize',18);
+    text(pos(1,1)+100,pos(1,2),['Line ',num2str(iLine)],'color','r','fontsize',18);
     rdrLineMap(inds) = rdr_exp;
     rdrLines(iLine) = rdr_exp;
 end
@@ -199,7 +217,7 @@ myplot(x,y,rdrLineMap);
 %% repeat for each strain level, get rdr evolution at different strain levels  
 clear rdrLine;
 for iE = 1:7
-    filename = ['E:\Ti7Al_E1_insitu_tension\Selected Area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
+    filename = ['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\r',num2str(ir),'c',num2str(ic),'\Ti7Al_E1_S',num2str(iE),'_r',num2str(ir),'c',num2str(ic),'.mat']
     load(filename, 'x','y','exx','u','v','sigma')
     exx(sigma==-1) = nan;
     u(sigma==-1) = nan;
@@ -252,15 +270,31 @@ for iE = 1:7
 
 end
 
-% plot
+%% plot for r6c5
+figure; hold on;
+
+plot(1:7,rdrLine{1},'-o','linewidth',2);
+plot(1:7,rdrLine{2},'-^','linewidth',2);
+plot(1:7,rdrLine{3},'-d','linewidth',2);
+plot(1:7,rdrLine{4},'-s','linewidth',2);
+
+plot(0:8, repmat(rdr_t(4),1,9), '--k','linewidth',2,'HandleVisibility','off')
+text(3.5,rdr_t(4)-0.3,['RDR^4_{theoretical} = ',num2str(rdr_t(4),3)],'fontsize',16)
+plot(0:8, repmat(rdr_t(5),1,9), '--k','linewidth',2,'HandleVisibility','off')
+text(3.5,rdr_t(5)+0.3,['RDR^5_{theoretical} = ',num2str(rdr_t(5),3)],'fontsize',16)
+
+set(gca,'ylim',[-2.2,2],'fontsize',18)
+ylabel('RDR');
+xlabel('Strain Level');
+legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
+
+
+%% plot for any new measurement
 figure; hold on;
 for iLine = 1:length(rdrLine)
-    plot(rdrLine{iLine},'-o');
+    plot(1:length(rdrLine{iLine}),rdrLine{iLine},'-o','linewidth',2);
 end
-ylabel('rdr (experimental)');
-xlabel('strain level');
-legend('Location','bestoutside');
-
-
-
-
+set(gca,'fontsize',18)
+ylabel('RDR');
+xlabel('Strain Level');
+legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
