@@ -29,9 +29,22 @@ exx(sigma==-1) = nan;
 u(sigma==-1) = nan;
 v(sigma==-1) = nan;
 
+exx_all = load('E:\Ti7Al_E1_insitu_tension\SEM Data\stitched_DIC\global_method_stitched_7.mat','exx');
+exx_all = exx_all.exx;
+xum = X / 4096 * 60;
+yum = Y / 4096 * 60;
+
 %% Illustrate ID map
 myplot(X,Y,ID,boundaryTF);
 label_map_with_ID(X,Y,ID,gcf,gID);
+
+%% illustrate exx map
+[f,a,c] = myplot(xum,yum,exx_all,boundaryTF);
+title('');
+set(gca,'XTick', [0:100:400], 'YTick', [0:100:400], 'fontsize',18);
+xlabel('x (\mum)');
+ylabel('y (\mum)');
+title(c,'\epsilon_x_x');
 
 %% Can load local boundary map
 load('E:\Ti7Al_E1_insitu_tension\Analysis_r6c5\Ti7Al_E1_EbsdToSemForTraceAnalysis.mat','boundaryTF')
@@ -43,6 +56,7 @@ euler = [gPhi1(ind),gPhi(ind),gPhi2(ind)];
 [ssa, c_a, nss, ntwin, ssGroup] = define_SS('Ti','pyii'); % [plane normal; slip direction] 
 [ss, c_a, ssa] = define_SS_cart('Ti','pyii');
 m = angle2dcm(euler(1)/180*pi, euler(2)/180*pi, euler(3)/180*pi, 'zxz');
+stressTensor = [1 0 0; 0 0 0; 0 0 0];
 
 clear traceDir bDir RDR;
 for iss = 1:nss
@@ -53,6 +67,10 @@ for iss = 1:nss
     % RDR
     bDir(iss,:) = ss(2,:,iss) * m;
     rdr_t(iss,:) = bDir(iss,1)/bDir(iss,2); % theoretical, du/dv
+    
+    N = ss(1,:,iss) * m;    % plane normal in sample coord
+    M = ss(2,:,iss) * m;    % slip dir in sample coord
+    sf(iss,:) = abs(N * stressTensor * M');
 end
 
 % Plot map, draw theoretical slip traces for this grain to compare
@@ -64,8 +82,8 @@ colormap(summer);
 stressTensor = [1 0 0; 0 0 0; 0 0 0];
 sampleMaterial = 'Ti';
 label_map_with_trace_for_Ti7Al_E1(x,y,ones(size(x))*ID_current,ID_current,ss_to_compare,'pyii',gca);    
-tbl = array2table([[1:nss]',atand(traceDir(:,2)./traceDir(:,1)),rdr_t(:)]);
-tbl.Properties.VariableNames = {'ss#','traceDir','rdr_theoretical'};
+tbl = array2table([[1:nss]', atand(traceDir(:,2)./traceDir(:,1)), rdr_t(:), sf(:)]);
+tbl.Properties.VariableNames = {'ss#','traceDir','rdr_theoretical','sf'};
 disp(tbl);
 
 %% Add line on top of slip trace to analyze
@@ -209,6 +227,7 @@ for iLine = 1:length(savedLines)
     rdrLineMap(inds) = rdr_exp;
     rdrLines(iLine) = rdr_exp;
 end
+text(500,500,'Grain #1','color','k','fontsize',18);
 %% can plot the pt map and line map of rdr
 myplot(x,y,rdrPtMap);
 myplot(x,y,rdrLineMap);
@@ -266,17 +285,24 @@ for iE = 1:7
         rdr_exp = lmd.Coefficients{2,1};
         
         rdrLine{iLine}(iE) = rdr_exp;
+        ebar{iLine}(iE) = std(uv2(1,:)./uv2(2,:));
+%         ebar{iLine}(1:2) = nan;
     end
 
 end
 
 %% plot for r6c5
-figure; hold on;
+close all;figure; hold on;
 
-plot(1:7,rdrLine{1},'-o','linewidth',2);
-plot(1:7,rdrLine{2},'-^','linewidth',2);
-plot(1:7,rdrLine{3},'-d','linewidth',2);
-plot(1:7,rdrLine{4},'-s','linewidth',2);
+% plot(1:7,rdrLine{1},'-o','linewidth',2);
+% plot(1:7,rdrLine{2},'-^','linewidth',2);
+% plot(1:7,rdrLine{3},'-d','linewidth',2);
+% plot(1:7,rdrLine{4},'-s','linewidth',2);
+
+errorbar(1:7,rdrLine{1},ebar{1},'-o','linewidth',2,'CapSize',12);
+errorbar(1:7,rdrLine{2},ebar{2},'-^','linewidth',2,'CapSize',12);
+errorbar(1:7,rdrLine{3},ebar{3},'-d','linewidth',2,'CapSize',12);
+errorbar(1:7,rdrLine{4},ebar{4},'-v','linewidth',2,'CapSize',12);
 
 plot(0:8, repmat(rdr_t(4),1,9), '--k','linewidth',2,'HandleVisibility','off')
 text(3.5,rdr_t(4)-0.3,['RDR^4_{theoretical} = ',num2str(rdr_t(4),3)],'fontsize',16)

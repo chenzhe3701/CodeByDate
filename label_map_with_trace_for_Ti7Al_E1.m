@@ -81,7 +81,7 @@ for ii=1:length(ID_targets)
                 plot3(ha, [x_this_nb - dx, x_this_nb + dx], [y_this_nb - dy, y_this_nb + dy], [20,20],'linewidth',3,'color', 'm');
             end
 %             text(x_this_nb, y_this_nb, 50, num2str(ID_target));
-            text(x_this_nb - dx, y_this_nb - dy, 50, ['ss#',num2str(ss_target(ii)),char(10),'m=',num2str(sfs(ss_target(ii)),3)],'fontsize',18);
+            text(x_this_nb - dx, y_this_nb - dy, 50, ['ss#',num2str(ss_target(ii)),char(10),'m=',num2str(sfs(ss_target(ii)),2)],'fontsize',18);
         end
     catch
         disp(['error in finding ID: ',num2str(ID_target)]);
