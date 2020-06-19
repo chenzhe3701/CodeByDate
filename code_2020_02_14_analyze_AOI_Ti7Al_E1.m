@@ -314,6 +314,9 @@ ylabel('RDR');
 xlabel('Strain Level');
 legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
 
+%% The average RDR for ss#4, from 2 line segments, at strain levels 3-7, is (1.30)
+(rdrLine{1}(3:7)+rdrLine{2}(3:7))/2
+mean((rdrLine{1}(3:7)+rdrLine{2}(3:7))/2)
 
 %% plot for any new measurement
 figure; hold on;
