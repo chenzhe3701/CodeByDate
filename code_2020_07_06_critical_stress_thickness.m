@@ -1,3 +1,7 @@
+%% Euler buckling:
+% The critical load is: P_cr = 4*pi^2*E*I/L^2
+% Therefore, sigma_cr = P_cr/A = E * I/A * 4*pi^2/L^2 = E * (w*t^3/12)/(wt) *(4*pi^2/L^2) = (E*pi^2)/3 * (t^2/L^2) 
+
 %% (1) setting for Ti-7Al, assume width = thickness
 MAXLOAD = 4000; % max load can be applied
 L = 19;   %   set sample length, mm
