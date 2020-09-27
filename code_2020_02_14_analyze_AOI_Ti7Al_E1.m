@@ -34,6 +34,9 @@ exx_all = exx_all.exx;
 xum = X / 4096 * 60;
 yum = Y / 4096 * 60;
 
+% add global strain valus
+e_global = [0.009, 0.013, 0.018, 0.023, 0.029, 0.034, 0.028];
+    
 %% Illustrate ID map
 myplot(X,Y,ID,boundaryTF);
 label_map_with_ID(X,Y,ID,gcf,gID);
@@ -165,7 +168,9 @@ save(['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\selected_slip_trace_lin
 load(['E:\Ti7Al_E1_insitu_tension\Analysis_selected_area\selected_slip_trace_line_r',num2str(ir),'c',num2str(ic),'.mat'],'savedLines');
 %% Load all saved lines for analysis, and repeat the above analysis to generate a map of rdr for each line on the slip trace line  
 
-myplot(x,y,exx,boundaryTF);title('\epsilon_x_x','fontweight','normal');
+[f,a,c] = myplot(x,y,exx,boundaryTF);
+title('\fontsize{18}\epsilon\fontsize{16}^G\fontsize{18} = 0.028','fontweight','normal');
+title(c,'\epsilon_x_x');
 colormap(summer);
 set(gca,'fontsize',18,'XTick',[0:1000:4000],'YTick',[0:1000:4000]);
 xlabel('X (pixels)');
@@ -314,6 +319,40 @@ ylabel('RDR');
 xlabel('Strain Level');
 legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
 
+%% replace user defined strain levels with global strain values
+% (1), big image
+close all;figure; hold on;
+
+errorbar(e_global, rdrLine{1},ebar{1},'-o','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{2},ebar{2},'-^','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{3},ebar{3},'-d','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{4},ebar{4},'-v','linewidth',2,'CapSize',12);
+
+% plot(0:0.005:0.04, repmat(rdr_t(4),1,9), '--k','linewidth',2,'HandleVisibility','off')
+% plot(0:0.005:0.04, repmat(rdr_t(5),1,9), '--k','linewidth',2,'HandleVisibility','off')
+rectangle('Position', [0.015, -1.5-3, 0.038-0.015, 2+1.5+6])
+set(gca,'xlim', [0.005, 0.04], 'fontsize',18)
+ylabel('RDR');
+xlabel('Global Strain');
+legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
+
+% (2) zoom-in
+figure; hold on;
+errorbar(e_global, rdrLine{1},ebar{1},'-o','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{2},ebar{2},'-^','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{3},ebar{3},'-d','linewidth',2,'CapSize',12);
+errorbar(e_global, rdrLine{4},ebar{4},'-v','linewidth',2,'CapSize',12);
+
+plot(linspace(0.015, 0.038, 9), repmat(rdr_t(4),1,9), '--k','linewidth',2,'HandleVisibility','off')
+text(0.02,rdr_t(4)-0.3,['RDR^4_{theoretical} = ',num2str(rdr_t(4),3)],'fontsize',16)
+plot(linspace(0.015, 0.038, 9), repmat(rdr_t(5),1,9), '--k','linewidth',2,'HandleVisibility','off')
+text(0.02,rdr_t(5)+0.3,['RDR^5_{theoretical} = ',num2str(rdr_t(5),3)],'fontsize',16)
+
+set(gca,'ylim',[-1.5,2], 'xlim',[0.015,0.038], 'fontsize',18)
+% ylabel('RDR');
+% xlabel('Global Strain');
+% legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
+
 %% The average RDR for ss#4, from 2 line segments, at strain levels 3-7, is (1.30)
 (rdrLine{1}(3:7)+rdrLine{2}(3:7))/2
 mean((rdrLine{1}(3:7)+rdrLine{2}(3:7))/2)
@@ -327,3 +366,6 @@ set(gca,'fontsize',18)
 ylabel('RDR');
 xlabel('Strain Level');
 legend({'Line 1','Line 2','Line 3', 'Line 4', 'Line 5'},'Location','southeast');
+
+%%
+print('C:\Users\ZheChen\Desktop\fig 6a.tif','-dtiff')
