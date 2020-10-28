@@ -1,5 +1,8 @@
 
 %% Using Mg4Al_U1 (non-symmetric sample) data, study how to process EBSD data by MTEX
+% Note, this is just to explore the method. The data itself is bad.
+% More discussion on code, convention, etc, should look at next code.
+
 
 %% install mtex
 addChenFunction;
@@ -17,9 +20,14 @@ setMTEXpref('xAxisDirection','east');
 setMTEXpref('zAxisDirection','intoPlane');
 
 % crystal symmetry. Note this is different from crystalSymmetry.load('Mg-Magnesium.cif') 
-CS = crystalSymmetry('6/mmm', [3.2 3.2 5.2], 'X||a', 'Y||b*', 'Z||c', 'mineral', 'Mg');
+CS = crystalSymmetry('6/mmm', [3.2 3.2 5.2], 'X||a', 'Y||b*', 'Z||c', 'mineral', 'Mg');     
 
-% can import and export as ang
+%% Can import and export as ang. 
+% Note that TSL OIM analysis needs '62' instead of '6/mmm', and this needs
+% to be manually corrected in the .ang file. 
+% Even if we change in CS definition to '62', MTEX still export as '622',
+% which OIM analysis does not understand.
+
 ebsd = EBSD.load(file_name, CS);
 ebsd.export_ang([replace(file_name,'.osc',''),' export.ang']);
 
