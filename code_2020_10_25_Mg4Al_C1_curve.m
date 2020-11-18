@@ -27,7 +27,7 @@ force =  A.data(:,3);
 motor_speed = A.data(:,4);
 motor_current = A.data(:,5);
 strain =  A.data(:,6)/1000000;
-stress = force/3.48/2.69;   % Mg4Al tested on 2020-10-13
+stress = force/3.48/2.69;   % Mg4Al_C1 tested on 2020-10-13
 
 %% explore
 close all;
