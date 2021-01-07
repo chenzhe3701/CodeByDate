@@ -25,6 +25,9 @@ B.data(:,3) = B.data(:,3) - B.data(1,3) + A.data(end,3);
 B.data(:,6) = B.data(:,6) - B.data(1,6) + A.data(end,6); 
 
 A.data = [A.data;B.data];
+
+width = 3.44;       % Mg4Al_C2 tested on 2020-11-13
+thickness = 2.68;
 %% make variable
 time = A.data(:,1);
 displacement =  A.data(:,2);
@@ -32,7 +35,7 @@ force =  A.data(:,3);
 motor_speed = A.data(:,4);
 motor_current = A.data(:,5);
 strain =  A.data(:,6)/1000000;
-stress = force/3.44/2.68;   % Mg4Al_C2 tested on 2020-11-13
+stress = force/width/thickness;   
 
 %% explore
 close all;
@@ -94,7 +97,7 @@ force =  data(:,3);
 motor_speed = data(:,4);
 motor_current = data(:,5);
 strain =  data(:,6)/1000000;
-stress = force/3.3/2.74;   
+stress = force/width/thickness; 
 
 figure;
 subplot(3,1,1); hold on;

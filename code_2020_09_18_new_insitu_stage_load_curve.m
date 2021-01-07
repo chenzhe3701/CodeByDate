@@ -18,7 +18,7 @@ force = A.data(:,3);
 motor_speed = A.data(:,4);
 motor_current = A.data(:,5);
 strain = A.data(:,6)/1000000;
-stress = force/1.75/2.95;   % aluminum sample, cross section
+stress = force/1.75/2.95;   % pure Mg sample, cross section
 %% explore
 close all;
 

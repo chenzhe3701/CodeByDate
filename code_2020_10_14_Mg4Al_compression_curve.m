@@ -11,6 +11,9 @@ display(A.colheaders)
 % A.data = A.data(1:ind,:);
 data = A.data;
 
+width = 3.3;        % Mg4Al tested on 2020-10-13
+thickness = 2.74;
+
 %% make variable
 time = A.data(:,1);
 displacement =  A.data(:,2);
@@ -18,7 +21,7 @@ force =  A.data(:,3);
 motor_speed = A.data(:,4);
 motor_current = A.data(:,5);
 strain =  A.data(:,6)/1000000;
-stress = force/3.3/2.74;   % Mg4Al tested on 2020-10-13
+stress = force/width/thickness;    
 
 %% explore
 close all;
@@ -86,7 +89,8 @@ force =  data(:,3);
 motor_speed = data(:,4);
 motor_current = data(:,5);
 strain =  data(:,6)/1000000;
-stress = force/3.3/2.74;   
+stress = force/width/thickness; 
+
 %%
 figure; hold on;
 plot(strain, stress, 'linewidth', 3);
