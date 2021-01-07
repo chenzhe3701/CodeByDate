@@ -1,3 +1,6 @@
+% 2020-01-05 modify and make notes
+% This is to make figures for the part-1 paper focused more on the model.
+
 
 clear;
 clc;
@@ -8,6 +11,10 @@ load_settings([pathSetting,fileSetting],'sampleName','sampleMaterial','stressTen
 saveDataPath = 'D:\WE43_T6_C1\Analysis_by_Matlab_after_realign';
 dicPath = 'D:\WE43_T6_C1\SEM Data\stitched_DIC';
 variantFile = 'D:\p\m\DIC_Analysis\temp_results\WE43_T6_C1_new_variant_map_20200401.mat';
+output_dir = 'C:\Users\ZheChen\Desktop\output_dir';
+try
+    mkdir(output_dir);
+end
 
 for iE = 1:5
     dicFileName = ['_',num2str(iE),'_v73.mat'];
@@ -17,7 +24,7 @@ end
 load(fullfile(saveDataPath, 'WE43_T6_C1_EbsdToSemForTraceAnalysis_GbAdjusted.mat'),...
     'ID','X','Y','boundaryTF','boundaryTFB','gDiameter','gID','gNeighbors','gNNeighbors','gPhi1','gPhi','gPhi2','eulerAligned');
 load(variantFile,'variantMapCleanedCell','struCell');
-%%
+%% Strain Map. Twin variant map.
 for iE = 1:5
     strain_str{iE} = ['\epsilon\fontsize{16}^G = ',num2str(strainPauses(iE),'%.3f')];
 end
@@ -42,7 +49,7 @@ for iE = 1:5
 %     clims(iE,:) = caxis;
     title(strain_str(iE),'fontweight','normal');
     title(c,'\fontsize{20}\epsilon\fontsize{18}_x_x');
-    print(['C:\Users\ZheChen\Desktop\exxMap_',num2str(iE)],'-r300','-dtiff');
+    print(fullfile(output_dir, ['exxMap_',num2str(iE)]),'-r300','-dtiff');
 end
 
 % for iE = 3
@@ -61,7 +68,7 @@ for iE = 2:5
     set(c,'limits', [0.5, 6.5]);
     set(gca,'XTick',[],'YTick',[],'fontsize',18);
     title(strain_str(iE),'fontweight','normal');
-    print(['C:\Users\ZheChen\Desktop\variantMap_',num2str(iE)],'-r300','-dtiff');
+    print(fullfile(output_dir, ['variantMap_',num2str(iE)]),'-r300','-dtiff');
 end
 
 %% Calculate grain Schmid factor. plot SF map and histogram
@@ -77,16 +84,16 @@ gSF_etwin_map = assign_field_to_cell(ID, gID, gSF_etwin, zeros(size(gID)));
 % [Figure] grain basal SF map
 myplot(X,Y,gSF_basal_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
-title('Max Basal Schmid Factor','fontweight','normal','fontsize',18);
+title('Maximum Nominal Basal Schmid Factor','fontweight','normal','fontsize',18);
 caxis([0, 0.5]);
-print(['C:\Users\ZheChen\Desktop\basal_SF_map'],'-r300','-dtiff');
+print(fullfile(output_dir, ['basal_SF_map']),'-r300','-dtiff');
 
 % [Figure] grain twin SF map
 myplot(X,Y,gSF_etwin_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
-title('Max Twin Schmid Factor','fontweight','normal','fontsize',18);
+title('Maximum Nominal Twin Schmid Factor','fontweight','normal','fontsize',18);
 caxis([-0.1, 0.5]);
-print(['C:\Users\ZheChen\Desktop\etwin_SF_map'],'-r300','-dtiff');
+print(fullfile(output_dir, ['etwin_SF_map']),'-r300','-dtiff');
 
 gID_list = unique(ID(:));
 % [Figure] grain basal SF histogram
@@ -94,18 +101,19 @@ figure;
 t = gSF_basal(ismember(gID, gID_list));
 histogram(t, 0:0.05:0.5);
 ylabel('Counts');
-xlabel('Max Basal Schmid Factor');
+xlabel('Maximum Nominal Basal Schmid Factor');
 set(gca,'fontsize',18);
-print('C:\Users\ZheChen\Desktop\basal SF distribution','-dtiff');
+print(fullfile(output_dir, 'basal SF distribution'),'-dtiff');
 
 % [Figure] grain twin SF histogram
 figure;
 t = gSF_etwin(ismember(gID, gID_list));
 histogram(t, -0.1:0.05:0.5);
 ylabel('Counts');
-xlabel('Max Twin Schmid Factor');
+xlabel('Maximum Nominal Twin Schmid Factor');
 set(gca,'fontsize',18);
-print('C:\Users\ZheChen\Desktop\twin SF distribution','-dtiff');
+print(fullfile(output_dir, 'twin SF distribution'),'-dtiff');
 
+save(fullfile(output_dir,'Schmid factor data.mat'),'gSF_basal_map','gSF_etwin_map');
 %%
 
