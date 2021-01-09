@@ -16,8 +16,9 @@ setMTEXpref('zAxisDirection','intoPlane'); % or 'intoPlane'
 
 ebsd = EBSD.load(fname,CS,'interface','ang','convertEuler2SpatialReferenceFrame','setting 2');    
 ebsd = ebsd('Magnesium');
+ebsd = ebsd(ebsd.iq>0);     % need to remove the non-valid grains !!!
 ori = ebsd.orientations;
-figure; plot(ebsd, ori);
+% figure; plot(ebsd, ori);
 
 odf = calcDensity(ori);
 figure;
@@ -36,13 +37,15 @@ for ii = 1:length(a)
        a(ii).String = 'TD';
    end
 end
-% change color scale
+
+%% change color scale
 a = findall(gcf,'Type','axes');
-clim = [0.1 4.2];
+clim = [0 2.8];
 for ii = 1:length(a)
    axes(a(ii));
    caxis(clim);
 end
+
 % change colorbar limit
 a = findall(gcf,'Type','colorbar');
 for ii = 1:length(a)

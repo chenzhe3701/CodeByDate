@@ -16,6 +16,7 @@ setMTEXpref('zAxisDirection','intoPlane'); % or 'intoPlane'
 
 ebsd = EBSD.load(fname,CS,'interface','ang','convertEuler2SpatialReferenceFrame','setting 2');    
 ebsd = ebsd('Magnesium');
+ebsd = ebsd(ebsd.iq>0);     % need to remove the non-valid grains !!!
 ori = ebsd.orientations;
 figure; plot(ebsd, ori);
 
@@ -36,6 +37,12 @@ for ii = 1:length(a)
        a(ii).String = 'TD';
    end
 end
+
+% try the method Reza used to plot pole figures
+% psi = deLaValleePoussinKernel('halfwidth',5*degree) ;
+% odf_2 = calcDensity(ori, psi) ;
+% pf = calcPoleFigure(odf_2, Miller({0,0,0,1},{1,0,-1,0},cs), 'resolution',5*degree, 'complete') ;
+% figure; pf.plot()
 %% uninstall mtex
 cd('D:\p\m\mtex-5.3.1');
 uninstall_mtex();
