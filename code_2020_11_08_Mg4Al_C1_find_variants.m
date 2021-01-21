@@ -157,6 +157,7 @@ end
 save(fullfile(working_dir,save_dir_name,'variant_maps.mat'),'variantMap');
 
 %% study twin area fraction
+load(fullfile(working_dir,save_dir_name,'variant_maps.mat'),'variantMap');
 
 strain = [0, -0.001, -0.008, -0.015, -0.025, -0.023, -0.017, -0.003];
 stress = [0, -78, -89, -103, -127, 10, 91, 138];
@@ -203,11 +204,35 @@ set(gca,'xlim',[-0.035, 0.002],'ylim',[-0.5 12],'fontsize',18,'fontweight','norm
 xlabel('Global Strain');
 ylabel('Twin Area Percent (%)');
 
+%% This is corrected from geotrans information
+zoom_value = [
+    0.9991 0.9947;
+    0.9946 0.9947;
+    0.9907 0.9966;
+    0.9892 0.9915;
+    0.9903 0.9960;
+    0.9976 0.9937;
+    1.0041 0.9971];
+strain_corrected = zoom_value(:,1) - 1;
+strain_corrected = [0; strain_corrected];
 
+figure;
+errorbar(strain_corrected, 100*tAvg, 100*tStd, '-r.','linewidth',1.5,'markersize',18);
+pos = [strain_corrected(:),tAvg(:)*100];
+pos(3,:) = [-0.001, 2];
+pos(4,:) = [-0.005, 8];
+pos(5,:) = [-0.034, 10];
+pos(6,:) = [-0.0225, 9.7];
+pos(7,:) = [-0.027, 3];
+for iE = 2:6
+    ii = iE + 1;
+    text(pos(ii,1),pos(ii,2), [num2str(100*tAvg(ii),2),'\pm',num2str(100*tStd(ii),2),'%'],'fontsize',16);
+end
 
-
-
-
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.025, 0.01],'ylim',[-2, 28],'fontsize',18,'fontweight','normal');
+xlabel('Global Strain');
+ylabel('Twin Area Percent (%)');
 
 
 

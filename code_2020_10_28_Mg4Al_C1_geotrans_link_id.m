@@ -42,7 +42,7 @@ y = reshape(EBSD_data_1(:,column_index_1(6)),mResize,nResize)';
 ID_0 = reshape(EBSD_data_1(:,column_index_1(1)),mResize,nResize)';
 boundary_0 = find_boundary_from_ID_matrix(ID_0);
 
-%% Select deformed iE to select contro grains [No need to run every time]
+%% Select deformed iE to select control grains [No need to run every time]
 iE = 3;
 try
     [EBSD_data_1, EBSD_header_1] = grain_file_read(fullfile(working_dir,['Mg4Al_C1_iE=',num2str(iE),' grain_file_type_1_parent.txt']));
