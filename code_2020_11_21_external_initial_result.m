@@ -2,6 +2,7 @@
 %% (1) For the external scan trial test on 2020-11-18, the images with external scan show streaks in the horizontal direction.
 
 working_dir = 'E:\zhec umich Drive\2020-11-18 Ext vs Builtin on Tescan\Compare AOI_1\';
+cd(working_dir);
 
 image_name = 'ext_image_001 raw.tiff';
 I_r = imread(fullfile(working_dir, image_name));
