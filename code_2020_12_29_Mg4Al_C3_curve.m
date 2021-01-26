@@ -174,8 +174,25 @@ set(gca, 'xlim',[-1.5, 1.5], 'ylim',[-150,150], 'fontsize',18);
 
 %% Then, the strain was estimated from EBSD map, and corrected.
 
+% from python, EBSD estimated strain
 
+scale = [1, 0.9892, 0.9782, 0.9700, ...
+    0.9704, 0.9759, 0.9880, 0.9975, ...
+    0.9900, 0.9808, 0.9688, ...
+    0.9775, 0.9876, 0.9964] ;
 
+strain_ebsd = scale - 1;
+strain_sg = strain(ind_stop(1:end-1));
+
+figure; hold on;
+for iE = 1:13
+    plot(strain_sg(iE:iE+1), strain_ebsd(iE:iE+1), '-', 'color', colors(iE,:), 'linewidth', 1);
+end
+plot(strain_sg, strain_ebsd,'.r','markersize',24);
+
+set(gca,'xlim',[-0.035,0.005], 'ylim',[-0.035,0.005], 'fontsize',18);
+xlabel('Strain gage strain');
+ylabel('EBSD estimated strain');
 
 
 

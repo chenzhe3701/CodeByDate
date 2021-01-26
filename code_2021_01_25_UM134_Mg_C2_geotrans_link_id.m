@@ -1,15 +1,13 @@
-%% EBSD data for in-situ test, UM134 Pure Mg_C1, tested on 2020-12-05 (14 load steps, 2 cycles)
-
 %% setup
 clear; clc; close all;
 addChenFunction;
-working_dir = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD';
+working_dir = 'E:\zhec umich Drive\2021-01-15 UM_134 Mg_C2 insitu EBSD';
 save_dir = [working_dir, '\analysis'];
 cd(working_dir);
 
 %% reference, iE=0
 iE = 0;
-d = load(fullfile(save_dir, ['Mg4Al_C3_grain_file_iE_',num2str(iE),'.mat']),'ID','phi1','phi','phi2','x','y',...
+d = load(fullfile(save_dir, ['UM134_Mg_C2_grain_file_iE_',num2str(iE),'.mat']),'ID','phi1','phi','phi2','x','y',...
     'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
 
 x = d.x;
@@ -25,11 +23,11 @@ gCenterY_0 = d.gCenterY;
 gEdge_0 = d.gEdge;
 
 %% Select deformed iE to select control grains [No need to run every time]
-for iE = 1:13;
+for iE = 1:13
 close all;
 
 % load the modified EBSD data
-load(fullfile(save_dir, ['Mg4Al_C3_modified_parent_grain_file_iE_',num2str(iE),'.mat']));
+load(fullfile(save_dir, ['UM134_Mg_C2_modified_parent_grain_file_iE_',num2str(iE),'.mat']));
 
 [boundary, boundaryID, neighborID, tripleTF, tripleID, indTriple, triIDs] = find_one_boundary_from_ID_matrix(ID);
 
@@ -48,60 +46,58 @@ print(fullfile(save_dir, ['b_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
 
 %% Double check if the grains for geotrans from iE=0 -> iE has changed.
 % (step-1) Select no less than 3 grain pairs for control points, and record
-grain_pair{1} = [12, 13;
-    13, 14;
-    143, 139;
-    136, 134];
-grain_pair{2} = [12, 12;
-    13, 13;
-    143, 143;
-    136, 138];
-grain_pair{3} = [12, 12;
-    13, 15;
-    143, 146;
-    136, 141];
-grain_pair{4} = [12, 12;
-    13, 15;
-    143, 145;
-    136, 139];
-grain_pair{5} = [12, 12;
-    13, 14;
-    143, 145;
-    136, 140];
-grain_pair{6} = [12, 12;
-    13, 13;
-    143, 137;
-    136, 132];
-grain_pair{7} = [12, 12;
-    13, 13;
-    143, 139;
-    136, 134];
-grain_pair{8} = [12, 12;
-    13, 13;
-    143, 138;
-    136, 133];
-grain_pair{9} = [12, 12;
-    13, 13;
-    143, 135;
-    136, 130];
-grain_pair{10} = [12, 12;
-    13, 15;
-    143, 142;
-    136, 136];
-grain_pair{11} = [12, 12;
-    13, 13;
-    143, 136;
-    136, 131];
-grain_pair{12} = [12, 13;
-    13, 14;
-    143, 163;
-    136, 157];
-grain_pair{13} = [12, 12;
-    13, 13;
-    143, 136;
-    136, 131];
-
-
+grain_pair{1} = [61, 59;
+    55, 54;
+    388, 384;
+    391, 387];
+grain_pair{2} = [61, 59;
+    55, 58;
+    388, 402;
+    391, 406];
+grain_pair{3} = [61, 57;
+    55, 60;
+    388, 406;
+    391, 411];
+grain_pair{4} = [61, 60;
+    55, 61;
+    388, 403;
+    391, 407];
+grain_pair{5} = [61, 59;
+    55, 60;
+    388, 393;
+    391, 396];
+grain_pair{6} = [61, 59;
+    55, 57;
+    388, 388;
+    391, 391];
+grain_pair{7} = [61, 59;
+    55, 55;
+    388, 381;
+    391, 384];
+grain_pair{8} = [61, 59;
+    55, 58;
+    388, 387;
+    391, 391];
+grain_pair{9} = [61, 57;
+    55, 58;
+    388, 390;
+    391, 394];
+grain_pair{10} = [61, 56;
+    55, 60;
+    388, 400;
+    391, 405];
+grain_pair{11} = [61, 59;
+    55, 61;
+    388, 393;
+    391, 399];
+grain_pair{12} = [61, 57;
+    55, 58;
+    388, 382;
+    391, 386];
+grain_pair{13} = [61, 60;
+    55, 57;
+    388, 378;
+    391, 381];
 
 % (step-2) Rough align using the selected control grains. The result is already decent 
 g_0 = grain_pair{iE}(:,1);    % ref at iE=0
@@ -183,6 +179,7 @@ print(fullfile(save_dir, ['b_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 % text(210,170,10000,'70<=>71','fontsize',18,'color','r')
 
 end
+
 %% Task 1: Affine transform ID map. Link grains.
 % Generate geotrans/tform information at iE = 1 to 13, without showing results
 % Link ids (save in 'tbl') at differnt iEs after loading the saved geotrans/tform. 
@@ -191,7 +188,7 @@ end
 for iE = 1:13
     disp(['iE=',num2str(iE)]);
     % load the modified EBSD data at iE
-    load(fullfile(save_dir, ['Mg4Al_C3_modified_parent_grain_file_iE_',num2str(iE),'.mat']));
+    load(fullfile(save_dir, ['UM134_Mg_C2_modified_parent_grain_file_iE_',num2str(iE),'.mat']));
     
     % match IDs
     g_0 = grain_pair{iE}(:,1);    % ref at iE=0
@@ -264,9 +261,9 @@ load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms','tbl');
 maxID = 0;
 for iE = 0:13
     if iE==0
-        f = matfile(fullfile(save_dir,['Mg4Al_C3_grain_file_iE_',num2str(iE)]));
+        f = matfile(fullfile(save_dir,['UM134_Mg_C2_grain_file_iE_',num2str(iE)]));
     else
-        f = matfile(fullfile(save_dir,['Mg4Al_C3_modified_parent_grain_file_iE_',num2str(iE)]));
+        f = matfile(fullfile(save_dir,['UM134_Mg_C2_modified_parent_grain_file_iE_',num2str(iE)]));
     end
     gID = f.gID;
     maxID = max(maxID, max(gID));
@@ -276,9 +273,9 @@ id_to_add = 10^(ceil(log10(maxID)));    % round to 1000 etc for adjustment.
 for iE = 0:13
     clear euler_aligned_to_sample;
     if iE==0
-        load(fullfile(save_dir,['Mg4Al_C3_grain_file_iE_',num2str(iE)]));
+        load(fullfile(save_dir,['UM134_Mg_C2_grain_file_iE_',num2str(iE)]));
     else        
-        load(fullfile(save_dir,['Mg4Al_C3_modified_parent_grain_file_iE_',num2str(iE)]));
+        load(fullfile(save_dir,['UM134_Mg_C2_modified_parent_grain_file_iE_',num2str(iE)]));
     end
     if ~exist('euler_aligned_to_sample','var')
         euler_aligned_to_sample = 0;
@@ -322,18 +319,9 @@ for iE = 0:13
     close;
     
     euler_aligned_to_parent = 1;
-    save(fullfile(save_dir, ['Mg4Al_C3_parent_grain_file_iE_',num2str(iE),'.mat']), 'euler_aligned_to_sample','euler_aligned_to_parent', ...
+    save(fullfile(save_dir, ['UM134_Mg_C2_parent_grain_file_iE_',num2str(iE),'.mat']), 'euler_aligned_to_sample','euler_aligned_to_parent', ...
         'ID','phi1','phi','phi2','x','y',...
         'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
 
 end
-
-
-
-
-
-
-
-
-
 
