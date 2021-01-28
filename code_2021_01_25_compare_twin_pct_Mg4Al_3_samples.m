@@ -3,7 +3,9 @@ clear;clc;close all;
 addChenFunction;
 
 %% load data
-save('D:\p\m\CodeByDate\data\Mg4Al_twinPct_summary.mat','tbl_s1','tbl_c1','tbl_c3');
+load('D:\p\m\CodeByDate\data\Mg4Al_twinPct_summary.mat','tbl_s1','tbl_c1','tbl_c3');
+
+close all;
 
 figure; hold on;
 errorbar(tbl_s1.strain_corrected, 100*tbl_s1.t_avg, 100*tbl_s1.t_std, '.-', 'color', 'r', 'linewidth',1.5,'markersize',24);
@@ -13,6 +15,18 @@ legend({'Mg4Al SEM-DIC', 'Mg4Al EBSD sample C1', 'Mg4Al EBSD sample C3'});
 xlabel('strain (%), estimated by DIC or EBSD');
 ylabel('twin percent (%)');
 set(gca, 'fontsize', 16);
+
+figure; hold on;
+errorbar(tbl_s1.strain_corrected, 100*tbl_s1.t_avg, 100*tbl_s1.t_std, '.-', 'color', 'r', 'linewidth',1.5,'markersize',24);
+errorbar(tbl_c1.strain_corrected, 100*tbl_c1.t_avg, 100*tbl_c1.t_std, '.-', 'color', 'b', 'linewidth',1.5,'markersize',24);
+errorbar(tbl_c3.strain_sg, 100*tbl_c3.t_avg, 100*tbl_c3.t_std, '.-', 'color', 'k', 'linewidth',1.5,'markersize',24);
+xlabel('strain (%)');
+ylabel('twin percent (%)');
+set(gca, 'fontsize', 16, 'xlim', [-0.03, 0.005]);
+legend({'\fontsize{12}Mg4Al SEM-DIC, estimated from strain field', ...
+    '\fontsize{12}Mg4Al EBSD C1, estimated from EBSD', ...
+    '\fontsize{12}Mg4Al EBSD C3, strain gage'}, ...
+    'location','best');
 
 %% Codes below: nalysis and save data
 %% Mg4Al_S1, see code '2020_03_30_summarize_Mg4Al_S1.m' for further
@@ -131,4 +145,7 @@ tbl_c3 = table(strain_sg(:), strain_corrected(:), tAvg(:), tStd(:), ...
 
 %% Save tables to data folder, no need to analyze everytime
 save('D:\p\m\CodeByDate\data\Mg4Al_twinPct_summary.mat','tbl_s1','tbl_c1','tbl_c3');
+
+
+
 
