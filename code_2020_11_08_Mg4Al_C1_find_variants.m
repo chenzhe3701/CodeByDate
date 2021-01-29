@@ -205,16 +205,8 @@ xlabel('Global Strain');
 ylabel('Twin Area Percent (%)');
 
 %% This is corrected from geotrans information
-zoom_value = [
-    0.9991 0.9947;
-    0.9946 0.9947;
-    0.9907 0.9966;
-    0.9892 0.9915;
-    0.9903 0.9960;
-    0.9976 0.9937;
-    1.0041 0.9971];
-strain_corrected = zoom_value(:,1) - 1;
-strain_corrected = [0; strain_corrected];
+strain_corrected = [0, 0.9991, 0.9946, 0.9907, ...
+    0.9892, 0.9903, 0.9976, 1.0041] - 1;
 
 figure;
 errorbar(strain_corrected, 100*tAvg, 100*tStd, '-r.','linewidth',1.5,'markersize',18);

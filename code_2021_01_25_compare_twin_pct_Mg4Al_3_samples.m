@@ -72,7 +72,7 @@ stress = [0, -78, -89, -103, -127, 10, 91, 138];
 twinPct = zeros(12,8);
 
 for iE = 2:6
-    load(['E:\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu EBSD\analysis\data_with_ID_overwrite_iE_',num2str(iE),'.mat'], 'ID');
+    load(fullfile(save_dir,['data_with_ID_overwrite_iE_',num2str(iE),'.mat']), 'ID');
     variant_map = variantMap{iE};
     if iE==2
         [nR,nC] = size(variant_map);
@@ -113,7 +113,7 @@ strain_sg = [0, -0.0075, -0.015, -0.025, ...
     -0.0075, -0.015, -0.025, ...
     -0.017, -0.0073, 0];
 
-twinPct = zeros(14,8);
+twinPct = zeros(12,14);
 
 for iE = 1:13
     variant_map = variantMap{iE};
@@ -125,7 +125,7 @@ for iE = 1:13
     for ir=1:nr
        for ic = 1:nc
            
-           load(['E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis\Mg4Al_C3_grain_file_iE_',num2str(iE),'.mat'], 'ID');
+           load(fullfile(save_dir,['Mg4Al_C3_grain_file_iE_',num2str(iE),'.mat']), 'ID');
 
            sub_variant_map = variant_map([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic);
            sub_ID_map = ID([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic); % just for counting number of pixels

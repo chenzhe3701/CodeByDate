@@ -162,34 +162,23 @@ load(fullfile(save_dir,'variant_maps.mat'),'variantMap');
 
 %% This is corrected from geotrans information
 % 13 load steps
-zoom_value = [
-    0.9798 0.9618;
-    0.9759 0.9579;
-    0.9751 0.9874;
-    0.9831 0.9909;
-    0.9950 0.9868;
-    1.0042 0.9957;
-    1.0001 0.9668;
-    0.9976 0.9481;
-    0.9926 0.9411;
-    0.9934 0.9477;
-    0.9961 0.9714;
-    1.0012 0.9779;
-    1.0059 0.9793];
-strain_corrected = zoom_value(:,1) - 1;
-strain_corrected = [0; strain_corrected];
+strain_corrected = [1, 0.9798, 0.9759, ...
+    0.9751, 0.9831, 0.9950, 1.0042, ...
+    1.0001, 0.9976, 0.9926, 0.9934, ...
+    0.9961, 1.0012, 1.0059] - 1;
 
-% strain from image analysis, iE=0:13 + last unloaded step
-strain = [0, -0.0035, -0.0037, -0.0032, -0.0020, ...
-    -0.0010, 0.0000, -0.0010, -0.0020, -0.0033, ...
-    -0.0035, -0.0020, -0.0010, -0.0000, -0.0006];
-stress = [-2, -67, -76, -4, 55, ...
-    67, 99, -45, -60, -72, ...
-    -85, 57, 64, 102, -4];
+% strain from strain gage, iE=0:13 + last unloaded step
+strain_sg = [0, -0.0035, -0.0037, ...
+    -0.0032, -0.0020, -0.0010, 0.0000, ...
+    -0.0010, -0.0020, -0.0033, -0.0035, ...
+    -0.0020, -0.0010, -0.0000];
+stress = [-2, -67, -76, ...
+    -4, 55, 67, 99, ...
+    -45, -60, -72, -85, ...
+    57, 64, 102];
 
 % use corrected, followed by explicitly copied value, 4 segments in 2 cycles   
-strain = strain_corrected';
-strain = [0, -0.0202, -0.0241, ...
+strain_corrected = [0, -0.0202, -0.0241, ...
     -0.0249, -0.0169, -0.0050, 0.0042, ...
     0.0001, -0.0024, -0.0074, -0.0066, ...
     -0.0039, 0.0012, 0.0059];   
@@ -223,10 +212,10 @@ figure; hold on;
 colors = parula(5);
 
 inds = {1:3, 3:7, 7:11, 11:14};
-errorbar(strain(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '-', 'color',colors(4,:), 'linewidth',1.5,'markersize',18);
-errorbar(strain(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '-', 'color',colors(3,:), 'linewidth',1.5,'markersize',18);
-errorbar(strain(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '-', 'color',colors(2,:), 'linewidth',1.5,'markersize',18);
-errorbar(strain(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '-', 'color',colors(1,:), 'linewidth',1.5,'markersize',18);
+errorbar(strain_corrected(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '-', 'color',colors(4,:), 'linewidth',1.5,'markersize',18);
+errorbar(strain_corrected(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '-', 'color',colors(3,:), 'linewidth',1.5,'markersize',18);
+errorbar(strain_corrected(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '-', 'color',colors(2,:), 'linewidth',1.5,'markersize',18);
+errorbar(strain_corrected(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '-', 'color',colors(1,:), 'linewidth',1.5,'markersize',18);
 
 
 % pos = [strain(:),tAvg(:)*100];
