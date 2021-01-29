@@ -154,6 +154,83 @@ save(fullfile(save_dir,'variant_maps.mat'),'variantMap');
 %% study twin area fraction
 load(fullfile(save_dir,'variant_maps.mat'),'variantMap');
 
+
+%% Try point-wise analysis
+% for iE = 1:13
+    
+iE = 1
+
+    d = load(fullfile(save_dir, ['Mg4Al_C3_parent_grain_file_iE_0.mat']));
+    gID_0 = d.gID;
+    gPhi1_0 = d.gPhi1;
+    gPhi_0 = d.gPhi;
+    gPhi2_0 = d.gPhi2;
+    ID_0 = d.ID;
+    boundary_0 = find_boundary_from_ID_matrix(ID_0);
+    
+    d = load(fullfile(save_dir, ['Mg4Al_C3_parent_grain_file_iE_',num2str(iE),'.mat']));
+    x = d.x;
+    y = d.y;
+    gID_p = d.gID;
+    gPhi1_p = d.gPhi1;
+    gPhi_p = d.gPhi;
+    gPhi2_p = d.gPhi2;
+    ID_p = d.ID;
+    boundary_p = find_boundary_from_ID_matrix(ID_p);
+        
+    % data where twins (children) are individially labeled with IDs
+    d = load(fullfile(save_dir, ['Mg4Al_C3_grain_file_iE_',num2str(iE),'.mat']));
+    gID_c = d.gID;
+    gPhi1_c = d.gPhi1;
+    gPhi_c = d.gPhi;
+    gPhi2_c = d.gPhi2;
+    ID_c = d.ID;
+    phi1_c = d.phi1;
+    phi_c = d.phi;
+    phi2_c = d.phi2;
+
+    ID_variant = zeros(size(ID_p));
+    ID_miso = zeros(size(ID_p));
+    [nR,nC] = size(ID_variant);
+    for iR = 1:3:nR
+        disp(['iR = ',num2str(iR)]);
+        for iC = 1:3:nC
+            id_p = ID_p(iR,iC);
+            % Find the parent orientation at iE = 0    ==> Also check the misorientation of the parent grain at the two iEs
+            ind_0 = find(gID_0 == id_p);
+            euler_0 = [gPhi1_0(ind_0), gPhi_0(ind_0), gPhi2_0(ind_0)];
+            
+            id_c = ID_c(iR,iC);
+            ind_c = find(gID_c==id_c);
+            euler_c = [phi1_c(iR,iC), phi_c(iR,iC), phi2_c(iR,iC)];
+            
+            if ~isempty(ind_0)
+                misorientation = [];
+                % compare euler of the twin grain  vs  euler of the iTwin system of the parent orientation
+                for kk = 1:6
+                    euler_kk = euler_by_twin(euler_0, kk, 'Mg');    % calculate the twin euler angle for twin system kk
+                    misorientation(kk) = calculate_misorientation_euler_d(euler_c, euler_kk, 'HCP');
+                end
+                [miso, iVariant] = min(abs(misorientation)); 
+                ID_miso(iR,iC) = miso;
+                ID_variant(iR,iC) = iVariant;
+            end
+        end 
+    end
+        
+    variantMap{iE} = ID_variant;
+    
+    myplot(x,y, ID_variant, boundary_p); caxis([0 6]);
+    title(['iE=',num2str(iE)]);
+    print(fullfile(save_dir,['variantMap_pt_wise_iE=',num2str(iE),'.tif']),'-dtiff');
+    close;
+% end
+save(fullfile(save_dir,'variant_maps_pt_wise.mat'),'variantMap');
+
+%%
+ID_variant(ID_miso > 10) = 0;
+myplot(x,y, ID_variant, boundary_p); caxis([0 6]);
+
 %% This is corrected from geotrans information
 % 13 load steps, Mg4Al_C3
 
@@ -199,23 +276,10 @@ colors = parula(5);
 
 inds = {1:3, 3:7, 7:11, 11:14};
 errorbar(strain(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
-% pos = [strain(:),tAvg(:)*100];
-% pos(3,:) = [-0.0065, 2];
-% pos(4,:) = [-0.014, 8];
-% pos(5,:) = [-0.034, 10];
-% pos(6,:) = [-0.0225, 9.7];
-% pos(7,:) = [-0.027, 3];
-% for iE = 1:13
-%     ii = iE + 1;
-%     text(pos(ii,1),pos(ii,2), [num2str(100*tAvg(ii),2),'\pm',num2str(100*tStd(ii),2),'%'],'fontsize',16);
-% end
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',[-0.03, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
 xlabel('Strain from strain gage');
@@ -231,23 +295,12 @@ colors = parula(5);
 
 inds = {1:3, 3:7, 7:11, 11:14};
 errorbar(strain_corrected(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain_corrected(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain_corrected(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
-
 errorbar(strain_corrected(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
-% pos = [strain(:),tAvg(:)*100];
-% pos(3,:) = [-0.0065, 2];
-% pos(4,:) = [-0.014, 8];
-% pos(5,:) = [-0.034, 10];
-% pos(6,:) = [-0.0225, 9.7];
-% pos(7,:) = [-0.027, 3];
-% for iE = 1:13
-%     ii = iE + 1;
-%     text(pos(ii,1),pos(ii,2), [num2str(100*tAvg(ii),2),'\pm',num2str(100*tStd(ii),2),'%'],'fontsize',16);
-% end
+% text(pos(ii,1),pos(ii,2), [num2str(100*tAvg(ii),2),'\pm',num2str(100*tStd(ii),2),'%'],'fontsize',16);
+
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
 xlabel('Strain from EBSD');
