@@ -1,4 +1,7 @@
-% ID_temp is calculated form a grain boundary map that has more boundaries added based on ID_target map
+% ID_temp is modified from ID_target by dividing selected grains into more
+% grains. After this, for the affected grains, we update all the grain
+% info, including gID, gCenterX, gCenterY, gArea, gEdge, gNeighbors,
+% gNNeighbors, gPhi1, gPhi, gPhi2
 % 
 % data_in contains fields:
 % data_in.umPerDp
@@ -36,11 +39,6 @@
 function data_out = match_ID_map_and_summarize(data_in)
 
 %% parse input data
-try
-    umPerDp = data_in.umPerDp;
-catch
-    umPerDp = 1;    % micron per data point in EBSD data
-end
 symmetry = data_in.symmetry;
 ID = data_in.ID_target;
 ID_temp = data_in.ID_temp;
@@ -54,6 +52,13 @@ gID = data_in.gID;
 gPhi1 = data_in.gPhi1;
 gPhi = data_in.gPhi;
 gPhi2 = data_in.gPhi2;
+
+try
+    umPerDp = data_in.umPerDp;
+catch
+    umPerDp = y(2) - y(1);    % micron per data point in EBSD data
+    warning(['warning: um per data point obtained from x y matrix = ',num2str(umPerDp),' um/dp']);
+end
 
 %% Process data: align ID, and make new ID, ID_temp is calculated form the new boundary map
 % directly find gID, gCenterX, gCenterY, gArea, gDiameter, gEdge

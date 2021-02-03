@@ -4,9 +4,9 @@
 clc;
 for iE = 1:13
     try
-        A = tforms{iE}.T'
+        A = tforms{iE}.T';
     catch
-        A = tforms{iE}.tdata.T'
+        A = tforms{iE}.tdata.T';
     end
 
     M = zeros(4,4);
@@ -15,7 +15,7 @@ for iE = 1:13
     M(4,4) = 1;
     M(4,1:2) = A(3,1:2);
     M(1:2,4) = A(1:2,3);
-    M
+    M;
     
     disp(['matrix: iE=',num2str(iE)]);
     
@@ -23,4 +23,5 @@ for iE = 1:13
         M(1,1), M(1,2), M(1,4), M(2,1), M(2,2), M(2,4));
     
     disp(str);
+    disp('===================================');
 end

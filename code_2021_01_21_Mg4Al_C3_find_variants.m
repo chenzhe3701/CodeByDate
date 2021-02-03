@@ -131,7 +131,7 @@ for iE = 1:13
                         end
                     end
                 else
-                    warning('No parent orientation found:');
+                    warning('No parent orientation found:'); % --> but if no parent found, this could be the actual twin ? 2021-02-03 when writing new code.
                     str = sprintf('iE = %d, ii = %d, ID_parent = %d\n', iE, ii, id_p);
                     disp(str);
                 end
