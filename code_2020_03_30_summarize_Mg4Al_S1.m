@@ -4,12 +4,13 @@
 % Divide the manually corrected twin map into 3x3=9 regions for errorbar
 
 clear twinPct;
+working_dir = 'E:\zhec umich Drive\0_temp_output';
 
 load('D:\p\m\DIC_Analysis\20200324_2004_relabeled_result_Mg4Al_S1.mat','trueTwinMapCell');
 load('D:\p\m\DIC_Analysis\setting_for_real_samples\Mg4Al_S1_setting.mat','strainPauses', 'strainPauses_sg');
 load('E:\Mg4Al_S1_insitu\Analysis_by_Matlab\Mg4Al_S1_EbsdToSemForTraceAnalysis.mat','ID','boundaryTFB');
 load('D:\p\m\DIC_Analysis\temp_results\20200325_0506_new_variant_map_Mg4Al_S1.mat','variantMapCleanedCell');
-strainFileFolder = 'E:\Mg4Al_S1_insitu\SEM_Images\stitched_DIC';
+strainFileFolder = 'E:\Mg4Al_S1_insitu\SEM Data\stitched_DIC';
 iE_start = 1;
 iE_stop = 6;
 for iE = iE_start:iE_stop
@@ -118,5 +119,27 @@ save('E:\Mg4Al_S1_insitu\Summary\Mg4Al_S1_EBSD_organized.mat','ID','gID','gPhi1'
 %% maybe can also choose to save variantMapCleanedCell
 save('E:\Mg4Al_S1_insitu\Summary\twinVariantMapCell.mat','variantMapCleanedCell','-v7.3');
 
+%% For TMS 2011, Plot and save variantMap, gray background
+cmap = parula(6);
+cmap = [[1,1,1] * 0.3; cmap];
+for iE=1:6
+   [f,a,c] = myplot(variantMapCleanedCell{iE},boundaryTFB);
+   caxis([-0.5 6.5]);
+   colormap(cmap);
+   set(c,'limits',[0.5, 6.5]);
+   axis off;
+   print(fullfile(working_dir, ['Mg4Al_S1_variantMap_',num2str(iE),'.tiff']),'-dtiff');
+   close;
+end
 
+%% For TMS 2011, plot the exx maps
+for iE=1:6
+    load(fullfile(strainFileFolder,['_',num2str(iE),'_v73.mat']),'exx','x','y');
+    myplot(exx,boundaryTFB);
+%     caxis([-0.1 0.02]);
+    title('');
+    axis off;
+   print(fullfile(working_dir, ['Mg4Al_S1_exxMap_',num2str(iE),'.tiff']),'-dtiff');
+   close;
+end
 
