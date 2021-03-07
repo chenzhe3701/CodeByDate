@@ -34,9 +34,22 @@ thetad = thetad(:,4)/pi*180;
 [val_min, ind_S] = min(abs(thetad));
 q_out = qs(ind_S,:);
 
-if  q_out(1) * q_ref(1) < 0
+% This is the original temp solution I had. It works mostly, but can lead to error.
+% if  q_out(1) * q_ref(1) < 0
+%     q_out = -q_out;
+% end
+
+% The meaning of quarternion is: 
+% q = [q0, q1, q2, q3] = [cos(w/2), sin(w/2)n1, sin(w/2)n2, sin(w/2)n3], 
+% where w and [n1,n2,n3] are angle and axis form.
+% So, maybe try this solution:
+% try to make the directions [n1,n2,n3] approximately the same
+% chenzhe, updated 2021-03-04
+if dot(q_out(2:4),q_ref(2:4)) < 0
     q_out = -q_out;
 end
+
+
 
 end
 

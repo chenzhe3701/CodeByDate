@@ -35,6 +35,11 @@
 % data_out.gNeighbors 
 %
 % 2021-01-19
+%
+% add note 2021-03-02 
+% If merge gA,gB -> gAA, then we have ID_temp include gAA, gTarget include
+% [gA, gB], and link gAA->gA. In this code, the gEuler_gAA is directly
+% copied from that of gEuler_gA.
 
 function data_out = match_ID_map_and_summarize(data_in)
 

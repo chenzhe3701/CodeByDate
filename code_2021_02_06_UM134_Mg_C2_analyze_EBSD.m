@@ -2,12 +2,12 @@
 %% setup
 clear; clc; close all;
 addChenFunction;
-working_dir = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD';
+working_dir = 'E:\zhec umich Drive\2021-01-15 UM134 Mg_C2 insitu EBSD';
 save_dir = [working_dir, '\analysis'];
 mkdir(save_dir);
 % cd(working_dir);
 
-sample_name = 'Mg4Al_C3';
+sample_name = 'UM134_Mg_C2';
 
 %% Step-1: load .txt grain files, align_euler_to_sample and save as .mat
 
@@ -184,7 +184,7 @@ euler_aligned_to_sample = d.euler_aligned_to_sample;
 myplot(x, y, ID_0, grow_boundary(boundary_0)); 
 title('ID, iE=0','fontweight','normal');
 set(gca,'fontsize',18);
-label_map_with_ID(x,y,ID_0,gcf, [12, 13, 143,136],'r',24,10);  % illustrate selected control grains  
+label_map_with_ID(x,y,ID_0,gcf, [61, 55, 388, 391],'r',24,10);  % illustrate selected control grains  
 print(fullfile(save_dir, ['a_ID_map_iE=0.tif']),'-r300','-dtiff');
 
 myplot(x, y, ID, grow_boundary(boundary)); 
@@ -195,62 +195,62 @@ print(fullfile(save_dir, ['a_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
 
 %% Geotrans the iE=0 map to overlay on iE>0 map, to overlay the same grains [no need to run every time]
 % (step-1) Select no less than 3 grain pairs for control points, and record
-grain_pair{1} = [12, 12;
-    13, 13;
-    143, 143;
-    136, 136];
-grain_pair{2} = [12, 13;
-    13, 14;
-    143, 139;
-    136, 134];
-grain_pair{3} = [12, 12;
-    13, 13;
-    143, 143;
-    136, 138];
-grain_pair{4} = [12, 12;
-    13, 15;
-    143, 146;
-    136, 141];
-grain_pair{5} = [12, 12;
-    13, 15;
-    143, 145;
-    136, 139];
-grain_pair{6} = [12, 12;
-    13, 14;
-    143, 145;
-    136, 140];
-grain_pair{7} = [12, 12;
-    13, 13;
-    143, 137;
-    136, 132];
-grain_pair{8} = [12, 12;
-    13, 13;
-    143, 139;
-    136, 134];
-grain_pair{9} = [12, 12;
-    13, 13;
-    143, 138;
-    136, 133];
-grain_pair{10} = [12, 12;
-    13, 13;
-    143, 135;
-    136, 130];
-grain_pair{11} = [12, 12;
-    13, 15;
-    143, 142;
-    136, 136];
-grain_pair{12} = [12, 12;
-    13, 13;
-    143, 136;
-    136, 131];
-grain_pair{13} = [12, 13;
-    13, 14;
-    143, 163;
-    136, 157];
-grain_pair{14} = [12, 12;
-    13, 13;
-    143, 136;
-    136, 131];
+grain_pair{1} = [61, 61;
+    55, 55;
+    388, 388;
+    391, 391];
+grain_pair{2} = [61, 59;
+    55, 54;
+    388, 384;
+    391, 387];
+grain_pair{3} = [61, 59;
+    55, 58;
+    388, 402;
+    391, 406];
+grain_pair{4} = [61, 57;
+    55, 60;
+    388, 406;
+    391, 411];
+grain_pair{5} = [61, 60;
+    55, 61;
+    388, 403;
+    391, 407];
+grain_pair{6} = [61, 59;
+    55, 60;
+    388, 393;
+    391, 396];
+grain_pair{7} = [61, 59;
+    55, 57;
+    388, 388;
+    391, 391];
+grain_pair{8} = [61, 59;
+    55, 55;
+    388, 381;
+    391, 384];
+grain_pair{9} = [61, 59;
+    55, 58;
+    388, 387;
+    391, 391];
+grain_pair{10} = [61, 57;
+    55, 58;
+    388, 390;
+    391, 394];
+grain_pair{11} = [61, 56;
+    55, 60;
+    388, 400;
+    391, 405];
+grain_pair{12} = [61, 59;
+    55, 61;
+    388, 393;
+    391, 399];
+grain_pair{13} = [61, 57;
+    55, 58;
+    388, 382;
+    391, 386];
+grain_pair{14} = [61, 60;
+    55, 57;
+    388, 378;
+    391, 381];
 
 
 % (step-2) Rough align using the selected control grains. The result is already decent 
@@ -344,34 +344,34 @@ print(fullfile(save_dir, ['a_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 %% Record (1) the ID_list (on map_iE) to correct for each iE, and (2) the tolerance for each grain
 % ID_list{iB=iE+1}. To treat 0-based indexing as 1 based indexing  
 % ID_list{iB=iE+1} is the IDs need to be treated for iE = iB-1
-ID_list{1} = [];
-tolerance_cell{1} = [ ];
-ID_list{2} = [57,103,117,129];
-tolerance_cell{2} = [5,5,5,5];
-ID_list{3} = [56,71,86,104,122,129,133];
-tolerance_cell{3} = [5,5,5,5,5,5,5];
-ID_list{4} = [60,68,77,91,109,126,132,132,133,136];
-tolerance_cell{4} = [5,5,5,5,4,5,5,4,5,5];
-ID_list{5} = [61,66,75,89,106,123,130,134];
-tolerance_cell{5} = [5,5,5,5,5,5,5,5];
-ID_list{6} = [61,75,91,107,124,130,131,135];
-tolerance_cell{6} = [5,5,5,5,5,3,5,5];
-ID_list{7} = [32,54,66,99,115,127];
-tolerance_cell{7} = [5,5,5,5,5,5];
-ID_list{8} = [31,54,117,129];
-tolerance_cell{8} = [5,5,5,5];
-ID_list{9} = [32,53,116,128];
-tolerance_cell{9} = [5,5,5,5];
-ID_list{10} = [30,51,66,98,114,121,125];
-tolerance_cell{10} = [5,5,5,5,5,5,5,5,5];
-ID_list{11} = [57,63,72,87,93,105,120,127,131];
-tolerance_cell{11} = [5,5,4,5,5,5,5,5,5];
-ID_list{12} = [57,65,82,87,100,114,126];
-tolerance_cell{12} = [5,5,5,5,5,5,5];
-ID_list{13} = [32,56,114,134,150];
-tolerance_cell{13} = [5,5,5,5,5]; 
-ID_list{14} = [29,114,126];
-tolerance_cell{14} = [5,5,5];
+ID_list{1} = [274,337,215];
+tolerance_cell{1} = [3,3,3];
+ID_list{2} = [71,152,177,248,269,335];
+tolerance_cell{2} = [5,3,5,5,3,3];
+ID_list{3} = [184,260,279];
+tolerance_cell{3} = [5,5,3];
+ID_list{4} = [19,76,189,265,284,410];
+tolerance_cell{4} = [5,5,5,5,3,5];
+ID_list{5} = [25,79,126,189,263,283];
+tolerance_cell{5} = [5,5,3,5,5,3];
+ID_list{6} = [24,183,257,276,218];
+tolerance_cell{6} = [4,5,5,3,3];
+ID_list{7} = [72,255,275];
+tolerance_cell{7} = [4,4,3];
+ID_list{8} = [14,14,71,79,100,104,249,269,327];
+tolerance_cell{8} = [3,3,3,3,3,3,3,3,3];
+ID_list{9} = [50,72,255,273,340];
+tolerance_cell{9} = [3,3,3,3,3];
+ID_list{10} = [72,106,180,254,273];
+tolerance_cell{10} = [5,3,5,5,3];
+ID_list{11} = [73,105,182,260,280,403];
+tolerance_cell{11} = [5,5,5,5,3,5];
+ID_list{12} = [76,110,259,276,369,349];
+tolerance_cell{12} = [5,3,5,5,3,3];
+ID_list{13} = [24,48,70,251,333,333];
+tolerance_cell{13} = [5,5,5,5,3,5];
+ID_list{14} = [52,71,244,265,208];
+tolerance_cell{14} = [3,5,5,3,3];
 
 % load the saved masks
 try
@@ -548,7 +548,7 @@ end
 
 for iE = 0:13
     copyfile(fullfile(save_dir_2, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-           fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']) );
 end
 
 %% Part-3: Affine transform ID map. Link grains, and modify linked grains to the same ID#.
@@ -929,15 +929,15 @@ save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
 
 %% plot
 % strain for iE=0:13
-strain_ebsd = [0, -0.0108, -0.0218, -0.0300, ...
-    -0.0296, -0.0241, -0.0120, -0.0025, ...
-    -0.0100, -0.0192, -0.0312, ...
-    -0.0225, -0.0124, -0.0036];
+strain_ebsd = [ 0, -0.0157, -0.0256, -0.0317, ...
+    -0.0291, -0.0216, -0.0109, -0.0023, ...
+    -0.0124, -0.0215, -0.0312, ...
+    -0.0208, -0.0103, -0.0014];
     
 strain_sg = [0, -0.0075, -0.015, -0.025, ...
     -0.023, -0.017, -0.0075, 0, ...
     -0.0075, -0.015, -0.025, ...
-    -0.017, -0.0073, 0];
+    -0.017, -0.0075, 0];
 
 colors = parula(5);
 
@@ -951,7 +951,7 @@ errorbar(strain_sg(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color'
 errorbar(strain_sg(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
 set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
+set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 15],'fontsize',18,'fontweight','normal');
 xlabel('Strain from strain gage');
 ylabel('Twin Area Percent (%)');
 print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
@@ -966,7 +966,7 @@ errorbar(strain_ebsd(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'colo
 errorbar(strain_ebsd(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
 set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
+set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 15],'fontsize',18,'fontweight','normal');
 xlabel('Strain from ebsd estimate');
 ylabel('Twin Area Percent (%)');
 print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');

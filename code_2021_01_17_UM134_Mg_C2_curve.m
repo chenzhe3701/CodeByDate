@@ -3,8 +3,8 @@
 close all;
 clc;
 
-working_dir = 'E:\zhec umich Drive\2021-01-15 UM_134 Mg_C2 insitu curve';
-cd(working_dir);
+working_dir = 'E:\zhec umich Drive\2021-01-15 UM134 Mg_C2 insitu curve';
+% cd(working_dir);
 
 fileName = '2021-01-15 UM134_Mg_C2 comp-ten-data.lvm';
 delimiterIn = '\t';
@@ -188,6 +188,7 @@ plot(strain(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersize', 1
 xlabel('Strain, from strain gage');
 ylabel('Stress (MPa)');
 set(gca, 'xlim',[-0.03, 0.005], 'ylim',[-75,75], 'fontsize',18);
+print(fullfile(working_dir, 'stress vs strain gage.tiff'), '-dtiff');
 
 figure; hold on;
 for ii = 1:length(ind_stop)-1
@@ -197,5 +198,5 @@ plot(displacement(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersi
 xlabel('Displacement (mm)');
 ylabel('Stress (MPa)');
 set(gca, 'xlim',[-2, 1], 'ylim',[-75,75], 'fontsize',18);
-
+print(fullfile(working_dir, 'stress vs displacement.tiff'), '-dtiff');
 

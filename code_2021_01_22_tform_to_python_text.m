@@ -3,10 +3,11 @@
 % my python script.
 clc;
 for iE = 1:13
+    iB = iE + 1;
     try
-        A = tforms{iE}.T';
+        A = tforms{iB}.T';
     catch
-        A = tforms{iE}.tdata.T';
+        A = tforms{iB}.tdata.T';
     end
 
     M = zeros(4,4);

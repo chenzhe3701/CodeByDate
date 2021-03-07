@@ -154,7 +154,6 @@ grain_pair{13} = [12, 12;
     136, 131];
 
 
-
 % (step-2) Rough align using the selected control grains. The result is already decent 
 g_0 = grain_pair{iE}(:,1);    % ref at iE=0
 g_iE = grain_pair{iE}(:,2);    % iE > 0, considered as deformed
@@ -171,7 +170,6 @@ boundary_0_to_iE = find_boundary_from_ID_matrix(ID_0_to_iE);
 % myplot(x,y, ID_0_to_iE, boundary_0_to_iE); 
 % set(gca,'fontsize',18);
 % title(['(rough) affine transformed iE=0 -> iE=',num2str(iE)], 'fontweight','normal');
-
 
 
 % (step-3) Fine align again, based on id_link and use all non-edge grains, and show result! 
@@ -211,7 +209,6 @@ boundary_0_to_iE = find_boundary_from_ID_matrix(ID_0_to_iE);
 % myplot(x,y, ID_0_to_iE, boundary_0_to_iE); 
 % set(gca,'fontsize',18);
 % title(['(final) affine transformed iE=0 -> iE=',num2str(iE)], 'fontweight','normal');
-
 
 
 % (step-4) try to match grains based on their spatial location, and show the matching result. 
@@ -395,7 +392,7 @@ end
 close;close;
 myplot(boundary_new);
 
-%% Task-1: Use ID_temp to add grain boundaries, summarize and save the EBSD data, for iE
+%% Task-1: Use ID_updated to add grain boundaries, summarize and save the EBSD data, for iE
 % ID_updated: modified from the added grain boundaries
 % ID: the target ID map at this iE
 
