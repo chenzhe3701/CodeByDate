@@ -582,6 +582,221 @@ for iE = 0:13
         fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']) );
 end
 
+%% special for this sample, modify 'grain file' at iE=5
+for iE = 5
+%% load 'grain file' data, plot map to select grain
+iB = iE+1;
+
+% deformed iE
+d = load(fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']));
+% read type-2 grain file and get average info for grains
+gID = d.gID;
+gPhi1 = d.gPhi1;
+gPhi = d.gPhi;
+gPhi2 = d.gPhi2;
+
+ID = d.ID;
+phi1 = d.phi1;
+phi = d.phi;
+phi2 = d.phi2;
+euler_aligned_to_sample = d.euler_aligned_to_sample;
+
+boundary = find_one_boundary_from_ID_matrix(ID);
+
+myplot(x, y, ID, grow_boundary(boundary)); 
+title(['ID, iE=',num2str(iE)],'fontweight','normal');
+set(gca,'fontsize',18);
+
+%% record the grain to moidfy
+
+ID_list{6} = [348]; 
+tolerance_cell{6} = [3];
+
+try
+    load(fullfile(save_dir,[sample_name,'_twin_grain_mask_cell.mat']),'mask_cell','ID_updated_cell');
+catch
+    mask_cell = cell(1,14);
+end
+
+iN = 1;
+ID_updated = ID;
+next_gID = max(gID) + 1;
+
+boundary = find_one_boundary_from_ID_matrix(ID_updated);   
+boundary_new = boundary;
+
+%% draw mask, select points as additional grain boundary to modify
+
+N = length(ID_list{iB});
+while iN <= N
+    try
+        close(hf);
+    end
+    str = sprintf('iE=%d, iN=%d', iE, iN);
+    disp(str);
+    % example for debug, iE=1, grain 57
+    ID_current = ID_list{iB}(iN);
+    ind_local = ismember(ID, ID_current); %ismember(ID, [ID_current,ID_neighbor]);
+    indC_min = find(sum(ind_local, 1), 1, 'first');
+    indC_max = find(sum(ind_local, 1), 1, 'last');
+    indR_min = find(sum(ind_local, 2), 1, 'first');
+    indR_max = find(sum(ind_local, 2), 1, 'last');
+    
+    ID_local = ID_updated(indR_min:indR_max, indC_min:indC_max);    % crop from ID_temp
+    
+    x_local = x(indR_min:indR_max, indC_min:indC_max);
+    y_local = y(indR_min:indR_max, indC_min:indC_max);
+    phi1_local = phi1(indR_min:indR_max, indC_min:indC_max);
+    phi_local = phi(indR_min:indR_max, indC_min:indC_max);
+    phi2_local = phi2(indR_min:indR_max, indC_min:indC_max);
+    boundary_local = boundary_new(indR_min:indR_max, indC_min:indC_max);
+    
+    % for each pixel, find max misorientation within its four neighbors
+    [nR,nC] = size(ID_local);
+    misorientation_max = zeros(nR,nC);
+    for iR = 1:nR
+        for iC = 1:nC
+            neighbor_orientation = [];
+            % add upper neighbor, bottom neighbor, left neighbor, right neighbor
+            if iR>1
+                neighbor_orientation = [neighbor_orientation; phi1_local(iR-1,iC), phi_local(iR-1,iC), phi2_local(iR-1,iC)];
+            end
+            if iR<nR
+                neighbor_orientation = [neighbor_orientation; phi1_local(iR+1,iC), phi_local(iR+1,iC), phi2_local(iR+1,iC)];
+            end
+            if iC>1
+                neighbor_orientation = [neighbor_orientation; phi1_local(iR,iC-1), phi_local(iR,iC-1), phi2_local(iR,iC-1)];
+            end
+            if iC<nC
+                neighbor_orientation = [neighbor_orientation; phi1_local(iR,iC+1), phi_local(iR,iC+1), phi2_local(iR,iC+1)];
+            end
+            
+            euler_current = [phi1_local(iR,iC), phi_local(iR,iC), phi2_local(iR,iC)];
+            
+            misorientation = [];
+            for ii = 1:size(neighbor_orientation,1)
+                misorientation(ii) = calculate_misorientation_euler_d(euler_current, neighbor_orientation(ii,:), 'HCP');
+            end
+            misorientation_max(iR,iC) = max(misorientation);
+        end
+    end
+    
+    % if not previously processed, process, save the mask
+    % plot the max misorientation map, use mask to select the region where you
+    % want to add the misorientation boundary as a new boundary
+    if (length(mask_cell{iB})>=iN) && ~isempty(mask_cell{iB}{iN})
+        mask = mask_cell{iB}{iN};
+    else
+        hf2 = myplotm(boundary_local,'x',x_local,'y', y_local);
+        label_map_with_ID(x_local,y_local,ID_local, gcf, ID_current, 'r');
+        hf3= myplotm(misorientation_max);
+        caxism([tolerance_cell{iB}(iN), 100]);
+        h = drawpolygon;
+        customWait(h);
+        mask = h.createMask();
+        mask_cell{iB}{iN} = mask;
+    end
+    
+    tolerance = tolerance_cell{iB}(iN); % tolerance for this grain, default to 5
+    boundary_local_new = (misorientation_max > tolerance)&(mask==1);
+    boundary_local_new = double(ID_local~=ID_current | boundary_local_new);
+    
+    ID_local_new = find_ID_map_from_boundary_map(boundary_local_new);
+    if length(unique(ID_local_new(:))) ~= 2
+        % redraw
+        mask_cell{iB}{iN} = [];     % delete mask
+        myplot(boundary_local_new);
+        warning(' More than one additional number of grains is created, you might want to do it again!');
+    else
+        % If split into g1 and g2, let g1 = 0, g2 = next_gID - ID_current, other grains = 0
+        % ==> modification on 2021-02-25, need to check previous code for compatibility:  
+        % Let the larger grain keep the ID_current.  
+        if sum(ID_local_new(:)==1)/sum(ID_local(:)==ID_current) > 0.5
+            ID_local_new(ID_local_new==1) = 0;
+            ID_local_new(ID_local_new==2) = next_gID - ID_current;
+        else
+            ID_local_new(ID_local_new==2) = 0;
+            ID_local_new(ID_local_new==1) = next_gID - ID_current;
+        end
+        ID_local_new(ID_local~=ID_current) = 0;
+        ID_local_new = ID_local_new + ID_local;     % after adding, g2 will be next_gID
+        ID_updated(indR_min:indR_max, indC_min:indC_max) = ID_local_new;    % update ID_new
+        
+        next_gID = next_gID + 1;    % update next_gID and iN
+        iN = iN + 1;
+        
+        % update boundary, for illustration purpose.
+        boundary_local_new = (misorientation_max > tolerance)&(mask==1);
+        boundary_local_new = double(boundary_local | boundary_local_new);
+        boundary_new(indR_min:indR_max, indC_min:indC_max) = boundary_local_new;
+        try
+            close(hf2);
+            close(hf3);
+        end
+        hf = myplot(boundary_local_new);
+    end
+    
+    ID_updated_cell{iB} = ID_updated;
+    save(fullfile(save_dir, [sample_name,'_twin_grain_mask_cell.mat']),'mask_cell','ID_updated_cell');
+end
+
+close all;
+myplot(boundary_new);
+
+%% After adding more gb and get ID_updated, match ID_updated to ID_iE, update ID and grain info
+% ID_updated: modified from the added grain boundaries
+% ID: the target ID map at this iE
+
+% umPerDp = 1;    % micron per data point in EBSD data
+% data_in.umPerDp = umPerDp;
+data_in.symmetry = 'hcp';
+data_in.ID_target = ID;
+data_in.ID_temp = ID_updated;
+data_in.x = x;
+data_in.y = y;
+data_in.phi1 = phi1;
+data_in.phi = phi;
+data_in.phi2 = phi2;
+data_in.gID = gID;
+data_in.gPhi1 = gPhi1;
+data_in.gPhi = gPhi;
+data_in.gPhi2 = gPhi2;
+
+data_out = match_ID_map_and_summarize(data_in);
+
+ID = data_out.ID;   % the modified ID map
+gID = data_out.gID;
+gPhi1 = data_out.gPhi1;
+gPhi = data_out.gPhi;
+gPhi2 = data_out.gPhi2;
+gCenterX = data_out.gCenterX;
+gCenterY = data_out.gCenterY;
+gNNeighbors = data_out.gNNeighbors;
+gDiameter = data_out.gDiameter;
+gArea = data_out.gArea;
+gEdge = data_out.gEdge;
+gNeighbors = data_out.gNeighbors;
+
+save_dir_2 = [save_dir,'\step-2'];
+mkdir(save_dir_2);
+
+save(fullfile(save_dir_2, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']),'euler_aligned_to_sample','ID','phi1','phi','phi2','x','y',...
+    'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
+
+close all;
+
+disp(['finished twin grain file at iE=',num2str(iE)]);
+
+end
+
+%% copy to analysis folder
+for iE = 0:13
+    try
+        copyfile(fullfile(save_dir_2, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
+            fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']) );
+    end
+end
+
 %% Part-3: Affine transform ID map. Link grains, and modify linked grains to the same ID#.
 % Generate geotrans/tform information at iE = 1 to 13, without showing results
 % Link ids (save in 'tbl') at differnt iEs after loading the saved geotrans/tform. 
