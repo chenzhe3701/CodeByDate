@@ -20,6 +20,11 @@ pole_figure_by_mtex(file_name);
 print(fullfile(output_dir,'Mg4Al_C3 pole figure.tiff'),'-dtiff');
 winopen(output_dir);
 
+%% Mg4Al_U2
+file_name = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\Mg4Al_U2 iE=0.osc';
+pole_figure_by_mtex(file_name);
+print(fullfile(output_dir,'Mg4Al_U2 pole figure.tiff'),'-dtiff');
+winopen(output_dir);
 
 
 %% UM134_Mg_C2

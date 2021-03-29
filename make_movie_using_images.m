@@ -22,9 +22,14 @@ outputVideo = VideoWriter(fullfile(folder,'output_video.avi'));
 outputVideo.FrameRate = 1;  % frame per second
 open(outputVideo)
 
-fileList = dir([folder,'\',img_prefix,'*',img_suffix])
+fileList = dir([folder,'\',img_prefix,'*',img_suffix]);
+
+folder_name = fileList(1).folder;
+file_names = sort({fileList.name});
+[file_names,index] = sort_nat(file_names);
+
 for ii = 1:length(fileList)
-    i_img = imread(fullfile(fileList(ii).folder,fileList(ii).name));
+    i_img = imread(fullfile(folder_name,file_names{ii}));
     i_frame(ii) = im2frame(i_img);
     writeVideo(outputVideo,i_img);    
 end

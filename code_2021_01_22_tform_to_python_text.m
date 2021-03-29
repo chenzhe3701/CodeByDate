@@ -5,7 +5,7 @@ clc;
 for iE = 1:13
     iB = iE + 1;
     try
-        A = tforms{iB}.T';
+        A = tforms{iB}.T';      
     catch
         A = tforms{iB}.tdata.T';
     end
