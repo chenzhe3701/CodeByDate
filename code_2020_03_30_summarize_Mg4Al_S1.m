@@ -4,7 +4,8 @@
 % Divide the manually corrected twin map into 3x3=9 regions for errorbar
 
 clear twinPct;
-working_dir = 'E:\zhec umich Drive\0_temp_output';
+for_TMS_dir = 'E:\zhec umich Drive\0_temp_output';
+save_dir = 'E:\Mg4Al_S1_insitu\Summary';
 
 load('D:\p\m\DIC_Analysis\20200324_2004_relabeled_result_Mg4Al_S1.mat','trueTwinMapCell');
 load('D:\p\m\DIC_Analysis\setting_for_real_samples\Mg4Al_S1_setting.mat','strainPauses', 'strainPauses_sg');
@@ -69,6 +70,52 @@ set(gca,'xlim',[-0.03, 0.015],'ylim',[-2 28],'fontsize',18,'fontweight','normal'
 xlabel('\fontsize{24}\epsilon\fontsize{18}^G, Strain Gage Strain');
 ylabel('Twin Area Percent, %');
 print('E:\Mg4Al_S1_insitu\Summary\Twin Area vs Strain Gage Strain.tif','-dtiff');
+
+%% Include iE=0 as tAvg{1}. 
+tAvg(2:7) = tAvg(end-5:end);
+tStd(2:7) = tStd(end-5:end);
+twinPct(2:7) = twinPct(end-5:end);
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
+
+strain_dic = [0, -0.0012, -0.0117, -0.0186, ...
+    -0.0172, -0.0124, 0.0006];
+
+strain_sg = [0, -0.0075, -0.0150, -0.0250, ...
+    -0.0230, -0.0170, 0];
+
+colors = parula(5);
+
+% [1] using strain gage strain
+figure; hold on;
+inds = {1:4, 4:7};
+
+errorbar(strain_sg(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_sg(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+xlabel('Strain from strain gage');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
+
+% [2] using (fine transformed) ebsd estimated strain
+figure; hold on;
+inds = {1:4, 4:7};
+
+errorbar(strain_dic(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_dic(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.025, 0.005],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+xlabel('Strain from ebsd estimate');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_dic_strain.tiff'),'-dtiff');
+
+
+tbl = array2table([(0:6)', strain_sg(:), strain_dic(:), 100*tAvg(:), 100*tStd(:)]);
+tbl.Properties.VariableNames = {'iE','strain_sg','strain_dic','twinPct %','twinStd %'};
+disp(tbl);
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
 %%
 
 % print('E:\Mg4Al_S1_insitu\Summary\Twin Area vs Global Strain.tif','-dtiff');
@@ -128,7 +175,7 @@ for iE=1:6
    colormap(cmap);
    set(c,'limits',[0.5, 6.5]);
    axis off;
-   print(fullfile(working_dir, ['Mg4Al_S1_variantMap_',num2str(iE),'.tiff']),'-dtiff');
+   print(fullfile(for_TMS_dir, ['Mg4Al_S1_variantMap_',num2str(iE),'.tiff']),'-dtiff');
    close;
 end
 
@@ -139,7 +186,7 @@ for iE=1:6
 %     caxis([-0.1 0.02]);
     title('');
     axis off;
-   print(fullfile(working_dir, ['Mg4Al_S1_exxMap_',num2str(iE),'.tiff']),'-dtiff');
+   print(fullfile(for_TMS_dir, ['Mg4Al_S1_exxMap_',num2str(iE),'.tiff']),'-dtiff');
    close;
 end
 

@@ -3,9 +3,11 @@
 clear;clc;close all;
 addChenFunction;
 working_dir = 'E:\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu EBSD';
-save_dir_name = 'analysis';
-cd(working_dir);
+save_dir = [working_dir, '\analysis'];
+mkdir(save_dir);
+% cd(working_dir);
 
+sample_name = 'Mg4Al_C1';
 %% Find out the twin variants 
 for iE = 2:6
 [EBSD_data_1, EBSD_header_1] = grain_file_read(fullfile(working_dir,['Mg4Al_C1_iE=',num2str(iE),' grain_file_type_1_parent.txt']));
@@ -155,6 +157,105 @@ variantMap{iE} = ID_variant;
 end
 
 save(fullfile(working_dir,save_dir_name,'variant_maps.mat'),'variantMap');
+
+
+%% part-6: summarize twin pct, [[temp 2021-03-10]]
+% load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
+load(fullfile(save_dir,'variant_maps.mat'),'variantMap');
+
+twinPct = zeros(12,6);
+for iE = 1:7
+    load(fullfile(save_dir, ['data_with_ID_overwrite_iE_',num2str(iE),'.mat']), 'ID');
+    
+    if iE<=6
+        variant_map = variantMap{iE};
+    else
+        variant_map = zeros(size(variantMap{6}));
+    end
+    [nR,nC] = size(variant_map);
+
+    nr = 3;
+    nc = 4;
+    for ir=1:nr
+       for ic = 1:nc
+           sub_variant_map = variant_map([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic);
+           sub_ID_map = ID([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic); % just for counting number of pixels
+           
+           ii = iE + 1;
+           twinPct((ir-1)*nc+ic,ii) = sum(sub_variant_map(:)>0)/sum(sub_ID_map(:)>0);
+       end
+    end
+end
+
+tAvg = mean(twinPct);
+tStd = std(twinPct);
+
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
+
+%% part-7, calculate EBSD estimated strain [[temp 2021-03-10]]
+load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms');
+for iE = 0:7
+    iB = iE+1;
+    if iE==0
+        strain_ebsd(iB) = 0;
+    else
+        [T,R,Z,S] = decompose_affine2d(tforms{iE});
+        strain_ebsd(iB) = round(Z(1)-1, 4);
+    end
+end
+str = [sprintf('strain_ebsd = ['), sprintf('%.4f, ',strain_ebsd(1:5)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(6:7)), sprintf('%.4f];',strain_ebsd(8))];
+disp(str);
+
+%% plot
+% strain for iE=0:13
+
+% EBSD strain from fine alignment
+strain_ebsd = [0.0000, -0.0009, -0.0054, -0.0092, -0.0108, ...
+    -0.0097, -0.0024, 0.0041];
+
+strain_sg = [0, -0.001, -0.008, -0.015, -0.025, ...
+    -0.023, -0.017, -0.003];
+
+colors = parula(5);
+
+% [1] using strain gage strain
+figure; hold on;
+inds = {1:5, 6:8};
+
+errorbar(strain_sg(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_sg(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.035, 0.002],'ylim',[-0.5 15],'fontsize',18,'fontweight','normal');
+xlabel('Strain from strain gage');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
+
+% [2] using (fine transformed) ebsd estimated strain
+figure; hold on;
+inds = {1:3, 3:7, 7:11, 11:14};
+
+errorbar(strain_ebsd(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_ebsd(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.02, 0.002],'ylim',[-2, 15],'fontsize',18,'fontweight','normal');
+xlabel('Strain from ebsd estimate');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');
+
+
+tbl = array2table([(0:7)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
+tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','twinPct %','twinStd %'};
+disp(tbl);
+
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
+
+
+
+
+
 
 %% study twin area fraction
 load(fullfile(working_dir,save_dir_name,'variant_maps.mat'),'variantMap');

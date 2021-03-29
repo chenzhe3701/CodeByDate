@@ -2,9 +2,11 @@
 %% setup
 clear; clc; close all;
 addChenFunction;
-working_dir = 'E:\zhec umich Drive\2020-12-05 UM_134 Mg_C1 insitu EBSD';
+working_dir = 'E:\zhec umich Drive\2020-12-05 UM134 Mg_C1 insitu EBSD';
 save_dir = [working_dir, '\analysis'];
-cd(working_dir);
+% cd(working_dir);
+
+sample_name = 'UM134 Mg_C1';
 
 %% Find out the twin variants 
 for iE = 1:13
@@ -157,31 +159,137 @@ end
 
 save(fullfile(save_dir,'variant_maps.mat'),'variantMap');
 
-%% study twin area fraction
+%% part-6: summarize twin pct, [[temp 2021-03-10]]
+% load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
 load(fullfile(save_dir,'variant_maps.mat'),'variantMap');
+
+twinPct = zeros(12,14);
+for iE = 1:13
+    load(fullfile(save_dir, ['data_with_ID_overwrite_iE_',num2str(iE),'.mat']), 'ID');
+
+    variant_map = variantMap{iE};
+    if iE==1
+        [nR,nC] = size(variant_map);
+    end
+    nr = 3;
+    nc = 4;
+    for ir=1:nr
+       for ic = 1:nc
+           sub_variant_map = variant_map([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic);
+           sub_ID_map = ID([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic); % just for counting number of pixels
+           
+           ii = iE + 1;
+           twinPct((ir-1)*nc+ic,ii) = sum(sub_variant_map(:)>0)/sum(sub_ID_map(:)>0);
+       end
+    end
+end
+
+tAvg = mean(twinPct);
+tStd = std(twinPct);
+
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
+
+%% part-7, calculate EBSD estimated strain [[temp 2021-03-10]]
+load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms');
+for iE = 0:13
+    iB = iE+1;
+    if iE==0
+        strain_ebsd(iB) = 0;
+    else
+        [T,R,Z,S] = decompose_affine2d(tforms{iE});
+        strain_ebsd(iB) = round(Z(1)-1, 4);
+    end
+end
+str = [sprintf('strain_ebsd = ['), sprintf('%.4f, ',strain_ebsd(1:4)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(5:8)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(9:11)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(12:13)), sprintf('%.4f];',strain_ebsd(14))];
+disp(str);
+
+%% plot
+% strain for iE=0:13
+
+% EBSD strain from fine alignment
+strain_ebsd = [0.0000, -0.0202, -0.0241, -0.0249, ...
+    -0.0169, -0.0050, 0.0042, 0.0001, ...
+    -0.0023, -0.0073, -0.0066, ...
+    -0.0040, 0.0012, 0.0059];
+
+strain_sg = [0, -0.0035, -0.0037, ...
+    -0.0032, -0.0020, -0.0010, 0.0000, ...
+    -0.0010, -0.0020, -0.0033, -0.0035, ...
+    -0.0020, -0.0010, -0.0000];
+
+colors = parula(5);
+
+% [1] using strain gage strain
+figure; hold on;
+inds = {1:3, 3:7, 7:11, 11:14};
+
+errorbar(strain_sg(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_sg(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_sg(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_sg(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.03, 0.01],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+xlabel('Strain from strain gage');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
+
+% [2] using (fine transformed) ebsd estimated strain
+figure; hold on;
+inds = {1:3, 3:7, 7:11, 11:14};
+
+errorbar(strain_ebsd(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_ebsd(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_ebsd(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
+errorbar(strain_ebsd(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',[-0.03, 0.01],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+xlabel('Strain from ebsd estimate');
+ylabel('Twin Area Percent (%)');
+print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');
+
+
+tbl = array2table([(0:13)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
+tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','twinPct %','twinStd %'};
+disp(tbl);
+
+save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
+
+
+
+
+
+
+
+
+
 
 %% This is corrected from geotrans information
 % 13 load steps
-strain_corrected = [1, 0.9798, 0.9759, ...
-    0.9751, 0.9831, 0.9950, 1.0042, ...
-    1.0001, 0.9976, 0.9926, 0.9934, ...
-    0.9961, 1.0012, 1.0059] - 1;
+% strain_corrected = [1, 0.9798, 0.9759, ...
+%     0.9751, 0.9831, 0.9950, 1.0042, ...
+%     1.0001, 0.9976, 0.9926, 0.9934, ...
+%     0.9961, 1.0012, 1.0059] - 1;
 
 % strain from strain gage, iE=0:13 + last unloaded step
 strain_sg = [0, -0.0035, -0.0037, ...
     -0.0032, -0.0020, -0.0010, 0.0000, ...
     -0.0010, -0.0020, -0.0033, -0.0035, ...
     -0.0020, -0.0010, -0.0000];
-stress = [-2, -67, -76, ...
-    -4, 55, 67, 99, ...
-    -45, -60, -72, -85, ...
-    57, 64, 102];
+% stress = [-2, -67, -76, ...
+%     -4, 55, 67, 99, ...
+%     -45, -60, -72, -85, ...
+%     57, 64, 102];
 
 % use corrected, followed by explicitly copied value, 4 segments in 2 cycles   
-strain_corrected = [0, -0.0202, -0.0241, ...
-    -0.0249, -0.0169, -0.0050, 0.0042, ...
-    0.0001, -0.0024, -0.0074, -0.0066, ...
-    -0.0039, 0.0012, 0.0059];   
+% strain_corrected = [0, -0.0202, -0.0241, ...
+%     -0.0249, -0.0169, -0.0050, 0.0042, ...
+%     0.0001, -0.0024, -0.0074, -0.0066, ...
+%     -0.0039, 0.0012, 0.0059];   
 twinPct = zeros(14,8);
 
 for iE = 1:13
