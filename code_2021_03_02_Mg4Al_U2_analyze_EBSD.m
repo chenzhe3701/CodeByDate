@@ -334,8 +334,8 @@ print(fullfile(save_dir, ['a_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 % on the result 'deformed map with matched ID', but in this situation, the
 % reference map might need to be processed, i.e., select a grain and reduce
 % the tolerance angle to divide it into two grains.
-% 
-% Ref can merge twin, but might not be useful at this point
+% (3) In addition, sometimes we also need to merge grains on ref map
+
 %% Record (1) the ID_list (on map_iE) to correct for each iE, and (2) the tolerance for each grain
 % ID_list{iB=iE+1}. To treat 0-based indexing as 1 based indexing  
 % ID_list{iB=iE+1} is the IDs need to be treated for iE = iB-1
@@ -582,7 +582,7 @@ for iE = 0:13
         fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']) );
 end
 
-%% special for this sample, modify 'grain file' at iE=5
+%% special for this sample, modify 'grain file' at iE=5, divide twin grain into two grains.
 for iE = 5
 %% load 'grain file' data, plot map to select grain
 iB = iE+1;
@@ -973,7 +973,8 @@ for iE = 0:13
 end
 
 %% part-5: find out variants
-
+po_tolerance_angle = 10; % if child grain has misorientation < po_tolerance_angle with undeformed parent grain, it is considered as having parent orientation
+twin_tolerance_angle = 10;  % if child grain has misorientation < twin_tolerance_angle to a potential twin variant, it is identified as that twin variant  
 for iE = 1:13
     d = load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
     gID_0 = d.gID;
@@ -1053,7 +1054,7 @@ for iE = 1:13
             
             % (1) Find out which 'children' is actually the 'parent', by checking the misorientation 
             % Note: multiple 'grains' can have the parent orientation
-            inds = find(misorientation < 15);   
+            inds = find(misorientation < po_tolerance_angle);   
             if ~isempty(inds)
                 % Use the average of all the 'child grains' with parent orientation.
                 id_po = id_c(inds);
@@ -1095,7 +1096,7 @@ for iE = 1:13
                 
                 % ==============> The child grain may be a twin area containing multiple variants. Assume the child orientation represents at least one true twin orientation  
                 % Ff small enough, the child grain should be a twin. Do point-wise analysis   
-                if min_val < 10
+                if min_val < twin_tolerance_angle
                     ID_variant_grain_wise(ID_c == id) = iVariant_child; % grain-wise variant map 
                     
                     ind_list = find(ID_c==id);
@@ -1184,17 +1185,34 @@ tStd = std(twinPct);
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
 
+%% part-7, calculate EBSD estimated strain
+load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms');
+for iE = 0:13
+    iB = iE+1;
+    if ~isempty(tforms{iB})
+        [T,R,Z,S] = decompose_affine2d(tforms{iB});
+        strain_ebsd(iB) = round(Z(1)-1, 4);
+    else
+        strain_ebsd(iB) = 0;
+    end
+end
+str = [sprintf('strain_ebsd = ['), sprintf('%.4f, ',strain_ebsd(1:4)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(5:8)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(9:11)), newline, ...
+    sprintf('%.4f, ',strain_ebsd(12:13)), sprintf('%.4f];',strain_ebsd(14))];
+disp(str);
+
 %% plot
 % strain for iE=0:13
 
 % EBSD strain from fine alignment
-strain_ebsd = [0, -0.0292, -0.0385, -0.0465, ....
-    -0.0414, -0.0313, -0.0145, -0.0012, ...
-    -0.0179, -0.0320, -0.0438, ...
-    -0.0301, -0.0145, -0.0016];
-    
+strain_ebsd = [0, -0.0085, -0.0220, -0.0342, ...
+    -0.0343, -0.0268, -0.0150, -0.0032, ...
+    -0.0112, -0.0207, -0.0297, ...
+    -0.0235, -0.0130, -0.0045];
+
 strain_sg = [0, -0.0075, -0.015, -0.025, ...
-    -0.023, -0.017, -0.0075, 0, ...
+    -0.023, -0.017, -0.0075, 0.002, ...
     -0.0075, -0.015, -0.025, ...
     -0.017, -0.0075, 0];
 
@@ -1210,7 +1228,7 @@ errorbar(strain_sg(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color'
 errorbar(strain_sg(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
 set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',[-0.035, 0.005],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+set(gca,'xlim',[-0.04, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
 xlabel('Strain from strain gage');
 ylabel('Twin Area Percent (%)');
 print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
@@ -1225,38 +1243,40 @@ errorbar(strain_ebsd(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'colo
 errorbar(strain_ebsd(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
 
 set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',[-0.055, 0.005],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
+set(gca,'xlim',[-0.04, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
 xlabel('Strain from ebsd estimate');
 ylabel('Twin Area Percent (%)');
 print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');
 
 
-% [3] using (rough transformed) ebsd estimate strain. Note, this sample is noisy, so the estimation might differ a lot ..   
-% EBSD strain from fine alignment
-strain_ebsd_0 = [0, -0.0354, -0.0464, -0.0555, ...
-    -0.0505, -0.0384, -0.0183, -0.0025, ...
-    -0.0220, -0.0393, -0.0537, ...
-    -0.0379, -0.0188, -0.0036];
-
-figure; hold on;
-inds = {1:3, 3:7, 7:11, 11:14};
-
-errorbar(strain_ebsd_0(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
-errorbar(strain_ebsd_0(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
-errorbar(strain_ebsd_0(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
-errorbar(strain_ebsd_0(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
-
-set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',[-0.065, 0.005],'ylim',[-2 30],'fontsize',18,'fontweight','normal');
-xlabel('Strain from ebsd estimate');
-ylabel('Twin Area Percent (%)');
-print(fullfile(save_dir,'twin_pct_vs_ebsd_0_strain.tiff'),'-dtiff');
-
-tbl = array2table([(0:13)', strain_sg(:), strain_ebsd(:), strain_ebsd_0(:), 100*tAvg(:), 100*tStd(:)]);
-tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','strain_ebsd_0','twinPct %','twinStd %'};
+tbl = array2table([(0:13)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
+tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','twinPct %','twinStd %'};
 disp(tbl);
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
+
+%%
+% % [3] using (rough transformed) ebsd estimate strain. Note, this sample is noisy, so the estimation might differ a lot ..   
+% % EBSD strain from fine alignment
+% strain_ebsd_0 = [0, -0.0079, -0.0213, -0.0335, ...
+%     -0.0327, -0.0250, -0.0140, -0.0031, ...
+%     -0.0111, -0.0202, -0.0286, ...
+%     -0.0232, -0.0125, -0.0045];
+% 
+% figure; hold on;
+% inds = {1:3, 3:7, 7:11, 11:14};
+% 
+% errorbar(strain_ebsd_0(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
+% errorbar(strain_ebsd_0(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
+% errorbar(strain_ebsd_0(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
+% errorbar(strain_ebsd_0(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
+% 
+% set(gca,'xdir','normal','linewidth',1.5);
+% set(gca,'xlim',[-0.04, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
+% xlabel('Strain from ebsd estimate');
+% ylabel('Twin Area Percent (%)');
+% print(fullfile(save_dir,'twin_pct_vs_ebsd_0_strain.tiff'),'-dtiff');
+
 
 
 
