@@ -1203,8 +1203,8 @@ str = [sprintf('strain_ebsd = ['), sprintf('%.4f, ',strain_ebsd(1:4)), newline, 
 disp(str);
 
 %% plot
+load(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
 % strain for iE=0:13
-
 % EBSD strain from fine alignment
 strain_ebsd = [0, -0.0085, -0.0220, -0.0342, ...
     -0.0343, -0.0268, -0.0150, -0.0032, ...
@@ -1252,6 +1252,10 @@ print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');
 tbl = array2table([(0:13)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
 tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','twinPct %','twinStd %'};
 disp(tbl);
+figure;
+uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
+    'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
+print(fullfile(save_dir,'twin pct table.tiff'),'-dtiff');
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
 
