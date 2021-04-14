@@ -42,7 +42,7 @@ errorbar(strain_ebsd, tAvg, tStd, '.-', 'linewidth',1.5,'markersize',24);
 
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',[-0.05, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
-xlabel('Strain from ebsd estimate');
+xlabel('Strain from ebsd (or DIC) estimate');
 ylabel('Twin Area Percent (%)');
 legend('Mg4Al S1','Mg4Al C1','Mg4Al C3','Mg4Al U2');
 
