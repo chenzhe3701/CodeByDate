@@ -3,8 +3,8 @@
 
 close all;
 clc;
-
-working_dir = 'E:\zhec umich Drive\2020-12-05 UM_134 Mg_C1 insitu curve';
+sample_name = 'UM134_Mg_C1';
+working_dir = 'E:\zhec umich Drive\2020-12-05 UM134 Mg_C1 insitu curve';
 cd(working_dir);
 
 fileName = '2020-12-05 UM134_Mg_C1 comp_ten_data.lvm';
@@ -121,7 +121,7 @@ motor_current = data(:,5);
 strain =  data(:,6)/1000000;
 stress = force/width/thickness;   
 
-figure; set(gcf,'Position', [150, 150, 1024, 768]);
+figure; set(gcf,'Position', [150, 150, 600, 800]);
 subplot(3,1,1); hold on;
 plot(displacement, '-r', 'linewidth', 3);
 plot(ind_stop(1:end-1), displacement(ind_stop(1:end-1)), '.b', 'markersize',16);
@@ -149,7 +149,7 @@ disp('strain at load steps:');
 disp(strain(ind_stop));
 disp('displacement at load steps:');
 disp(displacement(ind_stop));
-
+print(fullfile(working_dir,'displacement load strain vs time.tiff'),'-dtiff');
 %% stress vs strain,  displacement vs strain
 figure; hold on;
 % plot(strain, stress, 'linewidth', 3);
@@ -161,6 +161,7 @@ plot(strain(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersize', 1
 xlabel('Strain, from strain gage');
 ylabel('Stress (MPa)');
 set(gca, 'xlim',[-0.005, 0.001], 'ylim',[-110,110], 'fontsize',18);
+print(fullfile(working_dir,'stress vs strain.tiff'),'-dtiff');
 
 figure; hold on;
 for ii = 1:length(ind_stop)-1
@@ -170,19 +171,17 @@ plot(displacement(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersi
 xlabel('Displacement (mm)');
 ylabel('Stress (MPa)');
 set(gca, 'xlim',[-2.2, 1.5], 'ylim',[-110,110], 'fontsize',18);
+print(fullfile(working_dir,'stress vs displacement.tiff'),'-dtiff');
 
+tbl_full = array2table([stress(:),strain(:),displacement(:)],'VariableNames',{'stress','strain_sg','displacement'});
+tbl = array2table([[0:length(ind_stop)-1]',stress(ind_stop),strain(ind_stop),displacement(ind_stop)],'VariableNames',{'iE','stress','strain_sg','displacement'});
+disp(tbl);
+figure;
+uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
+    'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
+print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 
-%% Then, the strain was estimated from EBSD map, and corrected.
-
-
-
-
-
-
-
-
-
-
+save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
 
 
 

@@ -2,7 +2,7 @@
 
 close all;
 clc;
-
+sample_name = 'Mg4Al_U2';
 working_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 insitu curve';
 cd(working_dir);
 
@@ -188,7 +188,7 @@ disp('strain at load steps:');
 disp(strain(ind_stop));
 disp('displacement at load steps:');
 disp(displacement(ind_stop));
-
+print(fullfile(working_dir,'displacement load strain vs time.tiff'),'-dtiff');
 %% stress vs strain,  displacement vs strain
 figure; hold on;
 % plot(strain, stress, 'linewidth', 3);
@@ -220,7 +220,7 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
     'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 
-
+save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
 
 
 
