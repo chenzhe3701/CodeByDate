@@ -103,7 +103,7 @@ for ii = 1:size(id_link,1)
     gPhi_more_gb(ind_more_gb) = gPhi(ind_template);
     gPhi2_more_gb(ind_more_gb) = gPhi2(ind_template);
 end
-% Next, process grains in id_link_additional
+% Next, process grains in id_link_additional. [*** First, simply copy]
 for ii = 1:size(id_link_additional,1)
     id_more_gb = id_link_additional(ii,1);
     ind_more_gb = find(gID_more_gb == id_more_gb); % make ind the same as ID, this is the default convention
@@ -163,8 +163,8 @@ for ii = 1:length(gID_more_gb)
 end
 
 %% Calculate gEuler for specific grains.
-% If a grain in ID overlap more than one grain in ID_more_gb, these grains
-% in ID_more_gb needs their gEuler recalculated.
+% [*** Second] If a grain in ID overlap more than one grain in ID_more_gb,
+% these grains in ID_more_gb needs their gEuler recalculated.
 
 % Find out which ids in ID_more_gb needs recalculate euler
 ID_list = [];
