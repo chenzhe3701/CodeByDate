@@ -1,5 +1,5 @@
 
-%% Summarize the twin-detwin-retwin behavior for Mg4Al_U1
+%% Summarize the twin-detwin-retwin behavior for Mg4Al_U2 (should be U2)
 clear; clc; close all;
 addChenFunction;
 working_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD';
