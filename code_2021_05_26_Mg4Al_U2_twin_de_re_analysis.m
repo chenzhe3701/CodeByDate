@@ -2,22 +2,27 @@
 %% Summarize the twin-detwin-retwin behavior for Mg4Al_U2 (should be U2)
 clear; clc; close all;
 addChenFunction;
-working_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD';
-save_dir = [working_dir, '\analysis'];
+
 sample_name = 'Mg4Al_U2';
 
-output_dir = ['E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\',sample_name];
+% location of the parent/twin grain/variant/... files
+data_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis';
+
+% location of the twin-detwin-retwin data
+data_dir_2 = 'E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\Mg4Al_U2 reMake';
+data = matfile(fullfile(data_dir_2, 'Mg4Al_U2 twin data.mat'));
+
+% Where to save the output figures
+output_dir = ['E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\',sample_name, ' analysis reMake'];
 mkdir(output_dir);
 
 strain_ebsd = [0, -0.0085, -0.0220, -0.0342, ...
     -0.0343, -0.0268, -0.0150, -0.0032, ...
     -0.0112, -0.0207, -0.0297, ...
     -0.0235, -0.0130, -0.0045];
-
-data = matfile(fullfile(output_dir, 'Mg4Al_U1 twin data.mat'));
 %% load reference data at iE = 0, reference ID map and grain boundary
 iE = 0;
-d = matfile(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+d = matfile(fullfile(data_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
 ID_0 = d.ID;
 gPhi1_0 = d.gPhi1;
 gPhi_0 = d.gPhi;
