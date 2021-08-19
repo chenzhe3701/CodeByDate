@@ -9,7 +9,7 @@ mkdir(output_dir);
 close all;
 hcp_cell('euler',[1.7 109.5 5], 'plotPlane',1,'plotBurgers',0,'plotTrace',0, 'ss', 30);
 
-%% Use Mg4Al_ as example
+%% Use Mg4Al_U2 as example
 working_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD';
 save_dir = [working_dir, '\analysis'];
 sample_name = 'Mg4Al_U2';
