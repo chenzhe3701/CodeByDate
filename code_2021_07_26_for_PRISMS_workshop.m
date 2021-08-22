@@ -2,7 +2,7 @@
 % prepare Figures for in-situ EBSD paper and PRISMS workshop 2021
 clear; clc; close all;
 addChenFunction;
-output_dir = 'E:\zhec umich Drive\0_temp_output\for 2021 workshop';
+output_dir = 'E:\zhec umich Drive\0_temp_output\for 2021 workshop to edit';
 mkdir(output_dir);
 
 %% orientation for the hcp_cell for illustration
@@ -51,14 +51,14 @@ iE_a = 1;
 iE_b = 3;
 
 % [] ref IPF map at iE=0
-I = imread(fullfile(working_dir, 'Mg4Al_U2 IPF ND iE=0.tif'));
+I = imread(fullfile(working_dir, 'Mg4Al_U2 parent IPF ND iE=0.tif'));
 I = I(iR_min+10 : iR_max+10, iC_min:iC_max, :);
 figure;
 imshow(I);
 imwrite(I, fullfile(output_dir, 'fig 0a IPF iE=0.tiff'));
 
 % [] IPF map at iE_a
-I = imread(fullfile(working_dir, ['Mg4Al_U2 IPF ND iE=',num2str(iE_a),'.tif']));
+I = imread(fullfile(working_dir, ['Mg4Al_U2 parent IPF ND iE=',num2str(iE_a),'.tif']));
 I = I(iR_min:iR_max, iC_min:iC_max, :);
 figure;
 imshow(I);
@@ -72,7 +72,7 @@ imshow(I);
 imwrite(I, fullfile(output_dir, ['fig 0c twin map iE=',num2str(iE_a),'.tiff']));
 
 % [] IPF map at iE_b
-I = imread(fullfile(working_dir, ['Mg4Al_U2 IPF ND iE=',num2str(iE_b),'.tif']));
+I = imread(fullfile(working_dir, ['Mg4Al_U2 parent IPF ND iE=',num2str(iE_b),'.tif']));
 I = I(iR_min:iR_max, iC_min:iC_max, :);
 figure;
 imshow(I);
