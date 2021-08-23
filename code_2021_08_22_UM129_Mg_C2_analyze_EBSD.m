@@ -910,7 +910,9 @@ end
 %% part-5: find out variants
 po_tolerance_angle = 10; % if child grain has misorientation < po_tolerance_angle with undeformed parent grain, it is considered as having parent orientation
 twin_tolerance_angle = 10;  % if child grain has misorientation < twin_tolerance_angle to a potential twin variant, it is identified as that twin variant  
-for iE = 1:13
+for iE = 0:13 
+    iB = iE + 1;
+    
     d = load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
     gID_0 = d.gID;
     gPhi1_0 = d.gPhi1;
@@ -1057,8 +1059,8 @@ for iE = 1:13
             end
         end
     end
-    variant_grain_wise{iE} = ID_variant_grain_wise;
-    variant_point_wise{iE} = ID_variant_point_wise;
+    variant_grain_wise{iB} = ID_variant_grain_wise;
+    variant_point_wise{iB} = ID_variant_point_wise;
     
     % After processing this iE, Update the modified CHILD grain data and save
     save_dir_5 = [save_dir,'\step-5'];
@@ -1096,10 +1098,12 @@ end
 %% part-6: summarize twin pct
 load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
 twinPct = zeros(12,14);
-for iE = 1:13
+for iE = 0:13
+    iB = iE + 1;
+    
     load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'ID');
 
-    variant_map = variant_point_wise{iE};
+    variant_map = variant_point_wise{iB};
     if iE==1
         [nR,nC] = size(variant_map);
     end
@@ -1195,27 +1199,7 @@ print(fullfile(save_dir,'twin pct table.tiff'),'-dtiff');
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
 
-%%
-% % [3] using (rough transformed) ebsd estimate strain. Note, this sample is noisy, so the estimation might differ a lot ..   
-% % EBSD strain from fine alignment
-% strain_ebsd_0 = [0, -0.0079, -0.0213, -0.0335, ...
-%     -0.0327, -0.0250, -0.0140, -0.0031, ...
-%     -0.0111, -0.0202, -0.0286, ...
-%     -0.0232, -0.0125, -0.0045];
-% 
-% figure; hold on;
-% inds = {1:3, 3:7, 7:11, 11:14};
-% 
-% errorbar(strain_ebsd_0(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
-% 
-% set(gca,'xdir','normal','linewidth',1.5);
-% set(gca,'xlim',[-0.04, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
-% xlabel('Strain from ebsd estimate');
-% ylabel('Twin Area Percent (%)');
-% print(fullfile(save_dir,'twin_pct_vs_ebsd_0_strain.tiff'),'-dtiff');
+
 
 
 
