@@ -1,16 +1,29 @@
 % file_name = cell for multiple files
 
-function [] = pole_figure_by_mtex_multi_file(file_name_cell, setting_str, max_intensity)
+function [] = pole_figure_by_mtex_multi_file(file_name_cell, varargin)
+
+p = inputParser;
+addRequired(p,'file_name_cell');   
+addParameter(p,'setting_str','setting 1');
+addParameter(p,'clims',[]);
+addParameter(p,'axis_label',{'ED','RD'});
+parse(p, file_name_cell, varargin{:});
+
+file_name_cell = p.Results.file_name_cell;
+setting_str = p.Results.setting_str;
+clims = p.Results.clims;
+axis_label = p.Results.axis_label;
+
+if isempty(setting_str)
+    setting_str = 'setting 1';
+    warning('no input, use setting 1');
+end
 
 if ~exist('setting_str','var')
     setting_str = 'setting 1';
     warning('no input, use setting 1');
 end
 
-if ~exist('file_name_cell','var')
-    [file_name_cell,path_name] = uigetfile('E:\zhec umich Drive');
-    file_name_cell = fullfile(path_name,file_name_cell);
-end
 
 temp_dir = pwd();
 cd('D:\p\m\mtex-5.3.1');
@@ -50,26 +63,30 @@ pos = get(gcf,'position');
 pos(3) = 800; % new width
 pos(4) = 375; % new height
 set(gcf,'position',pos);
+
 % change label
 a = findall(gcf,'Type','text');
 for ii = 1:length(a)
    if strcmpi(a(ii).String,'X')
-       a(ii).String = 'ED';
+       a(ii).String = axis_label{1};
    elseif strcmpi(a(ii).String,'Y')
-       a(ii).String = 'RD';
+       a(ii).String = axis_label{2};
    end
 end
 
-if exist('max_intensity','var')
-   a = findobj(gcf,'Type','axes');
+% change colorbar    
+if ~isempty(clims)
+    a = findobj(gcf,'Type','axes');
+    
+    % sort according to location, from left to right
     for ii = 1:length(a)
         axis_pos(ii) = a(ii).Position(1);
     end
     [~, ind] = sort(axis_pos);
     
     for ii=1:length(a)
-         axes(a(ind(ii)));  % make current axis as a(ind(ii))
-         caxis([0 max_intensity(ii)]);
+        axes(a(ind(ii)));  % make current axis as a(ind(ii))
+        caxis(clims{ii});
     end
 end
 
