@@ -1200,7 +1200,33 @@ print(fullfile(save_dir,'twin pct table.tiff'),'-dtiff');
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
 
 
+%% part-8, generate variant map with good background color
+variant_map_dir = fullfile(save_dir, 'variant maps');
+mkdir(variant_map_dir);
 
+for iE = 0:13
+    iB = iE + 1;
+    % EBSD data for boundary file
+    d = load(fullfile(save_dir, [sample_name, '_parent_grain_file_iE_',num2str(iE),'.mat']));
+    
+    x = d.x;
+    y = d.y;
+    ID = d.ID;
+    
+    boundary = find_one_boundary_from_ID_matrix(ID);
+    
+    % variant data
+    d = load(fullfile(save_dir, 'variant_maps.mat'));
+    variant_pixel_map = d.variant_point_wise{iB};
+    
+    [f,a,c] = myplot(x,y,variant_pixel_map, boundary);
+    
+    make_variant_map_background;
+    
+    print(fullfile(variant_map_dir, ['variant_pixel_map_iE_',num2str(iE),'.tiff']), '-dtiff');
+    
+    close all;
+end
 
 
 
