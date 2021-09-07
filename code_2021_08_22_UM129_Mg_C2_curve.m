@@ -13,7 +13,7 @@ A = importdata(fullfile(working_dir,fileName), delimiterIn, headerlinesIn);
 display(A);
 
 width = 3.42;       % UM129_Mg_C1, tested on 2021-06-29
-thickness = 2.80;
+thickness = 2.85;
 
 %% make variable
 time = A.data(:,1);
