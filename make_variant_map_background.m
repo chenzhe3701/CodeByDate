@@ -1,11 +1,21 @@
-function [] = make_variant_map_background()
+function [] = make_variant_map_background(varargin)
+
+p = inputParser;
+addParameter(p, 'bg', [0.25, 0.25, 0.25]);
+addParameter(p, 'tickOff', true);
+
+parse(p, varargin{:});
+bg_color = p.Results.bg;
+tickOff = p.Results.tickOff;
 
 colors = parula(7);
-colors(1,:) = [0.25, 0.25, 0.25];
+colors(1,:) = bg_color;
 colormap(colors);
 
 a = findall(gcf,'type','Axes');
-set(a,'xTick',[], 'yTick',[], 'fontsize',16);
+if tickOff
+    set(a,'xTick',[], 'yTick',[], 'fontsize',16);
+end
 title('');
 
 caxis([-0.5, 6.5]);
