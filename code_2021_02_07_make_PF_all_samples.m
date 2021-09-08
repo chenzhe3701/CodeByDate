@@ -65,6 +65,12 @@ pole_figure_by_mtex(file_name, 'clims',clims);
 print(fullfile(output_dir,'UM129_Mg_C2 pole figure.tiff'),'-dtiff');
 winopen(output_dir);
 
+%% UM129_Mg_C3
+file_name = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\UM129_Mg_C3 iE=0.osc';
+pole_figure_by_mtex(file_name, 'clims',clims);
+print(fullfile(output_dir,'UM129_Mg_C3 pole figure.tiff'),'-dtiff');
+winopen(output_dir);
+
 %%
 close all;
 
@@ -80,7 +86,8 @@ file_name_UM134_Mg = {'E:\zhec umich Drive\2020-12-05 UM134 Mg_C1 insitu EBSD\UM
     'E:\zhec umich Drive\2021-01-29 UM134 Mg_C3 insitu EBSD\UM134_Mg_C3 iE=0.osc'};
 
 file_name_UM129_Mg = {'E:\zhec umich Drive\2021-06-29 UM129 Mg_C1 insitu EBSD\UM129 Mg_C1 EBSD iE=0.osc', ...
-    'E:\zhec umich Drive\2021-08-20 UM129 Mg_C2 insitu EBSD\UM129_Mg_C2 iE=0.osc'};
+    'E:\zhec umich Drive\2021-08-20 UM129 Mg_C2 insitu EBSD\UM129_Mg_C2 iE=0.osc', ...
+    'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\UM129_Mg_C3 iE=0.osc'};
 
 pole_figure_by_mtex_multi_file(file_name_Mg4Al, 'setting_str','setting 1', 'clims',clims);
 print(fullfile(output_dir, 'Mg4Al avg pole figure.tiff'), '-dtiff');
