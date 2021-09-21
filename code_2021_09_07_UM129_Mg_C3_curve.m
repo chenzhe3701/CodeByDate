@@ -2,7 +2,7 @@
 
 close all;
 clc;
-sample_name = 'UM129_Mg_C2';
+sample_name = 'UM129_Mg_C3';
 working_dir = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
 cd(working_dir);
 
@@ -12,7 +12,7 @@ headerlinesIn = 1;
 A = importdata(fullfile(working_dir,fileName), delimiterIn, headerlinesIn);
 display(A);
 
-width = 3.43;       % UM129_Mg_C1, tested on 2021-06-29
+width = 3.43;       % UM134_Mg_C3, tested on 2021-09-03
 thickness = 2.80;
 
 %% make variable
