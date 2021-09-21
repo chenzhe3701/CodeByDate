@@ -1,10 +1,10 @@
 % 2020-12-30 make movie using .tif images, with the selected prefix, from the selected folder 
-
-function [] = make_movie_using_images(varargin)
 % required parameters:
 % 'folder'
 % 'img_prefix'
 % 'img_suffix'
+
+function [] = make_movie_using_images(varargin)
 
 p = inputParser;
 
