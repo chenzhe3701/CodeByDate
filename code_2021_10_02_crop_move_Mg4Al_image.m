@@ -1,6 +1,6 @@
 % for Mohsen's Mg4Al sample, crop image, and move to corresponding folder
 clc;
-source_dir_p = 'E:\zhec umich Drive\2021-10-01 MgAl insitu SEM-DIC\SEM Data';
+source_dir_p = 'E:\zhec umich Drive\2021-10-01 Mg4Al_m1 insitu SEM-DIC\SEM Data';
 
 nR = 4;
 nC = 5;

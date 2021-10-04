@@ -3,7 +3,7 @@ close all;
 clc;
 
 % EBSD data
-ebsd_dir = 'E:\zhec umich Drive\2021-10-01 MgAl insitu SEM-DIC\EBSD Data';
+ebsd_dir = 'E:\zhec umich Drive\2021-10-01 Mg4Al_m1 insitu SEM-DIC\EBSD Data';
 
 f1 = fullfile(ebsd_dir, 'Mg4Al_grain_file_type_1.txt');
 f2 = fullfile(ebsd_dir, 'Mg4Al_grain_file_type_2.txt');
@@ -18,7 +18,7 @@ imagesc(boundary);
 [f1,a1,c1] = myplot(boundary);
 
 %% DIC data
-dic_data_dir = 'E:\zhec umich Drive\2021-10-01 MgAl insitu SEM-DIC\SEM Data\stitched DIC';
+dic_data_dir = 'E:\zhec umich Drive\2021-10-01 Mg4Al_m1 insitu SEM-DIC\SEM Data\stitched DIC';
 d = matfile(fullfile(dic_data_dir, 'DIC_merged_3.mat'));
 x = d.x;
 y = d.y;

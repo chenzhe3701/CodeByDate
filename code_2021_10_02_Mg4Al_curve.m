@@ -4,7 +4,7 @@
 close all;
 clc;
 sample_name = 'MgAl';
-working_dir = 'E:\zhec umich Drive\2021-10-01 MgAl insitu SEM-DIC\Loading Data';
+working_dir = 'E:\zhec umich Drive\2021-10-01 Mg4Al_m1 insitu SEM-DIC\Loading Data';
 cd(working_dir);
 
 fileName = '2021-10-01 MgAl tension.lvm';

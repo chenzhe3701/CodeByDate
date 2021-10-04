@@ -1,7 +1,7 @@
 % plot exx,exy,eyy maps for Mg4Al Mohsen sample tested on 2021-10-01
 addChenFunction;
 
-working_dir = 'E:\zhec umich Drive\2021-10-01 MgAl insitu SEM-DIC\SEM Data\stitched DIC';
+working_dir = 'E:\zhec umich Drive\2021-10-01 Mg4Al_m1 insitu SEM-DIC\SEM Data\stitched DIC';
 
 exx_mean = [];
 
