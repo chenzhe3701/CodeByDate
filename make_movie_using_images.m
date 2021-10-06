@@ -3,6 +3,7 @@
 % 'folder'
 % 'img_prefix'
 % 'img_suffix'
+% 'frame_rate'
 
 function [] = make_movie_using_images(varargin)
 
@@ -11,15 +12,17 @@ p = inputParser;
 p.addParameter('folder',[]);
 p.addParameter('img_prefix',[]);
 p.addParameter('img_suffix',[]);
+p.addParameter('frame_rate',1);
 
 p.parse(varargin{:});
 
 folder = p.Results.folder;
 img_prefix = p.Results.img_prefix;
 img_suffix = p.Results.img_suffix;
+frame_rate = p.Results.frame_rate;
 
 outputVideo = VideoWriter(fullfile(folder,'output_video.avi'));
-outputVideo.FrameRate = 1;  % frame per second
+outputVideo.FrameRate = frame_rate;  % frame per second
 open(outputVideo)
 
 fileList = dir([folder,'\',img_prefix,'*',img_suffix]);
