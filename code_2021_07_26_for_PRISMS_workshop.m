@@ -14,6 +14,8 @@ working_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD';
 save_dir = [working_dir, '\analysis'];
 sample_name = 'Mg4Al_U2';
 
+
+
 %% (task 1) Show IPF map before clean up, and after clean up. Just need simple illustratin
 close all;
 iE = 1;
@@ -43,6 +45,8 @@ I = I(iR_min:iR_max, iC_min:iC_max, :);
 figure;
 imshow(I);
 imwrite(I, fullfile(output_dir, 'fig 1b IPF cleaned.tiff'));
+
+
 
 %% (task 0) show that the parent/dauther map may be wrong
 close all;
@@ -84,6 +88,8 @@ I = I(iR_min:iR_max, iC_min:iC_max, :);
 figure;
 imshow(I);
 imwrite(I, fullfile(output_dir, ['fig 0e twin map iE=',num2str(iE_b),'.tiff']));
+
+
 
 %% (task 2) show 2 types of grain data: [type-A] ignore twin boundary and only show parent, [type-B] show individual twins. 
 iE = 1;
@@ -144,6 +150,8 @@ set(gcf,'position', [100, 100, 800, 600]);
 print(fullfile(output_dir, ['fig 2b ID with label include twin iE=',num2str(iE),'.tiff']),'-dtiff','-r300');
 
 imwrite(IPF, fullfile(output_dir, ['fig 2b gID include twin iE=',num2str(iE),'.tiff']));
+
+
 
 %% (task 4) example of: [A] merge grains, [B] divide grains more
 % we need to load from processed data
@@ -254,8 +262,8 @@ h = drawpolygon('Position',pos,'color','r');
 
 print(fullfile(output_dir, 'fig 4c max misorientation map and mask.tiff'), '-dtiff', '-r300');
 
-%% (4) original boundary + new boundary
 mask = h.createMask;
+%% (4) original boundary + new boundary
 boundary_local_new = (misorientation_max > tolerance)&(mask==1);
 
 map = double(boundary);
@@ -267,6 +275,56 @@ axis off;
 colorbar off;
 
 print(fullfile(output_dir, 'fig 4d old and new gb map.tiff'), '-dtiff', '-r300');
+
+%% (5) modified parent grain (after adding grain boundary) 
+ID_current = 69;
+boundary_local_new = double(ID_local~=ID_current | boundary_local_new);
+ID_local_new = find_ID_map_from_boundary_map(boundary_local_new);
+    
+iE = 5;
+d = load(fullfile(working_dir, 'analysis', 'step-2', ['Mg4Al_U2_parent_grain_file_iE_',num2str(iE),'.mat']));
+iR_min = 266;
+iR_max = iR_min + 169;
+iC_min = 226;
+iC_max = iC_min + 129;
+
+x = d.x(iR_min:iR_max, iC_min:iC_max);
+y = d.y(iR_min:iR_max, iC_min:iC_max);
+ID = d.ID(iR_min:iR_max, iC_min:iC_max);
+boundary = find_one_boundary_from_ID_matrix(ID);
+phi1 = d.phi1(iR_min:iR_max, iC_min:iC_max);
+phi = d.phi(iR_min:iR_max, iC_min:iC_max);
+phi2 = d.phi2(iR_min:iR_max, iC_min:iC_max);
+
+IPF = generate_IPF_map_pixel_wise(x,y, phi1,phi,phi2, boundary, [90,180,0], [0 0 1]);
+figure;
+imshow(IPF);
+
+imwrite(IPF, fullfile(output_dir, ['fig 4e IPF after dividing iE_',num2str(iE),'.tiff']));
+
+%% (6) deformed child grain 
+iE = 5;
+d = load(fullfile(working_dir, 'analysis', 'step-1', ['Mg4Al_U2_grain_file_iE_',num2str(iE),'.mat']));
+iR_min = 266;
+iR_max = iR_min + 169;
+iC_min = 226;
+iC_max = iC_min + 129;
+
+x = d.x(iR_min:iR_max, iC_min:iC_max);
+y = d.y(iR_min:iR_max, iC_min:iC_max);
+ID = d.ID(iR_min:iR_max, iC_min:iC_max);
+boundary = find_one_boundary_from_ID_matrix(ID);
+phi1 = d.phi1(iR_min:iR_max, iC_min:iC_max);
+phi = d.phi(iR_min:iR_max, iC_min:iC_max);
+phi2 = d.phi2(iR_min:iR_max, iC_min:iC_max);
+
+IPF = generate_IPF_map_pixel_wise(x,y, phi1,phi,phi2, boundary, [90,180,0], [0 0 1]);
+figure;
+imshow(IPF);
+
+imwrite(IPF, fullfile(output_dir, ['fig 4f child IPF with gb at iE_',num2str(iE),'.tiff']));
+
+
 
 %% (task 3) Show alignment/correlation of maps at load steps 0 and iE 
 iE = 2;
@@ -311,6 +369,7 @@ grain_pair{3} = [18, 18;
     108, 96;
     120, 110];
 
+
 % (step-2) Rough align using the selected control grains. The result is already decent 
 g_0 = grain_pair{iB}(:,1);    % ref at iE=0
 g_iE = grain_pair{iB}(:,2);    % iE > 0, considered as deformed
@@ -323,6 +382,10 @@ cpTo = [gCenterX(loc_iE),gCenterY(loc_iE)];         % cpTo is from deformed imag
 % The tform is to transform the [ref @ iE=0] to [deformed iE>0]
 tform = fitgeotrans(cpFrom, cpTo, 'affine');    % [x_0, y_0, 1] * tform.T = [x_iE, y_iE, 1]
 ID_0_to_iE = interp_data(x,y,ID_0, x,y,tform, 'interp', 'nearest');
+
+boundary_0_to_iE_intermediate = interp_data(x,y, boundary_0, x,y, tform, 'interp', 'nearest');
+boundary_iE_to_0_intermediate = interp_data(x,y, boundary, x,y, tform.invert, 'interp', 'nearest');
+
 
 % (step-3) Fine align again, based on id_link and use all non-edge grains, and show result! 
 [ID_new, id_link_additional, id_link] = hungarian_assign_ID_map(ID_0_to_iE, ID);
@@ -358,6 +421,7 @@ tform = fitgeotrans(cpFrom, cpTo, 'affine');    % [x_ref, y_ref, 1] * tform.T = 
 ID_0_to_iE = interp_data(x,y,ID_0, x,y,tform, 'interp', 'nearest');
 boundary_0_to_iE = find_boundary_from_ID_matrix(ID_0_to_iE);
 
+
 % (step-4) try to match grains based on their spatial location, and show the matching result. 
 % Transparent grains are the ones without a good match, so the parent grain need to be divided into more grains.     
 [ID_new, id_link_additional, id_link] = hungarian_assign_ID_map(ID_0_to_iE, ID);
@@ -382,36 +446,131 @@ figure; hold on;
 
 z = boundary_0;
 z(z==0) = nan;
-plot3(x(:),y(:),z(:),'.', 'markersize',1, 'color', 'k');
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1.5, 'color', 'k');
 
 z = boundary;
 z(z==0) = nan;
-plot3(x(:),y(:),z(:),'.', 'markersize',1, 'color', 'r');
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1, 'color', 'r');
 
 set(gca,'ydir','reverse', 'fontsize',16);
-xlabel('x (\mum)');
-ylabel('y (\mum)');
+xlabel('X (\mum)');
+ylabel('Y (\mum)');
 axis equal;
 axis square;
+% shade the grains for control points
+ids = grain_pair{3}(1:3,1);
+id = ID_0;
+inds = ismember(id,ids);
+id(inds)=1;
+id(~inds)=nan;
+surf(x,y,id,'edgecolor','none','facecolor','k','facealpha',0.5);
+
+% label_map_with_ID(x,y,ID_0,gcf,grain_pair{3}(1:3,1),'k',18,1);
+% add legend, but keep the axes height the same
+pa_0 = get(gca,'position');
+legend('Load Step 0', ['Load Step ',num2str(iE)], 'Selected Grains for Control Points', 'location','eastoutside');
+while(true)
+    pf = get(gcf,'position');
+    pf = pf + [0 0 1 0];
+    set(gcf, 'position',pf);
+    pa = get(gca,'position');
+    if pa(2)>=pa_0(2)
+        break
+    end
+end
 print(fullfile(output_dir, ['fig 3a raw overlay iE=0 and ',num2str(iE),'.tiff']), '-dtiff', '-r150');
 
-% (plot 2, aligned) boundary iE=0 black, boundary iE red
+% (plot 2, aligned) boundary iE=0 black, boundary iE red, iE align to 0.
 figure; hold on;
 
 z = boundary_0;
 z(z==0) = nan;
-plot3(x(:),y(:),z(:),'.', 'markersize',1, 'color', 'k');
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1.5, 'color','k');
 
 z = boundary_iE_to_0;
 z(z==0) = nan;
-plot3(x(:),y(:),z(:),'.', 'markersize',1, 'color', 'r');
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1, 'color', 'r');
 
 set(gca,'ydir','reverse', 'fontsize',16);
-xlabel('x (\mum)');
-ylabel('y (\mum)');
+xlabel('X (\mum)');
+ylabel('Y (\mum)');
 axis equal;
 axis square;
-print(fullfile(output_dir, ['fig 3b correlated overlay iE=0 and ',num2str(iE),'.tiff']), '-dtiff', '-r150');
+% add legend, but keep the axes height the same
+pa_0 = get(gca,'position');
+legend('Load Step 0', ['Load Step ',num2str(iE), ' Aligned to Load Step 0'], 'location','eastoutside');
+while(true)
+    pf = get(gcf,'position');
+    pf = pf + [0 0 1 0];
+    set(gcf, 'position',pf);
+    pa = get(gca,'position');
+    if pa(2)>=pa_0(2)
+        break
+    end
+end
+print(fullfile(output_dir, ['fig 3b correlated overlay iE=',num2str(iE),' to 0.tiff']), '-dtiff', '-r150');
+
+% (plot 2, version 2, aligned) boundary iE=0 black, boundary iE red, iE align to 0.
+figure; hold on;
+
+z = boundary_0;
+z(z==0) = nan;
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1.5, 'color','k');
+
+z = boundary_iE_to_0_intermediate;
+z(z==0) = nan;
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1, 'color', 'r');
+
+set(gca,'ydir','reverse', 'fontsize',16);
+xlabel('X (\mum)');
+ylabel('Y (\mum)');
+axis equal;
+axis square;
+% add legend, but keep the axes height the same
+pa_0 = get(gca,'position');
+legend('Load Step 0', ['Load Step ',num2str(iE), ' Aligned to Load Step 0'], 'location','eastoutside');
+while(true)
+    pf = get(gcf,'position');
+    pf = pf + [0 0 1 0];
+    set(gcf, 'position',pf);
+    pa = get(gca,'position');
+    if pa(2)>=pa_0(2)
+        break
+    end
+end
+print(fullfile(output_dir, ['fig 3b2 correlated overlay iE=',num2str(iE),' to 0 intermediate.tiff']), '-dtiff', '-r150');
+
+
+% (plot 3, aligned) boundary iE=0 black, boundary iE red, 0 align to iE.
+figure; hold on;
+
+z = boundary_0_to_iE;
+z(z==0) = nan;
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1.5, 'color', 'k');
+
+z = boundary;
+z(z==0) = nan;
+plot3(x(:),y(:),z(:),'.-', 'markersize',1,'linewidth',1, 'color', 'r');
+
+set(gca,'ydir','reverse', 'fontsize',16);
+xlabel('X (\mum)');
+ylabel('Y (\mum)');
+axis equal;
+axis square;
+% add legend, but keep the axes height the same
+pa_0 = get(gca,'position');
+legend(['Load Step 0 Aligned to Load Step ',num2str(iE)], ['Load Step ',num2str(iE)], 'location','eastoutside');
+while(true)
+    pf = get(gcf,'position');
+    pf = pf + [0 0 1 0];
+    set(gcf, 'position',pf);
+    pa = get(gca,'position');
+    if pa(2)>=pa_0(2)
+        break
+    end
+end
+print(fullfile(output_dir, ['fig 3c correlated overlay iE=0 to ',num2str(iE),'.tiff']), '-dtiff', '-r150');
+
 
 
 %% (task 5) Identification, use parent data in folder 'step-4', child data in folder 'step-2'
@@ -436,7 +595,7 @@ phi2 = d.phi2(iR_min:iR_max, iC_min:iC_max);
 IPF = generate_IPF_map_pixel_wise(x,y, phi1,phi,phi2, boundary, [90,180,0], [0 0 1]);
 figure;
 imshow(IPF);
-label_map_with_ID(x-min(x(:)), y-min(y(:)), ID, gcf, ID_target, 'k', 18, 1);
+label_map_with_ID(x-min(x(:)), y-min(y(:)), ID, gcf, ID_target, 'b', 18, 1);
 set(gcf,'position',[100 100 800 600]);
 
 print(fullfile(output_dir, 'fig 5a_1 ref IPF iE=0.tiff'), '-dtiff');
@@ -451,7 +610,7 @@ ind = (gID==ID_target);
 euler_0 = [gPhi1(ind), gPhi(ind), gPhi2(ind)]
 hcp_cell('euler',euler_0, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
 
-print(fullfile(output_dir, 'fig 5b hcp_cell iE_0.tiff'), '-dtiff');
+print(fullfile(output_dir, 'fig 5a_3 hcp_cell iE_0.tiff'), '-dtiff');
 %% (2) show parent grain at iE = 1
 iE = 1;
 
@@ -472,11 +631,11 @@ phi2 = d.phi2(iR_min:iR_max, iC_min:iC_max);
 IPF = generate_IPF_map_pixel_wise(x,y, phi1,phi,phi2, boundary, [90,180,0], [0 0 1]);
 figure;
 imshow(IPF);
-label_map_with_ID(x-min(x(:)), y-min(y(:)), ID, gcf, ID_target, 'k', 18, 1);
+label_map_with_ID(x-min(x(:)), y-min(y(:)), ID, gcf, ID_target, 'b', 18, 1);
 set(gcf,'position',[100 100 800 600]);
 
-print(fullfile(output_dir, ['fig 5c_1 parent IPF iE=',num2str(iE),'.tiff']), '-dtiff');
-imwrite(IPF, fullfile(output_dir, ['fig 5c_2 parent IPF iE=',num2str(iE),'.tiff']));
+print(fullfile(output_dir, ['fig 5b_1 parent IPF iE=',num2str(iE),'.tiff']), '-dtiff');
+imwrite(IPF, fullfile(output_dir, ['fig 5b_2 parent IPF iE=',num2str(iE),'.tiff']));
 
 %% (3) show child grain at iE = 1.  grain IDs = [182,177,178], where 177 is twin
 
@@ -502,8 +661,8 @@ text(84,50,'177','fontsize',18, 'color','b');
 text(93,65,'178','fontsize',18, 'color','b');
 set(gcf,'position',[100 100 800 600]);
 
-print(fullfile(output_dir, ['fig 5d_1 child IPF iE=',num2str(iE),'.tiff']), '-dtiff');
-imwrite(IPF, fullfile(output_dir, ['fig 5d_2 child IPF iE=',num2str(iE),'.tiff']));
+print(fullfile(output_dir, ['fig 5c_1 child IPF iE=',num2str(iE),'.tiff']), '-dtiff');
+imwrite(IPF, fullfile(output_dir, ['fig 5c_2 child IPF iE=',num2str(iE),'.tiff']));
 
 % euler for child grains, id=[182,178] are parent orientation, id=[177] is twin to check  
 gPhi1 = d.gPhi1;
@@ -513,41 +672,53 @@ gID = d.gID;
 
 ind = (gID==182);
 euler_a = [gPhi1(ind), gPhi(ind), gPhi2(ind)]
-hcp_cell('euler',euler_a, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0);
-print(fullfile(output_dir, ['fig 5e hcp_cell iE_',num2str(iE),' ID_182.tiff']), '-dtiff');
+hcp_cell('euler',euler_a, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_182 raw.tiff']), '-dtiff');
+euler_aa = find_closest_orientation_hcp(euler_a, euler_0)
+hcp_cell('euler',euler_aa, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_182 to closest.tiff']), '-dtiff');
 
 ind = (gID==178);
 euler_b = [gPhi1(ind), gPhi(ind), gPhi2(ind)]
-hcp_cell('euler',euler_b, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0);
-print(fullfile(output_dir, ['fig 5f hcp_cell iE_',num2str(iE),' ID_178.tiff']), '-dtiff');
+hcp_cell('euler',euler_b, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_178 raw.tiff']), '-dtiff');
+euler_bb = find_closest_orientation_hcp(euler_b, euler_0)
+hcp_cell('euler',euler_bb, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_178 to closest.tiff']), '-dtiff');
 
 ind = (gID==177);
 euler_c = [gPhi1(ind), gPhi(ind), gPhi2(ind)]
-hcp_cell('euler',euler_c, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0);
-print(fullfile(output_dir, ['fig 5g hcp_cell iE_',num2str(iE),' ID_177.tiff']), '-dtiff');
+hcp_cell('euler',euler_c, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_177 raw.tiff']), '-dtiff');
+euler_cc = find_closest_orientation_hcp(euler_c, euler_0)
+hcp_cell('euler',euler_cc, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5c_3 hcp_cell iE_',num2str(iE),' ID_177 to closest.tiff']), '-dtiff');
 
 % averaged parent orientation
 euler_po = calculate_average_dominant_euler_hcp([euler_a; euler_b])
 euler_po = find_closest_orientation_hcp(euler_po, euler_0)
+euler_po = calculate_average_dominant_euler_hcp([euler_aa; euler_bb])
+euler_po = find_closest_orientation_hcp(euler_po, euler_0)
 hcp_cell('euler',euler_po, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
-print(fullfile(output_dir, ['fig 5h hcp_cell iE_',num2str(iE),'_po.tiff']), '-dtiff');
+print(fullfile(output_dir, ['fig 5c_4 hcp_cell iE_',num2str(iE),'_po.tiff']), '-dtiff');
 
 [S, M] = hcp_symmetry();
 for iSym = 1:12
-    % equivalent orientations - 2 or 8
-    if iSym==2 || iSym==8 || 1
-        euler_r = euler_by_M(euler_po, M(:,:,iSym))
+    % equivalent orientations to check. Show grain #178's equivalent ones  
+    if iSym==2 || iSym==8 
+        euler_r = euler_by_M(euler_b, M(:,:,iSym))
         hcp_cell('euler',euler_r, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
-        print(fullfile(output_dir, ['fig 5h hcp_cell iE_',num2str(iE),'_po eq',num2str(iSym),'.tiff']), '-dtiff');
+        % print(fullfile(output_dir, ['fig 5c_4 hcp_cell iE_',num2str(iE),' ID_178 po_eq_',num2str(iSym),'.tiff']), '-dtiff');
     end
 end
 
+close all;
 %% (4) show the hcp_cell with avg_parent_orientation, and each of the 6 variant orientation
 close all;
 
 % hcp cell of parent orientation, and active TS # 2
-hcp_cell('euler',euler_po, 'ss', 26, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',0);
-print(fullfile(output_dir, ['fig 5i parent_cell iE_',num2str(iE),'.tiff']), '-dtiff');
+hcp_cell('euler',euler_po, 'ss', 26, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
+print(fullfile(output_dir, ['fig 5d parent_cell iE_',num2str(iE),'.tiff']), '-dtiff');
 
 % Based on parent orientation, calculate orientation of each possible variant,  
 % And calculate misorientation with child grain #177  
@@ -556,9 +727,14 @@ for kk = 1:6
     euler_kk = euler_by_twin(euler_po, kk, 'Mg');    % calculate the twin euler angle for twin system kk
     misorientation(kk) = calculate_misorientation_euler_d(euler_c, euler_kk, 'HCP');
     
-    hcp_cell('euler',euler_kk, 'ss', 24+kk, 'plotPlane',1, 'plotBurgers',1, 'plotTrace',1, 'plotAC',0);
-    print(fullfile(output_dir, ['fig 5i twin_cell iE_',num2str(iE),' ts_',num2str(kk),'.tiff']), '-dtiff');
+    hcp_cell('euler',euler_kk, 'ss', 24+kk, 'plotPlane',1, 'plotBurgers',1, 'plotTrace',0, 'plotAC',1);
+    print(fullfile(output_dir, ['fig 5d twin_cell iE_',num2str(iE),' ts_',num2str(kk),'.tiff']), '-dtiff');
 end
+
+%%
+close all;
+
+
 
 %%  [Task, merge for movie] Mg4Al_U2, IPF map, Twin variant map, Twin type map, curve.  
 if 0
