@@ -735,6 +735,38 @@ end
 close all;
 
 
+%% (task 6) show the twin variant map of [1] grain level, [2] pixel level, and [3] with connected segment length analysis, for iE=3
+
+% the code to generate the clean up map based on connect segment length analysis   
+winopen('code_2021_10_17_try_clean_variant_with_csl.m')
+
+%
+close all;
+
+d = matfile(fullfile(save_dir, 'Mg4Al_U2_parent_grain_file_iE_3.mat'));
+x = d.x;
+y = d.y;
+ID = d.ID;
+boundary = find_one_boundary_from_ID_matrix(ID);
+
+d = matfile(fullfile(save_dir,'variant_maps.mat'));
+variant_grain_wise = d.variant_grain_wise;
+variant_point_wise = d.variant_point_wise;
+
+d = matfile(fullfile(save_dir,'try_csl.mat'));
+variant_csl = d.ID_variant_by_csl;
+
+myplot(x,y,variant_grain_wise{3},boundary);
+make_variant_map_background;
+print(fullfile(output_dir, 'variant map grain wise iE=3.tiff'),'-dtiff');
+
+myplot(x,y,variant_point_wise{3},boundary);
+make_variant_map_background;
+print(fullfile(output_dir, 'variant map point wise iE=3.tiff'),'-dtiff');
+
+myplot(x,y,variant_csl,boundary);
+make_variant_map_background;
+print(fullfile(output_dir, 'variant map conseglen iE=3.tiff'),'-dtiff');
 
 %%  [Task, merge for movie] Mg4Al_U2, IPF map, Twin variant map, Twin type map, curve.  
 if 0
