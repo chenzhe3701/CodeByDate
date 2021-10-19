@@ -24,6 +24,7 @@ sample_name = 'Mg4Al_U2';
 %% copy part-5: find out variants
 po_tolerance_angle = 10; % if child grain has misorientation < po_tolerance_angle with undeformed parent grain, it is considered as having parent orientation
 twin_tolerance_angle = 10;  % if child grain has misorientation < twin_tolerance_angle to a potential twin variant, it is identified as that twin variant
+
 iE = 3
 d = load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
 gID_0 = d.gID;
@@ -58,8 +59,9 @@ boundary_c = find_boundary_from_ID_matrix(ID_c);
 ID_variant_grain_wise = zeros(size(ID_p));
 ID_variant_point_wise = zeros(size(ID_p));
 Misorientation_point_wise = zeros(size(ID_p));
+ID_variant_by_csl = zeros(size(ID_p));
 
-for ii = 68       % 68
+for ii = 1:length(gID_p)       % 68
     id_p = gID_p(ii);
     disp(['current ID = ',num2str(id_p)]);
     
@@ -83,11 +85,9 @@ for ii = 68       % 68
     
     vg_local = zeros(size(ID_c_local)); % variant map, grain level, local  
     vp_local = zeros(size(ID_c_local)); % variant map, pixel level, local
-    active_variants = zeros(6);
     
     
-    
-    
+        
     % Find the parent orientation at iE = 0
     ind_0 = find(gID_0 == id_p);
     euler_0 = [gPhi1_0(ind_0), gPhi_0(ind_0), gPhi2_0(ind_0)]
@@ -147,7 +147,7 @@ for ii = 68       % 68
         end
         
         % (2) Find out if the remaining child grain is a twin
-        for jj = 3 % 1:length(id_c)
+        for jj = 1:length(id_c)     % 3
             id = id_c(jj);  % twin grains id
             ind = (gID_c == id);
             euler_id = [gPhi1_c(ind), gPhi_c(ind), gPhi2_c(ind)];
@@ -207,14 +207,25 @@ for ii = 68       % 68
             % now we have map_to_analyze = variant_child_grain>0, 'active_variants', 'trace_dir'  
             [abs_schmid_factor, ~, ~] = trace_analysis_TiMgAl(euler_po, [0,0,0], [0,0,0], [-1 0 0; 0 0 0; 0 0 0], 'Mg', 'twin');
             traceDir = abs_schmid_factor(19:24,3); 
-            map = calculate_csl(variant_child_grain>0, active_variants, traceDir);
+            csl_v_map = calculate_csl(variant_child_grain>0, active_variants, traceDir);
+            
+            vp_local = vp_local + csl_v_map; % add 'child grain variant map by csl' to 'variant pixel local'    
         end
     end
+    map = ID_variant_by_csl(indR_min:indR_max, indC_min:indC_max);  % crop map
+    map = map + vp_local;   % add grain's variant map
+    ID_variant_by_csl(indR_min:indR_max, indC_min:indC_max) = map;  % past back
 end
+
+myplot(ID_variant_by_csl,boundary_p);
+
+save(fullfile(save_dir,'try_csl.mat'), 'ID_variant_by_csl');
+%% 
 myplot(variant_child_grain);
 caxis([0 6]);
 myplot(miso_child_grain);
-myplot(map);
+myplot(csl_v_map);
+
 % variant_grain_wise{iE} = ID_variant_grain_wise;
 % variant_point_wise{iE} = ID_variant_point_wise;
 
