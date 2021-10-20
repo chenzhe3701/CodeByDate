@@ -12,10 +12,10 @@ output_dir = ['E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent t
 mkdir(output_dir);
 
 % strain of this sample
-strain_ebsd = [0, -0.0085, -0.0220, -0.0342, ...
-    -0.0343, -0.0268, -0.0150, -0.0032, ...
-    -0.0112, -0.0207, -0.0297, ...
-    -0.0235, -0.0130, -0.0045];
+strain_ebsd = [0.0000, -0.0085, -0.0218, -0.0336, ...
+    -0.0337, -0.0265, -0.0149, -0.0032, ...
+    -0.0111, -0.0205, -0.0293, ...
+    -0.0232, -0.0130, -0.0045];
 
 %% load ref data at iE = 0
 iE = 0;
@@ -163,8 +163,8 @@ for iE = 0:13
     colormap(cmap);
     
     set(gca,'xTickLabel',[],'yTickLabel',[]);
-    set(c,'limits',[2.5,5.5], 'Ticks',[3,4,5], 'TickLabels',{'fresh twin', 'recurring twin', 'detwin'}); 
-    title(['\fontsize{16}pixel summary, load step = ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
+    set(c,'limits',[2.5,5.5], 'Ticks',[3,4,5], 'TickLabels',{'Fresh Twin', 'Recurring Twin', 'Detwin'}); 
+    title(['\fontsize{16}Load Step ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
     set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
     
     print(fullfile(output_dir,['frd twinned iE=',num2str(iE),'.tiff']),'-dtiff');
@@ -306,9 +306,9 @@ for iE = 0:13
     colormap(cmap);
     caxis([-0.5, 5.5]);
     set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
-        'TickLabels', {'fresh twin','detwin then retwin','evolving, current twin','evolving, past or present twin','completely detwin'})
-    title(['\fontsize{16}grain summary, load step = ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
-    set(gcf,'position',[80,172,1100,600]);
+        'TickLabels', {'Fresh Twin','Detwin Then Retwin','Evolving Twin','Evolving of Past-or-Present Twin','Completely Detwin of Past-or-Present Twin'})
+    title(['\fontsize{16}Load Step ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
+    set(gcf,'position',[80,172,1400,600]);
     set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',16);
     print(fullfile(output_dir,['grain label iE=',num2str(iE),'.tiff']),'-dtiff');
     close;
