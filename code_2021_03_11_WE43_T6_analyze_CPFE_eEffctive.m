@@ -154,9 +154,9 @@ for iE = 2:5
         legend_str{istr} = ['not-involved: ',num2str(sum(ind))];
         legend_str{istr} = ['(1): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_not_involved(pt_range),'-','color',[0 0.6 0],'LineWidth',3);
+        plot(um_per_dp*x_dist(pt_range),eline_not_involved(pt_range),'-','color',[0 0.6 0],'LineWidth',1);
     catch
-        plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',3);
+        plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',1);
     end
     
     try
@@ -165,9 +165,9 @@ for iE = 2:5
         legend_str{istr} = ['slip-twin slip-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(2): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_slip_twin_a(pt_range),'-b','LineWidth',3);
+        plot(um_per_dp*x_dist(pt_range),eline_slip_twin_a(pt_range),'-b','LineWidth',1);
     catch
-        plot(nan,nan,'-b','LineWidth',3);
+        plot(nan,nan,'-b','LineWidth',1);
     end
     
     try
@@ -220,9 +220,9 @@ for iE = 2:5
         legend_str{istr} = ['slip-growth twin-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(7): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_slip_growth_b(pt_range),'--m','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_slip_growth_b(pt_range),'--m','LineWidth',1);
     catch
-        plot(nan,nan,'--m','LineWidth',.5);
+        plot(nan,nan,'--m','LineWidth',1);
     end
     
     try
@@ -231,9 +231,9 @@ for iE = 2:5
         legend_str{istr} = ['twin-twin old-twin-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(8): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_twin_twin_a(pt_range),'-r','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_twin_twin_a(pt_range),'-r','LineWidth',1);
     catch
-        plot(nan,nan,'-r','LineWidth',.5);
+        plot(nan,nan,'-r','LineWidth',1);
     end
     
     try
@@ -242,9 +242,9 @@ for iE = 2:5
         legend_str{istr} = ['co-growth: ',num2str(sum(ind))];
         legend_str{istr} = ['(9): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_co_growth(pt_range),'-c','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_co_growth(pt_range),'-c','LineWidth',1);
     catch
-        plot(nan,nan,'-c','LineWidth',.5);
+        plot(nan,nan,'-c','LineWidth',1);
     end
     
     legend(legend_str, 'location','eastoutside');
@@ -283,17 +283,17 @@ for iE = 2:5
         try
             legend_str{istr} = ['(1) not-involved: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(1,pt_range),'-','color',[0 0.6 0],'LineWidth',3);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(1,pt_range),'-','color',[0 0.6 0],'LineWidth',1);
         catch
-            plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',3);
+            plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(2) slip-twin slip-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(2,pt_range),'-b','LineWidth',3);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(2,pt_range),'-b','LineWidth',1);
         catch
-            plot(nan,nan,'-b','LineWidth',3);
+            plot(nan,nan,'-b','LineWidth',1);
         end
         
         try
@@ -331,25 +331,25 @@ for iE = 2:5
         try
             legend_str{istr} = ['(7) slip-growth twin-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(7,pt_range),'--m','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(7,pt_range),'--m','LineWidth',1);
         catch
-            plot(nan,nan,'--m','LineWidth',.5);
+            plot(nan,nan,'--m','LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(8) twin-twin old-twin-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(8,pt_range),'-r','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(8,pt_range),'-r','LineWidth',1);
         catch
-            plot(nan,nan,'-r','LineWidth',.5);
+            plot(nan,nan,'-r','LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(9) co-growth: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(9,pt_range),'-c','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(9,pt_range),'-c','LineWidth',1);
         catch
-            plot(nan,nan,'-c','LineWidth',.5);
+            plot(nan,nan,'-c','LineWidth',1);
         end
         
         legend(legend_str, 'location','eastoutside');
@@ -473,9 +473,9 @@ for iE = 2:5
         legend_str{istr} = ['not-involved: ',num2str(sum(ind))];
         legend_str{istr} = ['(1): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_not_involved(pt_range),'-','color',[0 0.6 0],'LineWidth',3);
+        plot(um_per_dp*x_dist(pt_range),eline_not_involved(pt_range),'-','color',[0 0.6 0],'LineWidth',1);
     catch
-        plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',3);
+        plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',1);
     end
     
     try
@@ -484,9 +484,9 @@ for iE = 2:5
         legend_str{istr} = ['slip-twin slip-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(2): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_slip_twin_a(pt_range),'-b','LineWidth',3);
+        plot(um_per_dp*x_dist(pt_range),eline_slip_twin_a(pt_range),'-b','LineWidth',1);
     catch
-        plot(nan,nan,'-b','LineWidth',3);
+        plot(nan,nan,'-b','LineWidth',1);
     end
     
     try
@@ -539,9 +539,9 @@ for iE = 2:5
         legend_str{istr} = ['slip-growth twin-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(7): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_slip_growth_b(pt_range),'--m','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_slip_growth_b(pt_range),'--m','LineWidth',1);
     catch
-        plot(nan,nan,'--m','LineWidth',.5);
+        plot(nan,nan,'--m','LineWidth',1);
     end
     
     try
@@ -550,9 +550,9 @@ for iE = 2:5
         legend_str{istr} = ['twin-twin old-twin-side: ',num2str(sum(ind))];
         legend_str{istr} = ['(8): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_twin_twin_a(pt_range),'-r','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_twin_twin_a(pt_range),'-r','LineWidth',1);
     catch
-        plot(nan,nan,'-r','LineWidth',.5);
+        plot(nan,nan,'-r','LineWidth',1);
     end
     
     try
@@ -561,9 +561,9 @@ for iE = 2:5
         legend_str{istr} = ['co-growth: ',num2str(sum(ind))];
         legend_str{istr} = ['(9): ',num2str(sum(ind))];
         istr = istr + 1;
-        plot(um_per_dp*x_dist(pt_range),eline_co_growth(pt_range),'-c','LineWidth',.5);
+        plot(um_per_dp*x_dist(pt_range),eline_co_growth(pt_range),'-c','LineWidth',1);
     catch
-        plot(nan,nan,'-c','LineWidth',.5);
+        plot(nan,nan,'-c','LineWidth',1);
     end
     
     legend(legend_str, 'location','eastoutside');
@@ -602,17 +602,17 @@ for iE = 2:5
         try
             legend_str{istr} = ['(1) not-involved: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(1,pt_range),'-','color',[0 0.6 0],'LineWidth',3);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(1,pt_range),'-','color',[0 0.6 0],'LineWidth',1);
         catch
-            plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',3);
+            plot(nan,nan,'-','color',[0 0.6 0],'LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(2) slip-twin slip-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(2,pt_range),'-b','LineWidth',3);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(2,pt_range),'-b','LineWidth',1);
         catch
-            plot(nan,nan,'-b','LineWidth',3);
+            plot(nan,nan,'-b','LineWidth',1);
         end
         
         try
@@ -650,25 +650,25 @@ for iE = 2:5
         try
             legend_str{istr} = ['(7) slip-growth twin-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(7,pt_range),'--m','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(7,pt_range),'--m','LineWidth',1);
         catch
-            plot(nan,nan,'--m','LineWidth',.5);
+            plot(nan,nan,'--m','LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(8) twin-twin old-twin-side: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(8,pt_range),'-r','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(8,pt_range),'-r','LineWidth',1);
         catch
-            plot(nan,nan,'-r','LineWidth',.5);
+            plot(nan,nan,'-r','LineWidth',1);
         end
         
         try
             legend_str{istr} = ['(9) co-growth: '];
             istr = istr + 1;
-            plot(um_per_dp*x_dist(pt_range),edmat_cat(9,pt_range),'-c','LineWidth',.5);
+            plot(um_per_dp*x_dist(pt_range),edmat_cat(9,pt_range),'-c','LineWidth',1);
         catch
-            plot(nan,nan,'-c','LineWidth',.5);
+            plot(nan,nan,'-c','LineWidth',1);
         end
         
         legend(legend_str, 'location','eastoutside');
