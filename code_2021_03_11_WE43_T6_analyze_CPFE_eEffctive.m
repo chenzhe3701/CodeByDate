@@ -42,7 +42,7 @@ boundary = find_one_boundary_from_ID_matrix(ID);
 
 % myplot(X, Y, ID, boundary);
 
-d = load('D:\p\m\DIC_Analysis\temp_results\WE43_T6_C1_new_variant_map_20200401.mat','variantMapCleanedCell');
+d = load('D:\WE43_T6_C1\Analysis_2021_09\WE43_T6_C1_final_variant_map.mat','variantMapCleanedCell');
 variant_map_cell = d.variantMapCleanedCell;
 
 %% DIC strain data
@@ -68,7 +68,7 @@ for iE = 2:5
     % (7) slip-induced-growth, slip side, (8) slip-induced-growth, twin side, (9) co-growth
     
     % the data was stored in
-    load(['D:\p\m\DIC_Analysis\temp_results\twin_gb_summary_',num2str(iE),'.mat'], ...
+    load(['D:\WE43_T6_C1\Analysis_2021_09\twin_gb_summary_',num2str(iE),'.mat'], ...
         'bg_not_involved', 'bg_slip_twin_a', 'bg_slip_twin_b', ...
         'bg_co_found','bg_twin_twin_a','bg_twin_twin_b', ...
         'bg_slip_growth_a','bg_slip_growth_b','bg_co_growth');
@@ -388,7 +388,7 @@ for iE = 2:5
     % (7) slip-induced-growth, slip side, (8) slip-induced-growth, twin side, (9) co-growth
     
     % the data was stored in
-    load(['D:\p\m\DIC_Analysis\temp_results\twin_gb_summary_',num2str(iE),'.mat'], ...
+    load(['D:\WE43_T6_C1\Analysis_2021_09\twin_gb_summary_',num2str(iE),'.mat'], ...
         'bg_not_involved', 'bg_slip_twin_a', 'bg_slip_twin_b', ...
         'bg_co_found','bg_twin_twin_a','bg_twin_twin_b', ...
         'bg_slip_growth_a','bg_slip_growth_b','bg_co_growth');
