@@ -223,5 +223,59 @@ print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
 
 
+%% get some data from Mg4Al_C1 test, as this sample's data was partially lost
+output_dir = fullfile(working_dir, 'borrow some data');
+mkdir(output_dir);
 
+Mg4Al_C3_dir = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
+d = load(fullfile(Mg4Al_C3_dir, 'Mg4Al_C3_processed_loading_data.mat'));
+displacement_a = d.displacement(1:737);
+strain_a = d.strain(1:737);
+stress_a = d.stress(1:737);
+
+displacement_b = d.displacement(738:935);
+strain_b = d.strain(738:935);
+stress_b = d.stress(738:935);
+
+displacement = [displacement_a; displacement_b; displacement(3:end)];
+strain = [strain_a; strain_b; strain(3:end)];
+stress = [stress_a; stress_b; stress(3:end)];
+
+ind_stop(2) = 737;
+ind_stop(3) = 935;
+ind_stop(4:end) = ind_stop(4:end) + 933;
+
+
+%% stress vs strain,  displacement vs strain
+figure; hold on;
+% plot(strain, stress, 'linewidth', 3);
+colors = parula(length(ind_stop));
+for ii = 1:length(ind_stop)-1
+    plot(strain(ind_stop(ii):ind_stop(ii+1)), stress(ind_stop(ii):ind_stop(ii+1)), 'color',colors(ii,:), 'linewidth',3);
+end
+plot(strain(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersize', 18);
+xlabel('Strain, from strain gage');
+ylabel('Stress (MPa)');
+set(gca, 'xlim',[-0.03, 0.005], 'ylim',[-160,160], 'fontsize',18);
+print(fullfile(output_dir,'stress vs strain.tiff'),'-dtiff');
+
+figure; hold on;
+for ii = 1:length(ind_stop)-1
+    plot(displacement(ind_stop(ii):ind_stop(ii+1)), stress(ind_stop(ii):ind_stop(ii+1)), 'color',colors(ii,:), 'linewidth',3);
+end
+plot(displacement(ind_stop(1:end-1)), stress(ind_stop(1:end-1)), 'r.', 'markersize', 18);
+xlabel('Displacement (mm)');
+ylabel('Stress (MPa)');
+set(gca, 'xlim',[-2.5, 0.8], 'ylim',[-160,160], 'fontsize',18);
+print(fullfile(output_dir,'stress vs displacement.tiff'),'-dtiff');
+
+tbl_full = array2table([stress(:),strain(:),displacement(:)],'VariableNames',{'stress','strain_sg','displacement'});
+tbl = array2table([[0:length(ind_stop)-1]',stress(ind_stop),strain(ind_stop),displacement(ind_stop)],'VariableNames',{'iE','stress','strain_sg','displacement'});
+disp(tbl);
+figure;
+uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
+    'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
+print(fullfile(output_dir,'stress strain table.tiff'),'-dtiff');
+
+save(fullfile(output_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
 
