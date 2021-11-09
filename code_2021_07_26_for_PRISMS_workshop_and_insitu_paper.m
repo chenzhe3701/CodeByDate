@@ -91,7 +91,7 @@ imwrite(I, fullfile(output_dir, ['fig 0e twin map iE=',num2str(iE_b),'.tiff']));
 
 
 
-%% (task 2) show 2 types of grain data: [type-A] ignore twin boundary and only show parent, [type-B] show individual twins. 
+%% (task 2) show 2 types of grain data: [type-A] ignore twin boundary and only show parent, [type-B] show individual twins.
 iE = 1;
 
 iR_min = 261;
@@ -100,7 +100,7 @@ iC_min = 241;
 iC_max = iC_min + 99;
 
 close all;
-% (1) ignore twin boundary, only parent 
+% (1) ignore twin boundary, only parent
 d = grain_file_to_data(fullfile(working_dir, ['Mg4Al_U2 parent_grain_file_type_1 iE=',num2str(iE),'.txt']), ...
     fullfile(working_dir, ['Mg4Al_U2 parent_grain_file_type_2 iE=',num2str(iE),'.txt']));
 
@@ -125,7 +125,7 @@ print(fullfile(output_dir, ['fig 2a ID with label ignore twin iE=',num2str(iE),'
 
 imwrite(IPF, fullfile(output_dir, ['fig 2a gID ignore twin iE=',num2str(iE),'.tiff']));
 
-% (2) include twin boundary, show all children 
+% (2) include twin boundary, show all children
 d = grain_file_to_data(fullfile(working_dir, ['Mg4Al_U2 grain_file_type_1 iE=',num2str(iE),'.txt']), ...
     fullfile(working_dir, ['Mg4Al_U2 grain_file_type_2 iE=',num2str(iE),'.txt']));
 
@@ -250,14 +250,14 @@ set(gca,'fontsize',18);
 caxism([tolerance, 90]);
 
 pos =[
-   27.1380   85.5000
-   30.5941   78.5879
-   62.3896   77.8967
-   97.2955   79.2791
-  104.2076   84.1176
-   91.7658   87.2280
-   48.9110   87.2280];
-   
+    27.1380   85.5000
+    30.5941   78.5879
+    62.3896   77.8967
+    97.2955   79.2791
+    104.2076   84.1176
+    91.7658   87.2280
+    48.9110   87.2280];
+
 h = drawpolygon('Position',pos,'color','r');
 
 print(fullfile(output_dir, 'fig 4c max misorientation map and mask.tiff'), '-dtiff', '-r300');
@@ -276,11 +276,11 @@ colorbar off;
 
 print(fullfile(output_dir, 'fig 4d old and new gb map.tiff'), '-dtiff', '-r300');
 
-%% (5) modified parent grain (after adding grain boundary) 
+%% (5) modified parent grain (after adding grain boundary)
 ID_current = 69;
 boundary_local_new = double(ID_local~=ID_current | boundary_local_new);
 ID_local_new = find_ID_map_from_boundary_map(boundary_local_new);
-    
+
 iE = 5;
 d = load(fullfile(working_dir, 'analysis', 'step-2', ['Mg4Al_U2_parent_grain_file_iE_',num2str(iE),'.mat']));
 iR_min = 266;
@@ -302,7 +302,7 @@ imshow(IPF);
 
 imwrite(IPF, fullfile(output_dir, ['fig 4e IPF after dividing iE_',num2str(iE),'.tiff']));
 
-%% (6) deformed child grain 
+%% (6) deformed child grain
 iE = 5;
 d = load(fullfile(working_dir, 'analysis', 'step-1', ['Mg4Al_U2_grain_file_iE_',num2str(iE),'.mat']));
 iR_min = 266;
@@ -326,7 +326,7 @@ imwrite(IPF, fullfile(output_dir, ['fig 4f child IPF with gb at iE_',num2str(iE)
 
 
 
-%% (task 3) Show alignment/correlation of maps at load steps 0 and iE 
+%% (task 3) Show alignment/correlation of maps at load steps 0 and iE
 iE = 2;
 iB = iE + 1;
 
@@ -370,7 +370,7 @@ grain_pair{3} = [18, 18;
     120, 110];
 
 
-% (step-2) Rough align using the selected control grains. The result is already decent 
+% (step-2) Rough align using the selected control grains. The result is already decent
 g_0 = grain_pair{iB}(:,1);    % ref at iE=0
 g_iE = grain_pair{iB}(:,2);    % iE > 0, considered as deformed
 
@@ -387,7 +387,7 @@ boundary_0_to_iE_intermediate = interp_data(x,y, boundary_0, x,y, tform, 'interp
 boundary_iE_to_0_intermediate = interp_data(x,y, boundary, x,y, tform.invert, 'interp', 'nearest');
 
 
-% (step-3) Fine align again, based on id_link and use all non-edge grains, and show result! 
+% (step-3) Fine align again, based on id_link and use all non-edge grains, and show result!
 [ID_new, id_link_additional, id_link] = hungarian_assign_ID_map(ID_0_to_iE, ID);
 
 % [[remove]] '0's from linked ids
@@ -396,13 +396,13 @@ id_link(inds,:) = [];
 inds = isnan(ID_0_to_iE)|(ID_new==0); % old ID is nan, or matched ID=0
 ID_new(inds) = nan;
 
-% [[remove]] grains that are shown in BOTH the col_2 of id_link and col_2 of in_link_additional  
+% [[remove]] grains that are shown in BOTH the col_2 of id_link and col_2 of in_link_additional
 ind = ismember(id_link(:,2), id_link_additional(:,2));
 id_link(ind,:) = [];
 
-% [[remove]] edge grains in id_link 
+% [[remove]] edge grains in id_link
 g_0 = id_link(:,1);
-g_iE = id_link(:,2);    
+g_iE = id_link(:,2);
 [~, loc_0] = ismember(g_0, gID_0);
 [~, loc_iE] = ismember(g_iE, gID);
 ind = (gEdge_0(loc_0)==1) | (gEdge(loc_iE)==1);
@@ -422,8 +422,8 @@ ID_0_to_iE = interp_data(x,y,ID_0, x,y,tform, 'interp', 'nearest');
 boundary_0_to_iE = find_boundary_from_ID_matrix(ID_0_to_iE);
 
 
-% (step-4) try to match grains based on their spatial location, and show the matching result. 
-% Transparent grains are the ones without a good match, so the parent grain need to be divided into more grains.     
+% (step-4) try to match grains based on their spatial location, and show the matching result.
+% Transparent grains are the ones without a good match, so the parent grain need to be divided into more grains.
 [ID_new, id_link_additional, id_link] = hungarian_assign_ID_map(ID_0_to_iE, ID);
 % remove 0s
 ind = find(id_link(:,1)==0 | id_link(:,2)==0);
@@ -434,7 +434,7 @@ ID_new(inds) = nan;
 inds = ismember(ID_new, id_link_additional(:,1));
 ID_new(inds) = nan;
 
-    
+
 % transform maps at iE to i0
 boundary_iE_to_0 = interp_data(x,y, boundary, x,y, tform.invert, 'interp', 'nearest');
 
@@ -664,7 +664,7 @@ set(gcf,'position',[100 100 800 600]);
 print(fullfile(output_dir, ['fig 5c_1 child IPF iE=',num2str(iE),'.tiff']), '-dtiff');
 imwrite(IPF, fullfile(output_dir, ['fig 5c_2 child IPF iE=',num2str(iE),'.tiff']));
 
-% euler for child grains, id=[182,178] are parent orientation, id=[177] is twin to check  
+% euler for child grains, id=[182,178] are parent orientation, id=[177] is twin to check
 gPhi1 = d.gPhi1;
 gPhi = d.gPhi;
 gPhi2 = d.gPhi2;
@@ -704,8 +704,8 @@ print(fullfile(output_dir, ['fig 5c_4 hcp_cell iE_',num2str(iE),'_po.tiff']), '-
 
 [S, M] = hcp_symmetry();
 for iSym = 1:12
-    % equivalent orientations to check. Show grain #178's equivalent ones  
-    if iSym==2 || iSym==8 
+    % equivalent orientations to check. Show grain #178's equivalent ones
+    if iSym==2 || iSym==8
         euler_r = euler_by_M(euler_b, M(:,:,iSym))
         hcp_cell('euler',euler_r, 'ss', 1, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
         % print(fullfile(output_dir, ['fig 5c_4 hcp_cell iE_',num2str(iE),' ID_178 po_eq_',num2str(iSym),'.tiff']), '-dtiff');
@@ -720,8 +720,8 @@ close all;
 hcp_cell('euler',euler_po, 'ss', 26, 'plotPlane',0, 'plotBurgers',0, 'plotTrace',0, 'plotAC',1);
 print(fullfile(output_dir, ['fig 5d parent_cell iE_',num2str(iE),'.tiff']), '-dtiff');
 
-% Based on parent orientation, calculate orientation of each possible variant,  
-% And calculate misorientation with child grain #177  
+% Based on parent orientation, calculate orientation of each possible variant,
+% And calculate misorientation with child grain #177
 misorientation = [];
 for kk = 1:6
     euler_kk = euler_by_twin(euler_po, kk, 'Mg');    % calculate the twin euler angle for twin system kk
@@ -737,7 +737,7 @@ close all;
 
 %% (task 6) show the twin variant map of [1] grain level, [2] pixel level, and [3] with connected segment length analysis, for iE=3
 
-% the code to generate the clean up map based on connect segment length analysis   
+% the code to generate the clean up map based on connect segment length analysis
 winopen('code_2021_10_17_try_clean_variant_with_csl.m')
 
 %
@@ -768,7 +768,8 @@ myplot(x,y,variant_csl,boundary);
 make_variant_map_background;
 print(fullfile(output_dir, 'variant map conseglen iE=3.tiff'),'-dtiff');
 
-%%  [Task, merge for movie] Mg4Al_U2, IPF map, Twin variant map, Twin type map, curve.  
+%%  [Task, merge for movie] Mg4Al_U2, IPF map, Twin variant map, Twin type map, curve.
+iE = 0    % place holder
 if 0
     % top modify the curve
     open code_2021_03_01_Mg4Al_U2_curve.m;
@@ -794,15 +795,15 @@ vMap_spatially_file = ['pixel variant map iE=',num2str(iE),'.tiff'];
 IPF_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD';
 IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
 
-cat_dir = 'E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\Mg4Al_U2';
-cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];     % fresh, re, de-twins 
+cat_dir = 'E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\Mg4Al_U2 reMake';
+cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];     % fresh, re, de-twins
 
 curve_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 insitu curve'; % this sample, lost some loading data
 curve_dir = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
 curve_file = 'stress vs strain gage.tiff';
 
 %% For each iE, merge the maps
-for iE = 0:13
+for iE = [] %0:13
     close all;
     % (1) Loading curve
     image_1 = imread(fullfile(curve_dir, curve_file));
@@ -813,14 +814,14 @@ for iE = 0:13
     vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
     image_3 = imread(fullfile(vMap_dir, vMap_file));
     % (4) category map
-    cat_file = ['frd twinned iE=',num2str(iE),'.tiff']; 
+    cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
     image_4 = imread(fullfile(cat_dir, cat_file));
     
-%     figure; imshow(image_1);
-%     figure; imshow(image_2);
-%     figure; imshow(image_3);
-%     figure; imshow(image_4);
-
+    %     figure; imshow(image_1);
+    %     figure; imshow(image_2);
+    %     figure; imshow(image_3);
+    %     figure; imshow(image_4);
+    
     I_1 = imcrop(image_1, [0,0, inf,inf]);
     I_1 = imresize(I_1, 620/656);
     
@@ -857,12 +858,157 @@ for iE = 0:13
     figure;
     imshow(I);
     
-    % print(fullfile(output_dir, ['print merged_iE=',num2str(iE),'.tiff']),'-dtiff');    
+    % print(fullfile(output_dir, ['print merged_iE=',num2str(iE),'.tiff']),'-dtiff');
     imwrite(I, fullfile(output_dir, ['merged_iE=',num2str(iE),'.tiff']));
 end
 close all;
 
-%%
+%% 2021-10-20, Make 3 load steps (iE=3,7,9) as columns, and 4 maps as rows: (a) EBSD map, (b) variant map, (3) pixel level twin category map, (4) grain level twin category map
+
+I = inf * uint8(ones(3700,3500,3));
+close all;
+
+iE = 3;
+% (1) IPF
+IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
+image_1 = imread(fullfile(IPF_dir, IPF_file));
+% (2) twin variant map
+vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+image_2 = imread(fullfile(vMap_dir, vMap_file));
+% (3) pixel level category map
+cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
+image_3 = imread(fullfile(cat_dir, cat_file));
+% (4) Loading curve
+gcat_file = ['grain label iE=',num2str(iE),'.tiff'];
+image_4 = imread(fullfile(cat_dir, gcat_file));
+
+I_1 = imcrop(image_1, [0,0, inf,inf]);
+I_1 = imresize(I_1, [765, 765]);
+
+I_2 = imcrop(image_2, [200,70, 765,765]);
+
+I_3 = imcrop(image_3, [217,72, 765,765]);
+
+I_4 = imcrop(image_4, [703,72, 765,765]);
+I_4 = imresize(I_4, 765/765);
+
+% stitch I_1
+indR = 200;
+indC = 100;
+I(indR:indR + size(I_1,1) - 1, indC:indC + size(I_1,2) - 1, :) = I_1;
+
+% stitch I_2
+indR = 1100;
+indC = 100;
+I(indR:indR + size(I_2,1) - 1, indC:indC + size(I_2,2) - 1, :) = I_2;
+
+% stitch I_3
+indR = 2000;
+indC = 100;
+I(indR:indR + size(I_3,1) - 1, indC:indC + size(I_3,2) - 1, :) = I_3;
+
+% stitch I_4
+indR = 2900;
+indC = 100;
+I(indR:indR + size(I_4,1) - 1, indC:indC + size(I_4,2) - 1, :) = I_4;
+
+
+iE = 7;
+% (1) IPF
+IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
+image_1 = imread(fullfile(IPF_dir, IPF_file));
+% (2) twin variant map
+vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+image_2 = imread(fullfile(vMap_dir, vMap_file));
+% (3) pixel level category map
+cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
+image_3 = imread(fullfile(cat_dir, cat_file));
+% (4) Loading curve
+gcat_file = ['grain label iE=',num2str(iE),'.tiff'];
+image_4 = imread(fullfile(cat_dir, gcat_file));
+
+I_1 = imcrop(image_1, [0,0, inf,inf]);
+I_1 = imresize(I_1, [765, 765]);
+
+I_2 = imcrop(image_2, [200,70, 765,765]);
+
+I_3 = imcrop(image_3, [217,72, 765,765]);
+
+I_4 = imcrop(image_4, [703,72, 765,765]);
+I_4 = imresize(I_4, 765/765);
+
+% stitch I_1
+indR = 200;
+indC = 1000;
+I(indR:indR + size(I_1,1) - 1, indC:indC + size(I_1,2) - 1, :) = I_1;
+
+% stitch I_2
+indR = 1100;
+indC = 1000;
+I(indR:indR + size(I_2,1) - 1, indC:indC + size(I_2,2) - 1, :) = I_2;
+
+% stitch I_3
+indR = 2000;
+indC = 1000;
+I(indR:indR + size(I_3,1) - 1, indC:indC + size(I_3,2) - 1, :) = I_3;
+
+% stitch I_4
+indR = 2900;
+indC = 1000;
+I(indR:indR + size(I_4,1) - 1, indC:indC + size(I_4,2) - 1, :) = I_4;
+
+
+iE = 9;
+% (1) IPF
+IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
+image_1 = imread(fullfile(IPF_dir, IPF_file));
+% (2) twin variant map
+vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+image_2 = imread(fullfile(vMap_dir, vMap_file));
+% (3) pixel level category map
+cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
+image_3 = imread(fullfile(cat_dir, cat_file));
+% (4) Loading curve
+gcat_file = ['grain label iE=',num2str(iE),'.tiff'];
+image_4 = imread(fullfile(cat_dir, gcat_file));
+
+I_1 = imcrop(image_1, [0,0, inf,inf]);
+I_1 = imresize(I_1, [765, 765]);
+
+I_2 = imcrop(image_2, [200,70, 880,765]);
+
+I_3 = imcrop(image_3, [217,72, inf,765]);
+
+I_4 = imcrop(image_4, [703,72, inf,765]);
+I_4 = imresize(I_4, 765/765);
+
+% stitch I_1
+indR = 200;
+indC = 1900;
+I(indR:indR + size(I_1,1) - 1, indC:indC + size(I_1,2) - 1, :) = I_1;
+
+% stitch I_2
+indR = 1100;
+indC = 1900;
+I(indR:indR + size(I_2,1) - 1, indC:indC + size(I_2,2) - 1, :) = I_2;
+
+% stitch I_3
+indR = 2000;
+indC = 1900;
+I(indR:indR + size(I_3,1) - 1, indC:indC + size(I_3,2) - 1, :) = I_3;
+
+% stitch I_4
+indR = 2900;
+indC = 1900;
+I(indR:indR + size(I_4,1) - 1, indC:indC + size(I_4,2) - 1, :) = I_4;
+
+
+
+figure;
+imshow(I);
+
+% print(fullfile(output_dir, ['print merged_iE=',num2str(iE),'.tiff']),'-dtiff');
+imwrite(I, fullfile(output_dir, 'Fig 10.tiff'));
 
 
 
