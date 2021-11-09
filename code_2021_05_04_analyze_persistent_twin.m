@@ -166,7 +166,7 @@ for iE = 0:13
     set(c,'limits',[2.5,5.5], 'Ticks',[3,4,5], 'TickLabels',{'Fresh Twin', 'Recurring Twin', 'Detwin'}); 
     title(['\fontsize{16}Load Step ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
     set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
-    
+
     print(fullfile(output_dir,['frd twinned iE=',num2str(iE),'.tiff']),'-dtiff');
     
     close all;
