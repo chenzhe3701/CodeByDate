@@ -7,7 +7,7 @@ save_dir = [working_dir, '\analysis'];
 mkdir(save_dir);
 % cd(working_dir);
 
-sample_name = 'UM129 Mg_C1';
+sample_name = 'UM129_Mg_C1';
 
 %% Step-1: load .txt grain files, align_euler_to_sample and save as .mat
 
