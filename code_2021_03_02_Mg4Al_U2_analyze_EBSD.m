@@ -282,9 +282,10 @@ inds = isnan(ID_0_to_iE)|(ID_new==0); % old ID is nan, or matched ID=0
 ID_new(inds) = nan;
 
 % [[remove]] grains that are shown in BOTH the col_2 of id_link and col_2 of in_link_additional  
-ind = ismember(id_link(:,2), id_link_additional(:,2));
-id_link(ind,:) = [];
-
+if ~isempty(id_link_additional)
+    ind = ismember(id_link(:,2), id_link_additional(:,2));
+    id_link(ind,:) = [];
+end
 % [[remove]] edge grains in id_link 
 g_0 = id_link(:,1);
 g_iE = id_link(:,2);    
@@ -326,15 +327,10 @@ print(fullfile(save_dir, ['a_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 
 
 %% There might not be equal number of grains on the reference vs deformed maps. 
-% (1) If there are more grains on the reference map than the deformed map,
-% the extra grain on the reference map will not be able to find a match. If
-% necessary, we want to select the grain on the deformed map, alter the
-% tolerance angle to divide that grain into two (or more) grains. (2) If
-% there are more grains on the deformed map, it's more difficult to check
-% on the result 'deformed map with matched ID', but in this situation, the
-% reference map might need to be processed, i.e., select a grain and reduce
-% the tolerance angle to divide it into two grains.
-% (3) In addition, sometimes we also need to merge grains on ref map
+% Select grains on the deformed map, to divide it into two grains.  The
+% larger one keep the grain ID, and the smaller one get a new ID.
+% Select this grain twice if need to divide it into 3 grains, etc.
+% Select grains [A,B;] if want to merge A into B.
 
 %% Record (1) the ID_list (on map_iE) to correct for each iE, and (2) the tolerance for each grain
 % ID_list{iB=iE+1}. To treat 0-based indexing as 1 based indexing  
@@ -469,7 +465,7 @@ while iN <= N
     else
         hf2 = myplotm(boundary_local,'x',x_local,'y', y_local);
         label_map_with_ID(x_local,y_local,ID_local, gcf, ID_current, 'r');
-        hf3= myplotm(misorientation_max);
+        hf3 = myplotm(misorientation_max);
         caxism([tolerance_cell{iB}(iN), 100]);
         h = drawpolygon;
         customWait(h);
@@ -853,7 +849,7 @@ for iE = 0:13
         eulerd = [gPhi1(ind), gPhi(ind), gPhi2(ind)];
         
         % We can modify, or not modify. It won't affect the parient orientation determination in the twin identification.  
-        % eulerd = find_closest_orientation_hcp(eulerd, eulerd_ref);      % ==> Find Closest Orientation    
+        eulerd = find_closest_orientation_hcp(eulerd, eulerd_ref);      % ==> Find Closest Orientation    
         
         gPhi1(gID==id_source) = eulerd(1);
         gPhi(gID==id_source) = eulerd(2);
@@ -867,6 +863,7 @@ for iE = 0:13
     myplot(x,y,mod(ID,10),boundary);
     clim = caxis;
 %     caxis([0,maxID]);
+    set(gca,'fontsize',18);
     title(['iE=',num2str(iE),', mod(ID spatially aligned to iE=0,10) #']);
     print(fullfile(save_dir, ['matched_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
     close;
@@ -931,15 +928,9 @@ for iE = 1:13
             % find out all the id numbers on ID_c overlap with the parent grain on ID_p
             id_c = unique(ID_c(ID_p == id_p));
             
-            % Additionally, the child should have > 70% of its pixels overlap with the potential parent grain
-            area_c = zeros(size(id_c));
-            overlap_c = zeros(size(id_c));
-            for kk = 1:length(area_c)
-                area_c(kk) = sum(ID_c(:)==id_c(kk));
-                overlap_c(kk) = sum((ID_p(:)==id_p)&(ID_c(:)==id_c(kk)));
-            end
-            overlap_pct_c = overlap_c./area_c;
-            id_c(overlap_pct_c<0.75) = [];
+            % Additionally, the child should have > 70% of its pixels
+            % overlap with the potential parent grain 
+            % ==> 2021-11-19 I don't think we need this anymore   
             
             % Modify all the child orientation to crystallographically equivalent one that is closest to euler_0  
             misorientation = [];
@@ -1048,11 +1039,13 @@ for iE = 1:13
     
 
     myplot(x,y, ID_variant_grain_wise, boundary_p); caxis([0 6]);
+    set(gca,'fontsize',18);
     title(['iE=',num2str(iE)]);
     print(fullfile(save_dir,['variant_grain_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;
     
     myplot(x,y, ID_variant_point_wise, boundary_p); caxis([0 6]);
+    set(gca,'fontsize',18);
     title(['iE=',num2str(iE)]);
     print(fullfile(save_dir,['variant_pt_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;      
@@ -1070,7 +1063,9 @@ end
 
 %% part-6: summarize twin pct
 load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
-twinPct = zeros(12,14);
+nr = 3;
+nc = 3;
+twinPct = zeros(nr*nc,14);
 for iE = 1:13
     load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'ID');
 
@@ -1078,12 +1073,10 @@ for iE = 1:13
     if iE==1
         [nR,nC] = size(variant_map);
     end
-    nr = 3;
-    nc = 4;
     for ir=1:nr
        for ic = 1:nc
-           sub_variant_map = variant_map([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic);
-           sub_ID_map = ID([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic); % just for counting number of pixels
+           sub_variant_map = variant_map([1:floor(nR/nr)] + floor(nR/nr)*(ir-1), [1:floor(nC/nc)] + floor(nC/nc)*(ic-1));
+           sub_ID_map = ID([1:floor(nR/nr)] + floor(nR/nr)*(ir-1), [1:floor(nC/nc)] + floor(nC/nc)*(ic-1)); % just for counting number of pixels
            
            ii = iE + 1;
            twinPct((ir-1)*nc+ic,ii) = sum(sub_variant_map(:)>0)/sum(sub_ID_map(:)>0);
@@ -1169,31 +1162,5 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
 print(fullfile(save_dir,'twin pct table.tiff'),'-dtiff');
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
-
-%%
-% % [3] using (rough transformed) ebsd estimate strain. Note, this sample is noisy, so the estimation might differ a lot ..   
-% % EBSD strain from fine alignment
-% strain_ebsd_0 = [0, -0.0079, -0.0213, -0.0335, ...
-%     -0.0327, -0.0250, -0.0140, -0.0031, ...
-%     -0.0111, -0.0202, -0.0286, ...
-%     -0.0232, -0.0125, -0.0045];
-% 
-% figure; hold on;
-% inds = {1:3, 3:7, 7:11, 11:14};
-% 
-% errorbar(strain_ebsd_0(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{3}), 100*tAvg(inds{3}), 100*tStd(inds{3}), '.-', 'color',colors(3,:), 'linewidth',1.5,'markersize',24);
-% errorbar(strain_ebsd_0(inds{4}), 100*tAvg(inds{4}), 100*tStd(inds{4}), '.-', 'color',colors(4,:), 'linewidth',1.5,'markersize',24);
-% 
-% set(gca,'xdir','normal','linewidth',1.5);
-% set(gca,'xlim',[-0.04, 0.005],'ylim',[-2 50],'fontsize',18,'fontweight','normal');
-% xlabel('Strain from ebsd estimate');
-% ylabel('Twin Area Percent (%)');
-% print(fullfile(save_dir,'twin_pct_vs_ebsd_0_strain.tiff'),'-dtiff');
-
-
-
-
 
 
