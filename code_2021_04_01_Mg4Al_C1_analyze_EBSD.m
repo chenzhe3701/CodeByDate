@@ -1,6 +1,6 @@
-%% This sample only has 8 stops: iE=2 was at -0.75%. iE=1 was at low strain just to confirm experiment OK, no twinning observed yet.
+
 %% setup
-clear;clc;close all;
+clear; clc; close all;
 addChenFunction;
 working_dir = 'E:\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu EBSD';
 save_dir = [working_dir, '\analysis'];
@@ -8,11 +8,11 @@ mkdir(save_dir);
 % cd(working_dir);
 
 sample_name = 'Mg4Al_C1';
-
+iE_max = 7;    % maximum iE
 %% Step-1: load .txt grain files, align_euler_to_sample and save as .mat
 
 % (1.1) regular grain file
-for iE = 0:7   
+for iE = 0:iE_max    
     
     [EBSD_data_1, EBSD_header_1] = grain_file_read(fullfile(working_dir,[sample_name,' grain_file_type_1 iE=',num2str(iE),'.txt']));
     [EBSD_data_2, EBSD_header_2] = grain_file_read(fullfile(working_dir,[sample_name,' grain_file_type_2 iE=',num2str(iE),'.txt']));
@@ -65,7 +65,7 @@ for iE = 0:7
 end
 
 % (1.2) parent grain file. [[[For iE=0, use grain_file as parent_grain_file]]]  
-for iE = 2:6    
+for iE = 1:iE_max    
     [EBSD_data_1, EBSD_header_1] = grain_file_read(fullfile(working_dir,[sample_name,' parent_grain_file_type_1 iE=',num2str(iE),'.txt']));
     [EBSD_data_2, EBSD_header_2] = grain_file_read(fullfile(working_dir,[sample_name,' parent_grain_file_type_2 iE=',num2str(iE),'.txt']));
     % find column
@@ -114,23 +114,22 @@ for iE = 2:6
     save(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']),'euler_aligned_to_sample','ID','phi1','phi','phi2','x','y',...
         'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
 end
-% For iE=0,1,7, use grain_file as parent_grain_file
-for iE=[0,1,7]
-    copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
-end
+% For iE=0, use grain_file as parent_grain_file
+copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_0.mat']), fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']), 'f');
+
 % save a copy after step 1
 save_dir_1 = [save_dir,'\step-1'];
 mkdir(save_dir_1);
-for iE = 0:7
+for iE = 0:iE_max
     copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
-           fullfile(save_dir_1, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']));
+           fullfile(save_dir_1, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'f');
     copyfile(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-           fullfile(save_dir_1, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+           fullfile(save_dir_1, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
 
 %% Step-2: Analyze parent grain file: Select control points to affine transform and observe. Select grains to add grain boundaries. Update grain info for affected grains, and save data.
 % Select deformed iE (parent grain file) to select control grains [No need to run every time]
-for iE = 0:7
+for iE = 0:iE_max
 % iB=iE+1 for 0-based indexing, iB = iE for 1-based indexing
 iB = iE+1;  
 close all;    
@@ -202,8 +201,8 @@ grain_pair{1} = [20, 20;
     185, 185];
 grain_pair{2} = [20, 21;
     25, 29;
-    209, 214;
-    185, 192];
+    209, 211;
+    185, 191];
 grain_pair{3} = [20, 24;
     25, 32;
     209, 211;
@@ -226,8 +225,8 @@ grain_pair{7} = [20, 19;
     185, 184];
 grain_pair{8} = [20, 21;
     25, 26;
-    209, 211;
-    185, 188];
+    209, 208;
+    185, 187];
 
 
 % (step-2) Rough align using the selected control grains. The result is already decent 
@@ -259,9 +258,10 @@ inds = isnan(ID_0_to_iE)|(ID_new==0); % old ID is nan, or matched ID=0
 ID_new(inds) = nan;
 
 % [[remove]] grains that are shown in BOTH the col_2 of id_link and col_2 of in_link_additional  
-ind = ismember(id_link(:,2), id_link_additional(:,2));
-id_link(ind,:) = [];
-
+if ~isempty(id_link_additional)
+    ind = ismember(id_link(:,2), id_link_additional(:,2));
+    id_link(ind,:) = [];
+end
 % [[remove]] edge grains in id_link 
 g_0 = id_link(:,1);
 g_iE = id_link(:,2);    
@@ -303,22 +303,17 @@ print(fullfile(save_dir, ['a_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 
 
 %% There might not be equal number of grains on the reference vs deformed maps. 
-% (1) If there are more grains on the reference map than the deformed map,
-% the extra grain on the reference map will not be able to find a match. If
-% necessary, we want to select the grain on the deformed map, alter the
-% tolerance angle to divide that grain into two (or more) grains. (2) If
-% there are more grains on the deformed map, it's more difficult to check
-% on the result 'deformed map with matched ID', but in this situation, the
-% reference map might need to be processed, i.e., select a grain and reduce
-% the tolerance angle to divide it into two grains.
-% (3) In addition, sometimes we also need to merge grains on ref map
+% Select grains on the deformed map, to divide it into two grains.  The
+% larger one keep the grain ID, and the smaller one get a new ID.
+% Select this grain twice if need to divide it into 3 grains, etc.
+% Select grains [A,B;] if want to merge A into B.
 
 %% Record (1) the ID_list (on map_iE) to correct for each iE, and (2) the tolerance for each grain
 % ID_list{iB=iE+1}. To treat 0-based indexing as 1 based indexing  
 % ID_list{iB=iE+1} is the IDs need to be treated for iE = iB-1
 ID_list{1} = [120];
 tolerance_cell{1} = [5];
-ID_list{2} = [197];
+ID_list{2} = [195];
 tolerance_cell{2} = [5];
 ID_list{3} = [97,142];
 tolerance_cell{3} = [3,5];
@@ -330,8 +325,8 @@ ID_list{6} = [67,87,118,136,177];
 tolerance_cell{6} = [5,5,3,5,5];
 ID_list{7} = [67,120,139];
 tolerance_cell{7} = [5,3,5];
-ID_list{8} = [123];
-tolerance_cell{8} = [3];
+ID_list{8} = [85,122];
+tolerance_cell{8} = [5,3];
 
 
 % ID_merge_list{iB=iE+1} = [g1,->g2; ...]
@@ -348,7 +343,7 @@ ID_merge_list{8} = [];
 try
     load(fullfile(save_dir,[sample_name,'_mask_cell.mat']),'mask_cell','ID_updated_cell');
 catch
-    mask_cell = cell(1,14);
+    mask_cell = cell(1,iE_max+1);
 end
  
 iN = 1;
@@ -429,7 +424,7 @@ while iN <= N
     else
         hf2 = myplotm(boundary_local,'x',x_local,'y', y_local);
         label_map_with_ID(x_local,y_local,ID_local, gcf, ID_current, 'r');
-        hf3= myplotm(misorientation_max);
+        hf3 = myplotm(misorientation_max);
         caxism([tolerance_cell{iB}(iN), 100]);
         h = drawpolygon;
         customWait(h);
@@ -531,21 +526,142 @@ disp(['finished iE=',num2str(iE)]);
 % the saved file in step-1 folder.
 if iE == 0
     copyfile(fullfile(save_dir_2, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']) );
+        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
 
 end
 
 
-for iE = 0:7
+for iE = 0:iE_max
     copyfile(fullfile(save_dir_2, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']) );
+        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
 
-%% If needed, can also modify (non-parent) 'grain file', and divide twinned grains into more grains
+%% [clean (child) grain file] For twin grains, if it contains more than one parent grain, then divide it
+for iE = 0:iE_max
+    %% do this iE
+    iB = iE + 1;
+    
+    % parent grain file
+    d = load(fullfile(save_dir_2, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+    ID_parent = d.ID;
+    
+    % deformed iE
+    d = load(fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']));
+    % read type-2 grain file and get average info for grains
+    gID = d.gID;
+    gPhi1 = d.gPhi1;
+    gPhi = d.gPhi;
+    gPhi2 = d.gPhi2;
+    
+    ID = d.ID;
+    phi1 = d.phi1;
+    phi = d.phi;
+    phi2 = d.phi2;
+    euler_aligned_to_sample = d.euler_aligned_to_sample;
+    
+    boundary = find_one_boundary_from_ID_matrix(ID);
+    
+    iN = 1;
+    ID_updated = ID;     % up date child grain IDs
+    next_gID = max(gID) + 1;
+    
+    boundary = find_one_boundary_from_ID_matrix(ID_updated);
+    boundary_new = boundary;
+    
+    for ii = 1:length(gID)
+        ID_current = gID(ii);
+        ind_local = ismember(ID_updated, ID_current);
+        
+        indC_min = find(sum(ind_local, 1), 1, 'first');
+        indC_max = find(sum(ind_local, 1), 1, 'last');
+        indR_min = find(sum(ind_local, 2), 1, 'first');
+        indR_max = find(sum(ind_local, 2), 1, 'last');
+        
+        ID_p_overlap = unique(ID_parent(ind_local));
+        
+        % if overlap with multiple parent grain (2021-07-17 note: some of these might be created due to the manual further division, as the boundary is difficult to control)  
+        if length(ID_p_overlap)>1
+            disp(['===>',num2str(ii)]);
+            vols = arrayfun(@(x) sum(ID_parent(ind_local)==x), ID_p_overlap); % overlap area with each of the overlapped parent ID
+            [~, index_in_sorted] = sort(vols, 'descend');
+            ID_p_overlap_sorted(index_in_sorted) = ID_p_overlap; % sort the overlapped parent ID, the one with the max overlap is sorted 1st
+            
+            for jj=2:length(ID_p_overlap_sorted)
+                id_p = ID_p_overlap_sorted(jj);
+                inds = ismember(ID_updated, ID_current) & ismember(ID_parent, id_p);
+                
+                % modify the overlapped part of this twin grain to have a new ID
+                ID_updated(inds) = next_gID;
+                
+                % increment the next_gID
+                next_gID = next_gID + 1;
+            end
+            
+            % update the grain boundary [for illustration]
+            ID_updated_local = ID_updated(indR_min:indR_max, indC_min:indC_max);
+            boundary_local_new = find_one_boundary_from_ID_matrix(ID_updated_local);
+            boundary_new(indR_min:indR_max, indC_min:indC_max) = boundary_local_new;
+        end
+    end
+    myplot(boundary_new);
+    
+    %% After adding more gb and get ID_updated, match ID_updated to ID_iE, update ID and grain info
+    % ID_updated: modified from the added grain boundaries
+    % ID: the target ID map at this iE
+    
+    % umPerDp = 1;    % micron per data point in EBSD data
+    % data_in.umPerDp = umPerDp;
+    data_in.symmetry = 'hcp';
+    data_in.ID_target = ID;
+    data_in.ID_temp = ID_updated;
+    data_in.x = x;
+    data_in.y = y;
+    data_in.phi1 = phi1;
+    data_in.phi = phi;
+    data_in.phi2 = phi2;
+    data_in.gID = gID;
+    data_in.gPhi1 = gPhi1;
+    data_in.gPhi = gPhi;
+    data_in.gPhi2 = gPhi2;
+    
+    data_out = match_ID_map_and_summarize(data_in);
+    
+    ID = data_out.ID;   % the modified ID map
+    gID = data_out.gID;
+    gPhi1 = data_out.gPhi1;
+    gPhi = data_out.gPhi;
+    gPhi2 = data_out.gPhi2;
+    gCenterX = data_out.gCenterX;
+    gCenterY = data_out.gCenterY;
+    gNNeighbors = data_out.gNNeighbors;
+    gDiameter = data_out.gDiameter;
+    gArea = data_out.gArea;
+    gEdge = data_out.gEdge;
+    gNeighbors = data_out.gNeighbors;
+    
+    save_dir_2 = [save_dir,'\step-2'];
+    mkdir(save_dir_2);
+    
+    save(fullfile(save_dir_2, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']),'euler_aligned_to_sample','ID','phi1','phi','phi2','x','y',...
+        'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
+    
+    close all;
+    
+    disp(['finished twin grain file at iE=',num2str(iE)]);
+    
+end
+
+%% copy to analysis folder
+for iE = 0:iE_max
+    try
+        copyfile(fullfile(save_dir_2, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
+            fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'f');
+    end
+end
 
 %% Part-3: Affine transform ID map. Link grains, and modify linked grains to the same ID#.
-% Generate geotrans/tform information at iE = 1 to 13, without showing results
+% Generate geotrans/tform information at iE = 1 to iE_max, without showing results
 % Link ids (save in 'tbl') at differnt iEs after loading the saved geotrans/tform. 
 %   So, later, we can have grain files output again with different IDs.
 
@@ -564,7 +680,7 @@ gCenterX_0 = d.gCenterX;
 gCenterY_0 = d.gCenterY;
 gEdge_0 = d.gEdge;
 
-for iE = 1:7
+for iE = 1:iE_max
     iB = iE + 1;
     disp(['iE=',num2str(iE)]);
     % load the modified EBSD data at iE
@@ -652,7 +768,7 @@ save(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms_0','tforms','tbl');
 load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms','tbl');
 
 maxID = 0;
-for iE = 0:7
+for iE = 0:iE_max
     f = matfile(fullfile(save_dir,[sample_name,'_parent_grain_file_iE_',num2str(iE)]));
 
     gID = f.gID;
@@ -660,7 +776,10 @@ for iE = 0:7
 end
 id_to_add = 10^(ceil(log10(maxID)));    % round to 1000 etc for adjustment. 
 
-for iE = 0:7
+save_dir_4 = [save_dir,'\step-4'];
+mkdir(save_dir_4);
+
+for iE = 0:iE_max
     clear euler_aligned_to_sample;
     load(fullfile(save_dir,[sample_name,'_parent_grain_file_iE_',num2str(iE)]));
 
@@ -688,7 +807,8 @@ for iE = 0:7
         ind = find(gID==id_source);
         eulerd = [gPhi1(ind), gPhi(ind), gPhi2(ind)];
         
-        % eulerd = find_closest_orientation_hcp(eulerd, eulerd_ref);      % ==> Find Closest Orientation
+        % We can modify, or not modify. It won't affect the parient orientation determination in the twin identification.  
+        eulerd = find_closest_orientation_hcp(eulerd, eulerd_ref);      % ==> Find Closest Orientation    
         
         gPhi1(gID==id_source) = eulerd(1);
         gPhi(gID==id_source) = eulerd(2);
@@ -702,27 +822,26 @@ for iE = 0:7
     myplot(x,y,mod(ID,10),boundary);
     clim = caxis;
 %     caxis([0,maxID]);
-    title(['iE=',num2str(iE),', mod(ID spatially aligned to iE=0,10) #']);
+    set(gca,'fontsize',18);
+    title(['iE=',num2str(iE),', mod(ID spatially aligned to iE=0,10) #'],'fontweight','normal');
     print(fullfile(save_dir, ['matched_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
     close;
     
-    save(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'euler_aligned_to_sample', ...
+    save(fullfile(save_dir_4, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'euler_aligned_to_sample', ...
         'ID','phi1','phi','phi2','x','y',...
         'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
 
 end
 
-save_dir_4 = [save_dir,'\step-4'];
-mkdir(save_dir_4);
-for iE = 0:7
-    copyfile(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-           fullfile(save_dir_4, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+for iE = 0:iE_max
+    copyfile(fullfile(save_dir_4, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
+           fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
 
 %% part-5: find out variants
 po_tolerance_angle = 10; % if child grain has misorientation < po_tolerance_angle with undeformed parent grain, it is considered as having parent orientation
 twin_tolerance_angle = 10;  % if child grain has misorientation < twin_tolerance_angle to a potential twin variant, it is identified as that twin variant  
-for iE = 1:7
+for iE = 1:iE_max
     d = load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
     gID_0 = d.gID;
     gPhi1_0 = d.gPhi1;
@@ -768,15 +887,9 @@ for iE = 1:7
             % find out all the id numbers on ID_c overlap with the parent grain on ID_p
             id_c = unique(ID_c(ID_p == id_p));
             
-            % Additionally, the child should have > 70% of its pixels overlap with the potential parent grain
-            area_c = zeros(size(id_c));
-            overlap_c = zeros(size(id_c));
-            for kk = 1:length(area_c)
-                area_c(kk) = sum(ID_c(:)==id_c(kk));
-                overlap_c(kk) = sum((ID_p(:)==id_p)&(ID_c(:)==id_c(kk)));
-            end
-            overlap_pct_c = overlap_c./area_c;
-            id_c(overlap_pct_c<0.75) = [];
+            % Additionally, the child should have > 70% of its pixels
+            % overlap with the potential parent grain 
+            % ==> 2021-11-19 I don't think we need this anymore   
             
             % Modify all the child orientation to crystallographically equivalent one that is closest to euler_0  
             misorientation = [];
@@ -872,24 +985,27 @@ for iE = 1:7
     variant_grain_wise{iE} = ID_variant_grain_wise;
     variant_point_wise{iE} = ID_variant_point_wise;
     
-    % After processing this iE, Update the modified grain data and save
+    % After processing this iE, Update the modified CHILD grain data and save
     save_dir_5 = [save_dir,'\step-5'];
     mkdir(save_dir_5);
-    copyfile(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-            fullfile(save_dir_5, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+    
+    copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
+            fullfile(save_dir_5, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'f');
     gPhi1 = gPhi1_c;
     gPhi = gPhi_c;
     gPhi2 = gPhi2_c;
-    save(fullfile(save_dir_5, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'gPhi1','gPhi','gPhi2', '-append');
+    save(fullfile(save_dir_5, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'gPhi1','gPhi','gPhi2', '-append');
     
 
     myplot(x,y, ID_variant_grain_wise, boundary_p); caxis([0 6]);
-    title(['iE=',num2str(iE)]);
+    set(gca,'fontsize',18);
+    title(['iE=',num2str(iE)],'fontweight','normal');
     print(fullfile(save_dir,['variant_grain_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;
     
     myplot(x,y, ID_variant_point_wise, boundary_p); caxis([0 6]);
-    title(['iE=',num2str(iE)]);
+    set(gca,'fontsize',18);
+    title(['iE=',num2str(iE)],'fontweight','normal');
     print(fullfile(save_dir,['variant_pt_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;      
 
@@ -898,28 +1014,28 @@ end
 save(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
 
 % copy the updated file back to the main folder
-for iE = 1:7
-    copyfile(fullfile(save_dir_5, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), ...
-        fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']));
+for iE = 1:iE_max
+    copyfile(fullfile(save_dir_5, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
+        fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
 
 
 %% part-6: summarize twin pct
 load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
-twinPct = zeros(12,8);
-for iE = 1:7
+nr = 3;
+nc = 3;
+twinPct = zeros(nr*nc,iE_max+1);
+for iE = 1:iE_max
     load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'ID');
 
     variant_map = variant_point_wise{iE};
     if iE==1
         [nR,nC] = size(variant_map);
     end
-    nr = 3;
-    nc = 4;
     for ir=1:nr
        for ic = 1:nc
-           sub_variant_map = variant_map([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic);
-           sub_ID_map = ID([1:floor(nR/nr)]*ir, [1:floor(nC/nc)]*ic); % just for counting number of pixels
+           sub_variant_map = variant_map([1:floor(nR/nr)] + floor(nR/nr)*(ir-1), [1:floor(nC/nc)] + floor(nC/nc)*(ic-1));
+           sub_ID_map = ID([1:floor(nR/nr)] + floor(nR/nr)*(ir-1), [1:floor(nC/nc)] + floor(nC/nc)*(ic-1)); % just for counting number of pixels
            
            ii = iE + 1;
            twinPct((ir-1)*nc+ic,ii) = sum(sub_variant_map(:)>0)/sum(sub_ID_map(:)>0);
@@ -934,11 +1050,11 @@ save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
 
 %% part-7, calculate EBSD estimated strain
 load(fullfile(save_dir,'geotrans_and_id_link.mat'),'tforms');
-for iE = 0:7
+for iE = 0:iE_max
     iB = iE+1;
     if ~isempty(tforms{iB})
-        [T,R,Z,S] = decompose_affine2d(tforms{iB});
-        strain_ebsd(iB) = round(Z(1)-1, 4);
+        [T,R,Z,S,A,epsilon] = decompose_affine2d(tforms{iB});
+        strain_ebsd(iB) = round(epsilon(1), 4);
     else
         strain_ebsd(iB) = 0;
     end
@@ -949,9 +1065,9 @@ disp(str);
 
 %% plot
 load(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
-% strain for iE=0:7
+% strain for iE=0:iE_max
 % EBSD strain from fine alignment
-strain_ebsd = [0.0000, -0.0005, -0.0047, -0.0089, -0.0106, ...
+strain_ebsd = [0.0000, -0.0005, -0.0047, -0.0088, -0.0106, ...
     -0.0095, -0.0023, 0.0041];
 
 strain_sg = [0, -0.0004, -0.0075, -0.015, -0.025, ...
@@ -986,7 +1102,7 @@ ylabel('Twin Area Percent (%)');
 print(fullfile(save_dir,'twin_pct_vs_ebsd_strain.tiff'),'-dtiff');
 
 
-tbl = array2table([(0:7)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
+tbl = array2table([(0:iE_max)', strain_sg(:), strain_ebsd(:), 100*tAvg(:), 100*tStd(:)]);
 tbl.Properties.VariableNames = {'iE','strain_sg','strain_ebsd','twinPct %','twinStd %'};
 disp(tbl);
 figure;
@@ -995,11 +1111,5 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
 print(fullfile(save_dir,'twin pct table.tiff'),'-dtiff');
 
 save(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd', 'tbl');
-
-
-
-
-
-
 
 
