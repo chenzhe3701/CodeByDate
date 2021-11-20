@@ -316,8 +316,10 @@ id_link(ind,:) = [];
 inds = isnan(ID_0_to_iE)|(ID_new==0); % old ID is nan, or matched ID=0
 ID_new(inds) = nan;
 % ---> just for illustration, I don't want to show the newly assigned ID
-inds = ismember(ID_new, id_link_additional(:,1));
-ID_new(inds) = nan;
+if ~isempty(id_link_additional)
+    inds = ismember(ID_new, id_link_additional(:,1));
+    ID_new(inds) = nan;
+end
 
 myplot(x,y, ID_new, boundary_0_to_iE);
 title(['iE=0 transformed with matched ID at iE=',num2str(iE)],'fontweight','normal');
