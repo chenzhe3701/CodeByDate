@@ -1,4 +1,4 @@
-
+%% This sample only has 8 stops: iE=2 was at -0.75%. iE=1 was at low strain just to confirm experiment OK, no twinning observed yet.
 %% setup
 clear; clc; close all;
 addChenFunction;
