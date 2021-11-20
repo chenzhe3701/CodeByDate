@@ -864,7 +864,7 @@ for iE = 0:13
     clim = caxis;
 %     caxis([0,maxID]);
     set(gca,'fontsize',18);
-    title(['iE=',num2str(iE),', mod(ID spatially aligned to iE=0,10) #']);
+    title(['iE=',num2str(iE),', mod(ID spatially aligned to iE=0,10) #'],'fontweight','normal');
     print(fullfile(save_dir, ['matched_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
     close;
     
@@ -1040,13 +1040,13 @@ for iE = 1:13
 
     myplot(x,y, ID_variant_grain_wise, boundary_p); caxis([0 6]);
     set(gca,'fontsize',18);
-    title(['iE=',num2str(iE)]);
+    title(['iE=',num2str(iE)],'fontweight','normal');
     print(fullfile(save_dir,['variant_grain_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;
     
     myplot(x,y, ID_variant_point_wise, boundary_p); caxis([0 6]);
     set(gca,'fontsize',18);
-    title(['iE=',num2str(iE)]);
+    title(['iE=',num2str(iE)],'fontweight','normal');
     print(fullfile(save_dir,['variant_pt_wise_iE=',num2str(iE),'.tif']),'-dtiff');
     close;      
 
