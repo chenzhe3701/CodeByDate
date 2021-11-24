@@ -4,8 +4,8 @@ output_dir = 'E:\zhec umich Drive\0_temp_output\individual scale PF';
 clims = [];
 
 % comment to choose clims
-output_dir = 'E:\zhec umich Drive\0_temp_output\same scale PF';
-clims = {[0,7.2], [0,4.2]};
+% output_dir = 'E:\zhec umich Drive\0_temp_output\same scale PF';
+% clims = {[0,7.2], [0,4.2]};
 
 mkdir(output_dir);
 
@@ -82,6 +82,26 @@ winopen(output_dir);
 file_name = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\UM129_Mg_C3 iE=0.osc';
 pole_figure_by_mtex(file_name, 'clims',clims);
 print(fullfile(output_dir,'UM129_Mg_C3 pole figure.tiff'),'-dtiff');
+winopen(output_dir);
+
+
+%% big aoi
+file_name_Mg4Al_C2_big = {'E:\zhec umich Drive\2020-11-12 Mg4Al_C2 EBSD big AOI\Mg4Al_C2 big aoi left.osc', ...
+	'E:\zhec umich Drive\2020-11-12 Mg4Al_C2 EBSD big AOI\Mg4Al_C2 big aoi mid.osc', ...
+    'E:\zhec umich Drive\2020-11-12 Mg4Al_C2 EBSD big AOI\Mg4Al_C2 big aoi right.osc'};
+pole_figure_by_mtex_multi_file(file_name_Mg4Al_C2_big, 'setting_str','setting 1', 'clims',clims);
+print(fullfile(output_dir, 'Mg4Al_C2 big aois avg PF.tiff'), '-dtiff');
+
+file_name_UM134_Mg_C1_big = {'E:\zhec umich Drive\2020-12-01 UM134_Mg_C1 big AOI\UM134_Mg_C1 big aoi left.osc', ...
+    'E:\zhec umich Drive\2020-12-01 UM134_Mg_C1 big AOI\UM134_Mg_C1 big aoi mid.osc', ...
+    'E:\zhec umich Drive\2020-12-01 UM134_Mg_C1 big AOI\UM134_Mg_C1 big aoi right.osc'};
+pole_figure_by_mtex_multi_file(file_name_UM134_Mg_C1_big, 'setting_str','setting 1', 'clims',clims);
+print(fullfile(output_dir, 'UM134_Mg_C1 big aois avg PF.tiff'), '-dtiff');
+
+file_name = 'E:\zhec umich Drive\2021-10-26 Mg4Al_A1 coarse grain big aoi EBSD\Mg4Al_A1 coarse grain big aoi.osc';
+pole_figure_by_mtex(file_name, 'clims',clims);
+print(fullfile(output_dir,'Mg4Al_A1 big aoi PF.tiff'),'-dtiff');
+
 winopen(output_dir);
 
 %%

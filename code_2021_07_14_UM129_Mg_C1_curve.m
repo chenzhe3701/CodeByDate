@@ -3,7 +3,7 @@
 close all;
 clc;
 sample_name = 'UM129_Mg_C1';
-working_dir = 'E:\zhec umich Drive\2021-06-29 UM129 Mg_C1 insitu curve';
+working_dir = 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu curve';
 cd(working_dir);
 
 fileName = '2021-06-29 UM129 Mg_C1 comp_ten_data.lvm';
