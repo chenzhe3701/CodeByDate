@@ -2,7 +2,7 @@
 %% setup
 clear; clc; close all;
 addChenFunction;
-working_dir = 'E:\zhec umich Drive\2021-01-29 UM134 Mg_C3 insitu EBSD';
+working_dir = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD';
 save_dir = [working_dir, '\analysis'];
 mkdir(save_dir);
 % cd(working_dir);
