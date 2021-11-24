@@ -65,7 +65,7 @@ for iE = 0:iE_max
 end
 
 % (1.2) parent grain file. [[[For iE=0, use grain_file as parent_grain_file]]]  
-for iE = 1:iE_max    
+for iE = 0:iE_max    
     [EBSD_data_1, EBSD_header_1] = grain_file_read(fullfile(working_dir,[sample_name,' parent_grain_file_type_1 iE=',num2str(iE),'.txt']));
     [EBSD_data_2, EBSD_header_2] = grain_file_read(fullfile(working_dir,[sample_name,' parent_grain_file_type_2 iE=',num2str(iE),'.txt']));
     % find column
@@ -115,7 +115,7 @@ for iE = 1:iE_max
         'gID','gPhi1','gPhi','gPhi2','gCenterX','gCenterY','gNNeighbors','gDiameter','gArea','gEdge','gNeighbors');
 end
 % For iE=0, use grain_file as parent_grain_file
-copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_0.mat']), fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']), 'f');
+% copyfile(fullfile(save_dir, [sample_name,'_grain_file_iE_0.mat']), fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']), 'f');
 
 % save a copy after step 1
 save_dir_1 = [save_dir,'\step-1'];
@@ -184,7 +184,7 @@ euler_aligned_to_sample = d.euler_aligned_to_sample;
 myplot(x, y, ID_0, grow_boundary(boundary_0)); 
 title('ID, iE=0','fontweight','normal');
 set(gca,'fontsize',18);
-label_map_with_ID(x,y,ID_0,gcf, [12, 13, 143,136],'r',24,10);   % illustrate selected control grains  
+label_map_with_ID(x,y,ID_0,gcf, [12, 13, 139, 133],'r',24,10);   % illustrate selected control grains  
 print(fullfile(save_dir, ['a_ID_map_iE=0.tif']),'-r300','-dtiff');
 
 myplot(x, y, ID, grow_boundary(boundary)); 
@@ -197,60 +197,60 @@ print(fullfile(save_dir, ['a_ID_map_iE=',num2str(iE),'.tif']),'-r300','-dtiff');
 % (step-1) Select no less than 3 grain pairs for control points, and record
 grain_pair{1} = [12, 12;
     13, 13;
-    143, 143;
-    136, 136];
+    139, 139;
+    133, 133];
 grain_pair{2} = [12, 13;
     13, 14;
-    143, 139;
-    136, 134];
+    139, 139;
+    133, 134];
 grain_pair{3} = [12, 12;
     13, 13;
-    143, 143;
-    136, 138];
+    139, 143;
+    133, 138];
 grain_pair{4} = [12, 12;
     13, 15;
-    143, 146;
-    136, 141];
+    139, 146;
+    133, 141];
 grain_pair{5} = [12, 12;
     13, 15;
-    143, 145;
-    136, 139];
+    139, 145;
+    133, 139];
 grain_pair{6} = [12, 12;
     13, 14;
-    143, 145;
-    136, 140];
+    139, 145;
+    133, 140];
 grain_pair{7} = [12, 12;
     13, 13;
-    143, 137;
-    136, 132];
+    139, 137;
+    133, 132];
 grain_pair{8} = [12, 12;
     13, 13;
-    143, 139;
-    136, 134];
+    139, 139;
+    133, 134];
 grain_pair{9} = [12, 12;
     13, 13;
-    143, 138;
-    136, 133];
+    139, 138;
+    133, 133];
 grain_pair{10} = [12, 12;
     13, 13;
-    143, 135;
-    136, 130];
+    139, 135;
+    133, 130];
 grain_pair{11} = [12, 12;
     13, 15;
-    143, 142;
-    136, 136];
+    139, 142;
+    133, 136];
 grain_pair{12} = [12, 12;
     13, 13;
-    143, 136;
-    136, 131];
+    139, 136;
+    133, 131];
 grain_pair{13} = [12, 13;
     13, 14;
-    143, 163;
-    136, 157];
+    139, 163;
+    133, 157];
 grain_pair{14} = [12, 12;
     13, 13;
-    143, 136;
-    136, 131];
+    139, 136;
+    133, 131];
 
 
 % (step-2) Rough align using the selected control grains. The result is already decent 
@@ -337,8 +337,8 @@ print(fullfile(save_dir, ['a_tform_matched_ID_map_iE=',num2str(iE),'.tif']),'-r3
 %% Record (1) the ID_list (on map_iE) to correct for each iE, and (2) the tolerance for each grain
 % ID_list{iB=iE+1}. To treat 0-based indexing as 1 based indexing  
 % ID_list{iB=iE+1} is the IDs need to be treated for iE = iB-1
-ID_list{1} = [];
-tolerance_cell{1} = [ ];
+ID_list{1} = [116,128];
+tolerance_cell{1} = [5,5];
 ID_list{2} = [57,103,117,129];
 tolerance_cell{2} = [5,5,5,5];
 ID_list{3} = [56,71,86,104,122,129,133];
@@ -884,7 +884,9 @@ end
 %% part-5: find out variants
 po_tolerance_angle = 10; % if child grain has misorientation < po_tolerance_angle with undeformed parent grain, it is considered as having parent orientation
 twin_tolerance_angle = 10;  % if child grain has misorientation < twin_tolerance_angle to a potential twin variant, it is identified as that twin variant  
-for iE = 1:iE_max
+for iE = 0:iE_max
+    iB = iE + 1;
+    
     d = load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
     gID_0 = d.gID;
     gPhi1_0 = d.gPhi1;
@@ -1025,8 +1027,8 @@ for iE = 1:iE_max
             end
         end
     end
-    variant_grain_wise{iE} = ID_variant_grain_wise;
-    variant_point_wise{iE} = ID_variant_point_wise;
+    variant_grain_wise{iB} = ID_variant_grain_wise;
+    variant_point_wise{iB} = ID_variant_point_wise;
     
     % After processing this iE, Update the modified CHILD grain data and save
     save_dir_5 = [save_dir,'\step-5'];
@@ -1057,7 +1059,7 @@ end
 save(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_wise');
 
 % copy the updated file back to the main folder
-for iE = 1:iE_max
+for iE = 0:iE_max
     copyfile(fullfile(save_dir_5, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), ...
         fullfile(save_dir, [sample_name,'_grain_file_iE_',num2str(iE),'.mat']), 'f');
 end
@@ -1068,11 +1070,13 @@ load(fullfile(save_dir,'variant_maps.mat'),'variant_grain_wise','variant_point_w
 nr = 3;
 nc = 3;
 twinPct = zeros(nr*nc,iE_max+1);
-for iE = 1:iE_max
+for iE = 0:iE_max
+    iB = iE + 1;
+    
     load(fullfile(save_dir, [sample_name,'_parent_grain_file_iE_',num2str(iE),'.mat']), 'ID');
 
-    variant_map = variant_point_wise{iE};
-    if iE==1
+    variant_map = variant_point_wise{iB};
+    if iB==1
         [nR,nC] = size(variant_map);
     end
     for ir=1:nr
@@ -1112,8 +1116,8 @@ disp(str);
 load(fullfile(save_dir, 'twin_pct.mat'), 'twinPct', 'tAvg', 'tStd');
 % strain for iE=0:iE_max
 % EBSD strain from fine alignment
-strain_ebsd = [0.0000, -0.0107, -0.0215, -0.0295, ...
-    -0.0292, -0.0239, -0.0120, -0.0025, ...
+strain_ebsd = [0.0000, -0.0107, -0.0215, -0.0294, ...
+    -0.0292, -0.0238, -0.0120, -0.0025, ...
     -0.0099, -0.0190, -0.0307, ...
     -0.0222, -0.0123, -0.0035];
 
@@ -1126,7 +1130,7 @@ colors = parula(5);
 
 % [1] using strain gage strain
 figure; hold on;
-inds = {1:3, 3:7, 7:11, 11:14};
+inds = {1:4, 4:8, 8:11, 11:14};
 
 errorbar(strain_sg(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
 errorbar(strain_sg(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
@@ -1141,7 +1145,7 @@ print(fullfile(save_dir,'twin_pct_vs_sg.tiff'),'-dtiff');
 
 % [2] using (fine transformed) ebsd estimated strain
 figure; hold on;
-inds = {1:3, 3:7, 7:11, 11:14};
+inds = {1:4, 4:8, 8:11, 11:14};
 
 errorbar(strain_ebsd(inds{1}), 100*tAvg(inds{1}), 100*tStd(inds{1}), '.-', 'color',colors(1,:), 'linewidth',1.5,'markersize',24);
 errorbar(strain_ebsd(inds{2}), 100*tAvg(inds{2}), 100*tStd(inds{2}), '.-', 'color',colors(2,:), 'linewidth',1.5,'markersize',24);
