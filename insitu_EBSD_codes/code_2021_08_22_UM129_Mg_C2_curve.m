@@ -197,7 +197,7 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
     'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 
-save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
+save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop');
 
 %% [] stress vs strain, each load step with circle indicating position
 clc;
@@ -213,7 +213,7 @@ for iE = 0:13
     plot(strain(ind_stop(iE+1)), stress(ind_stop(iE+1)), 'ro', 'markersize', 12, 'linewidth',3);
     xlabel('Strain, from strain gage');
     ylabel('Stress (MPa)');
-    set(gca, 'xlim',[-0.03, 0.005], 'ylim',[-65,70], 'fontsize',18);
+    set(gca, 'xlim',[-0.03, 0.005], 'ylim',[-65,65], 'fontsize',18);
     print(fullfile(working_dir,['stress vs strain iE_',num2str(iE),'.tiff']),'-dtiff');
     close;
 end
