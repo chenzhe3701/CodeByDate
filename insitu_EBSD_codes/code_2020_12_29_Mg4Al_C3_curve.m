@@ -181,7 +181,7 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
     'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 
-save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop');
+save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop','tbl');
 
 %% Then, the strain was estimated from EBSD map, and corrected.
 
@@ -208,9 +208,7 @@ ylabel('EBSD estimated strain');
 %% [] stress vs strain, each load step with circle indicating position
 clc;
 for iE = 0:13
-    disp('a');
     figure; hold on;
-    disp('b')
     colors = parula(15);
     for ii = 1:13
         plot(strain(ind_stop(ii):ind_stop(ii+1)), stress(ind_stop(ii):ind_stop(ii+1)), 'color',colors(ii,:), 'linewidth',3);

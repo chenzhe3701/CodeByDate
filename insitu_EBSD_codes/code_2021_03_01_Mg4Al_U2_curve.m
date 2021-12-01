@@ -220,10 +220,10 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
     'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 print(fullfile(working_dir,'stress strain table.tiff'),'-dtiff');
 
-save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain');
+save(fullfile(working_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop','tbl');
 
 
-%% get some data from Mg4Al_C1 test, as this sample's data was partially lost
+%% get some data from Mg4Al_C3 test, as this sample's data was partially lost
 output_dir = fullfile(working_dir, 'borrow some data');
 mkdir(output_dir);
 
@@ -236,6 +236,10 @@ stress_a = d.stress(1:737);
 displacement_b = d.displacement(738:935);
 strain_b = d.strain(738:935);
 stress_b = d.stress(738:935);
+
+% correct using experimentally recorded data
+stress_a = stress_a/stress_a(end)*(-81.6);
+stress_b = stress_b/stress_b(end)*(-98.1);
 
 displacement = [displacement_a; displacement_b; displacement(3:end)];
 strain = [strain_a; strain_b; strain(3:end)];
@@ -277,14 +281,12 @@ uitable('Data',tbl{:,:},'ColumnName',tbl.Properties.VariableNames,...
     'RowName',tbl.Properties.RowNames,'Units', 'Normalized', 'Position',[0, 0, 1, 1]);
 print(fullfile(output_dir,'stress strain table.tiff'),'-dtiff');
 
-save(fullfile(output_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop');
+save(fullfile(output_dir, [sample_name,'_processed_loading_data.mat']), 'displacement','stress','strain','ind_stop','tbl');
 
 %% [] stress vs strain, each load step with circle indicating position
 clc;
 for iE = 0:13
-    disp('a');
     figure; hold on;
-    disp('b')
     colors = parula(15);
     for ii = 1:13
         plot(strain(ind_stop(ii):ind_stop(ii+1)), stress(ind_stop(ii):ind_stop(ii+1)), 'color',colors(ii,:), 'linewidth',3);
