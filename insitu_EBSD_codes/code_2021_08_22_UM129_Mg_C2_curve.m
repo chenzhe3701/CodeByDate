@@ -12,7 +12,7 @@ headerlinesIn = 1;
 A = importdata(fullfile(working_dir,fileName), delimiterIn, headerlinesIn);
 display(A);
 
-width = 3.42;       % UM129_Mg_C1, tested on 2021-06-29
+width = 3.42;       % UM129_Mg_C2, tested on 2021-08-20
 thickness = 2.85;
 
 %% make variable
