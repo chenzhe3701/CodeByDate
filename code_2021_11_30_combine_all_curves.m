@@ -42,7 +42,7 @@ d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
 plot(strain, stress, '-.', 'color', 'k');
-legend_str = [legend_str, 'Mg4Al A1 fine grain'];
+legend_str = [legend_str, 'Mg4Al A1 medium grain'];
 %%
 p = 'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu curve';
 f = 'Mg4Al_A2_processed_loading_data.mat';
@@ -50,7 +50,7 @@ d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
 plot(strain, stress, ':', 'color', 'k');
-legend_str = [legend_str, 'Mg4Al A2 fine grain'];
+legend_str = [legend_str, 'Mg4Al A2 medium grain'];
 
 %% Mg4Al, coarse grain
 p = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
@@ -288,9 +288,10 @@ set(gca,'fontsize',16);
 title('Mg4Al B2', 'fontweight', 'normal');
 
 % fit 
-ind = find(stress<-55,1,'first');
-y = stress(1:ind);
-x = strain(1:ind);
+ind1 = find(stress<-20,1,'first');
+ind2 = find(stress<-50,1,'first');
+y = stress(ind1:ind2);
+x = strain(ind1:ind2);
 mdl = fitlm(x,y);
 b = mdl.Coefficients.Estimate(1);
 k = mdl.Coefficients.Estimate(2);

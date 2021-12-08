@@ -9,18 +9,22 @@ dir_Mg4Al_C1 = 'E:\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu EBSD\analysis';
 dir_Mg4Al_C3 = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis';
 dir_Mg4Al_U2 = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis';
 
-%% Mg4Al coarse grain
+%% Mg4Al medium grain
 dir_Mg4Al_A1 = 'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis';
 dir_Mg4Al_A2 = 'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis';
 
+%% Mg4Al coarse grain
+dir_Mg4Al_B1 = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis';
+dir_Mg4Al_B2 = 'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis';
+
 %% UM134 unalloyed Mg samples
-dir_UM134_Mg_C1 = 'E:\zhec umich Drive\2020-12-05 UM134 Mg_C1 insitu EBSD\analysis';
-dir_UM134_Mg_C2 = 'E:\zhec umich Drive\2021-01-15 UM134 Mg_C2 insitu EBSD\analysis';
-dir_UM134_Mg_C3 = 'E:\zhec umich Drive\2021-01-29 UM134 Mg_C3 insitu EBSD\analysis';
+dir_UM134_Mg_C1 = 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis';
+dir_UM134_Mg_C2 = 'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis';
+dir_UM134_Mg_C3 = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis';
 
 % UM129 unalloyed Mg (coarse grain) samples
-dir_UM129_Mg_C1 = 'E:\zhec umich Drive\2021-06-29 UM129 Mg_C1 insitu EBSD\analysis';
-dir_UM129_Mg_C2 = 'E:\zhec umich Drive\2021-08-20 UM129 Mg_C2 insitu EBSD\analysis';
+dir_UM129_Mg_C1 = 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis';
+dir_UM129_Mg_C2 = 'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis';
 dir_UM129_Mg_C3 = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis';
 
 ylim = [-2 65];
@@ -61,9 +65,9 @@ xlabel('Strain from ebsd (or DIC) estimate');
 ylabel('Twin Area Percent (%)');
 legend('Mg4Al S1','Mg4Al C1','Mg4Al C3','Mg4Al U2');
 
-print(fullfile(output_dir, 'Mg4Al all twin pct.tiff'),'-dtiff');
+print(fullfile(output_dir, 'Mg4Al fine all twin pct.tiff'),'-dtiff');
 
-%% For Mg4Al coarse grain alloys
+%% For Mg4Al medium size grain
 close all;
 figure; 
 hold on;
@@ -84,9 +88,35 @@ set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
 xlabel('Strain from ebsd estimate');
 ylabel('Twin Area Percent (%)');
-legend('Mg4Al A1','Mg4Al A2');
+legend('Mg4Al A1 (medium grain)','Mg4Al A2 (medium grain)');
+
+print(fullfile(output_dir, 'Mg4Al medium all twin pct.tiff'),'-dtiff');
+
+%% For Mg4Al coarse grain alloys
+close all;
+figure; 
+hold on;
+
+load(fullfile(dir_Mg4Al_B1, 'twin_pct'), 'tbl');
+strain_ebsd = tbl.strain_ebsd;
+tAvg = tbl.("twinPct %");
+tStd = tbl.("twinStd %");
+errorbar(strain_ebsd, tAvg, tStd, '.-', 'linewidth',1.5,'markersize',24);
+
+load(fullfile(dir_Mg4Al_B2, 'twin_pct'), 'tbl');
+strain_ebsd = tbl.strain_ebsd;
+tAvg = tbl.("twinPct %");
+tStd = tbl.("twinStd %");
+errorbar(strain_ebsd, tAvg, tStd, '.-', 'linewidth',1.5,'markersize',24);
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
+xlabel('Strain from ebsd estimate');
+ylabel('Twin Area Percent (%)');
+legend('Mg4Al B1 (coarse grain)','Mg4Al B2 (coarse grain)');
 
 print(fullfile(output_dir, 'Mg4Al coarse all twin pct.tiff'),'-dtiff');
+
 
 %% For UM134 alloys
 figure; 
