@@ -16,6 +16,7 @@ winopen('E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD');
 open('code_2021_11_09_Mg4Al_A2_analyze_EBSD.m');    % done
 winopen('E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD');
 
+%% There is no individual scripts for Mg4Al_B1 and Mg4Al_B2
 
 %%
 open('code_2021_02_25_UM134_Mg_C3_analyze_EBSD.m'); % done 
