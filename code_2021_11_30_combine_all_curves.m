@@ -1,6 +1,8 @@
 %% Suggest to run step by step
 output_dir = 'E:\zhec umich Drive\0_temp_output\all curve yield stress';
 mkdir(output_dir);
+clear colors;
+colors = [0 0 0 ; mix_color(4)];
 
 %% [Task 1] plot all the curves on one plot and compare
 
@@ -24,7 +26,7 @@ f = 'Mg4Al_U2_processed_loading_data';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '-', 'color', 'k');
+plot(strain, stress, '-', 'color', colors(1,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al U2 fine grain'];
 %%
 p = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
@@ -32,7 +34,7 @@ f = 'Mg4Al_C3_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '--', 'color', 'k');
+plot(strain, stress, '--', 'color', colors(1,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al C3 fine grain'];
 
 %% Mg4Al, a little bit larger grain
@@ -41,7 +43,7 @@ f = 'Mg4Al_A1_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '-.', 'color', 'k');
+plot(strain, stress, '-.', 'color', colors(2,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al A1 medium grain'];
 %%
 p = 'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu curve';
@@ -49,7 +51,7 @@ f = 'Mg4Al_A2_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, ':', 'color', 'k');
+plot(strain, stress, ':', 'color', colors(2,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al A2 medium grain'];
 
 %% Mg4Al, coarse grain
@@ -58,7 +60,7 @@ f = 'Mg4Al_B1_processed_loading_data';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '-', 'color', 'r');
+plot(strain, stress, '-', 'color', colors(3,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al B1 coarse grain'];
 %%
 p = 'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu curve';
@@ -66,7 +68,7 @@ f = 'Mg4Al_B2_processed_loading_data';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '--', 'color', 'r');
+plot(strain, stress, '--', 'color', colors(3,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg4Al B2 coarse grain'];
 
 %% Pure Mg, fine grain
@@ -78,7 +80,7 @@ f = 'UM134_Mg_C2_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '-', 'color', 'b');
+plot(strain, stress, '-', 'color', colors(4,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg UM134 C2 fine grain'];
 %%
 p = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
@@ -86,7 +88,7 @@ f = 'UM134_Mg_C3_processed_loading_data';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '--', 'color', 'b');
+plot(strain, stress, '--', 'color', colors(4,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg UM134 C3 fine grain'];
 
 
@@ -96,7 +98,7 @@ f = 'UM129_Mg_C1_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, '-', 'color', 'm');
+plot(strain, stress, '-', 'color', colors(5,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg UM129 C1 coarse grain'];
 %%
 p = 'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu curve';
@@ -107,7 +109,7 @@ strain = d.strain;
 ind_stop = d.ind_stop;
 stress = stress(1:ind_stop(14));
 strain = strain(1:ind_stop(14));
-plot(strain, stress, '--', 'color', 'm');
+plot(strain, stress, '--', 'color', colors(5,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg UM129 C2 coarse grain'];
 %%
 p = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
@@ -115,14 +117,15 @@ f = 'UM129_Mg_C3_processed_loading_data.mat';
 d = matfile(fullfile(p,f));
 stress = d.stress;
 strain = d.strain;
-plot(strain, stress, ':', 'color', 'm');
+plot(strain, stress, ':', 'color', colors(5,:), 'linewidth',2);
 legend_str = [legend_str, 'Mg UM129 C3 coarse grain'];
 
 
 %%
 set(gca,'fontsize',16);
-xlabel('Strain'); ylabel('Stress');
+xlabel('Strain'); ylabel('Stress (MPa)');
 legend(legend_str, 'location','eastoutside');
+%%
 print(fullfile(output_dir, 'Mg all curves.tif'),'-dtiff');
 
 
