@@ -3,11 +3,11 @@
 clear; close all; clc;
 addChenFunction;
 data_dir = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab';
-variant_data = 'D:\p\m\DIC_Analysis\temp_results\20200325_0506_new_variant_map_Mg4Al_S1.mat';
+variant_data = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab\previous result recovered\20200325_0506_new_variant_map_Mg4Al_S1.mat';
 dic_dir = 'E:\Mg4Al_S1_insitu\SEM Data\stitched_DIC';
 sample_name = 'Mg4Al_S1';
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis';
+output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis for paper';
 mkdir(output_dir);
 
 strains = [0, -0.0012, -0.0117, -0.0186, -0.0172, -0.0124, 0.0006]; % iE=0:6
@@ -433,36 +433,43 @@ ylabel('Counts');
 set(gca, 'xTick',-0.5:0.1:0.5, 'fontsize',16);
 print(fullfile(output_dir, 'twin variant SF.tiff'), '-dtiff');
 
-%% Fig 2a. Counts of variants twinned & not-twinned vs. variant_SF
+%% [paper Fig 9]. Counts of variants twinned & not-twinned vs. variant_SF
 edges = -0.5:0.05:0.5;
+xstr = [];
+for ii=1:length(edges)-1
+    xstr{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
+end
 for iE=1:6
     iB = iE + 1;
     ind = (T2.iE==iE)&(T2.vActiveTF == 1);
     ind2 = (T2.iE==iE)&(T2.vActiveTF == 0);
     [N_t,~] = histcounts(T2.variant_SF(ind), edges);
     [N_nt,~] = histcounts(T2.variant_SF(ind2), edges);
+    d_int = (edges(3)-edges(2))/2;
+    xpos = [edges(2)-d_int, edges(2:end-1)+d_int];
     
     pct(iE,:) = N_t./(N_t+N_nt);
     
     figure; hold on; disableDefaultInteractivity(gca);
-    hbar = bar(edges(1:end-1)+0.025, [N_nt(:), N_t(:)], 1, 'stacked');
-    set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 300]);
+    hbar = bar(xpos, [N_nt(:), N_t(:)], 1, 'stacked');
+    % set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 300]);
+    set(gca, 'fontsize',12, 'ylim',[0 300], 'XTick',edges(1:end-1)+d_int, 'xTickLabels',xstr, 'xTickLabelRotation',45, 'xlim',[0 0.5]);
     xlabel('Twin Variant Schmid Factor');
     ylabel('Counts');
     
     yyaxis right;
-    set(gca, 'ycolor', 'k','fontsize',16);
+    set(gca, 'ycolor', 'k','fontsize',16, 'ylim',[0 80]);
     ylabel('Percent (%)');
     plot(-0.475:0.05:0.475, N_t./(N_t+N_nt) * 100,'-ko','linewidth',1.5);
 
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-    %     title(' ');
+    title(' ');
     legend({'Variants not twinned', 'Variants twinned','Percent of variants twinned'},'Location','northwest');
     
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
            
-    print(fullfile(output_dir,['twin nontwin variant vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 9 twin nontwin variant vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 
     disp('row1: # twinned, row2: # not twinned, row3: pct');
     clear tt;
@@ -472,7 +479,7 @@ for iE=1:6
     close;
 end
 
-%% [plot] pct variants twinned for all iEs
+%% [plot combine of Fig 9] pct variants twinned for all iEs
 close all;
 colors = inferno(6);
 markers = {'-o','-d','-s','-.o','-.d','-.s'};
@@ -493,7 +500,7 @@ legend({'Load step 1','Load step 2','Load step 3','Load step 4','Load step 5','L
 
 print(fullfile(output_dir,'pct variants twinned vs SF all iEs.tiff'), '-dtiff');
 
-%% Fig 2b. Counts grains twinned & not twinned vs. max_basal_SF
+%% [paper Fig 10]. Counts grains twinned & not twinned vs. max_basal_SF
 edges = 0:0.05:0.5;
 for iE=1:6
     iB = iE + 1;
@@ -509,7 +516,7 @@ for iE=1:6
     end
     figure;disableDefaultInteractivity(gca);
     hbar = bar(xpos, [N_nt(:),N_t(:)], 1, 'stacked');
-    set(gca,'ylim',[0 100]);
+    set(gca,'ylim',[0 100], 'xlim', [0 0.5]);
     xlabel('Maximum Basal Schmid Factor');
     ylabel('Counts');
     
@@ -520,11 +527,11 @@ for iE=1:6
     legend('Grains not twinned','Grains twinned','Percent of grains twinned','location','northwest');
     set(gca,'fontsize',12,'ylim',[0 149],'fontsize',16);
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-    % title('');
+    title('');
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
         
-    print(fullfile(output_dir,['twin nontwin grain vs basal SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 10 twin nontwin grain vs basal SF iE=',num2str(iE),'.tiff']),'-dtiff');
     
     disp(['iE = ',num2str(iE)]);
     tt = [N_t; N_nt; N_t./(N_t+N_nt)];
@@ -532,7 +539,7 @@ for iE=1:6
 
 end
 close all;
-%% Fig 2c/d
+%% [Fig 11]
 for iE = 1:6
     iB = iE + 1;
     figure;disableDefaultInteractivity(gca); hold on;
@@ -541,7 +548,7 @@ for iE = 1:6
     xlabel('Max Twin Schmid Factor');
     ylabel('Max Basal Schmid Factor');
     set(gca,'fontsize',16,'xTick',-0.5:0.1:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
-    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     legend('Not twinned','location','southwest');
     
     % title('')
@@ -552,7 +559,7 @@ for iE = 1:6
     xlabel('Max Twin Schmid Factor');
     ylabel('Max Basal Schmid Factor');
     set(gca,'fontsize',16,'xTick',-0.5:0.25:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
-    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     legend('Twinned','location','southwest');
     
     % title('');
@@ -564,18 +571,22 @@ for iE = 1:6
     plot(T.max_twin_SF(ind), T.max_basal_SF(ind),'.','markersize',12,'color','b'); % '#0072BD'
     xlabel('Max Twin Schmid Factor');
     ylabel('Max Basal Schmid Factor');
-    set(gca,'fontsize',16,'xTick',-0.5:0.25:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
-    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    set(gca,'fontsize',16,'xTick',-0.5:0.1:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
+    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title(' ');
     legend('Twinned', 'Not twinned', 'location','southwest');
+    
+    set(gca,'xlim', [ 0, 0.5]); % limit x positive
+    axis square;
     
     % title('');
     
-    print(fullfile(output_dir,['twin nontwin grain vs max SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 11 twin nontwin grain vs max SF iE=',num2str(iE),'.tiff']),'-dtiff');
     
     close all;
 end
 
-%% Fig 3. variant_area_fraction_in_grain vs. variant_SF
+%% [Fig 12]. variant_area_fraction_in_grain vs. variant_SF
 for iE = 1:6
     iB = iE + 1;
     ind = (T2.iE==iE)&(T2.vActiveTF==1);
@@ -591,14 +602,17 @@ for iE = 1:6
         labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
     end
     figure;disableDefaultInteractivity(gca);
-    boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','on');   % prevent having empty group
+    % boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','on');   % prevent having empty group
+    boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)']);   % prevent having empty group
     
     xlabel('Twin Variant Schmid Factor');
     ylabel('Twin Variant Area Fraction in Grain');
     set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',15);
-    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-    % title([' ']);
-    print(fullfile(output_dir,['variant fraction vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    set(gca,'ylim',[-0.02 0.62]);
+    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title([' ']);
+    axis square;
+    print(fullfile(output_dir,['fig 12 variant fraction vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 end
 close all;
 
@@ -807,13 +821,14 @@ for iE_ref = 3
     end
     
 end
-%% [A1] Counts of significantly detwinned (and not) vs. twinSF 
-for iE = 4:6
+%% [A1, Fig 15] Counts of significantly detwinned (and not) vs. twinSF 
+for iE = 6 % 4:6
     iB = iE + 1;
     edges = -0.5:0.05:0.5;
     
-    ind1 = (T4.iE==iE) & (T4.A_ratio < 0.9);    % 1: not significantly detwinned
-    ind2 = (T4.iE==iE) & (T4.A_ratio >= 0.9);
+    significantly_detwin_criterion = 0.9;
+    ind1 = (T4.iE==iE) & (T4.A_ratio < significantly_detwin_criterion);    % 1: not significantly detwinned
+    ind2 = (T4.iE==iE) & (T4.A_ratio >= significantly_detwin_criterion);
     
     N1 = histcounts(T4.variant_SF(ind1), edges);
     N2 = histcounts(T4.variant_SF(ind2), edges);
@@ -824,7 +839,7 @@ for iE = 4:6
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
     
-    set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 150]);
+    set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 150], 'xlim',[0 0.5]);
     xlabel('Twin Variant Schmid Factor');
     ylabel('Counts');
     
@@ -832,10 +847,12 @@ for iE = 4:6
     set(gca, 'ycolor', 'k','fontsize',16);
     ylabel('Percent (%)');
     plot(-0.475:0.05:0.475, N2./(N1+N2) * 100,'-ko','linewidth',1.5);
+    set(gca,'ylim',[0 100]);
     
-    title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    % title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    title(' ');
     legend({'Variants not significantly detwinned', 'Variants significantly detwinned','Percent of significantly detwinned'},'Location','northwest');
-    print(fullfile(output_dir,['significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir,['Fig 15 significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
     
     
     % plot to check. label the grains with 'significantly detwinned variants'
@@ -861,17 +878,18 @@ for iE = 4:6
     set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
         'TickLabels', {'g1:fresh','g2:de-twin then re-twin','g3:evolving current','g4:evolving past or present','g5:completely detwin'})
     title(['grain summary, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    title(' ');
     set(gcf,'position',[80,172,1000,600]);
     
     ids = T4.ID(ind2);
     label_map_with_ID(X,Y,ID,gcf,ids,'b',12,4);
-    print(fullfile(output_dir,['significantly detwin variant grain iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir,['Fig 15 significantly detwin variant grain iE=',num2str(iE),'.tiff']), '-dtiff');
     
     close all;
 end
 
 
-%% plot strain map, twin variant map
+%% [Fig 3] plot strain map, twin variant map
 for iE = 0:6
     iB = iE + 1;
     myplot(X,Y,variant_cell{iB},boundaryTF);
@@ -883,10 +901,13 @@ for iE = 0:6
     d = matfile(fullfile(dic_dir, ['_',num2str(iE),'_v73.mat']));
     exx = d.exx;
     exx = exx(1:reduce_ratio:end,1:reduce_ratio:end);
-    myplot(X,Y,exx,boundaryTF);
-    set(gca,'xTickLabel',[],'yTickLabel',[]);
-    title(['exx map, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-    print(fullfile(output_dir, ['exx_map_iE=',num2str(iE),'.tiff']), '-dtiff');
+    [f,a,c] = myplot(X,Y,exx,boundaryTF);
+    caxis([-0.08 0.01]);
+    set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
+    % title(['exx map, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title(['\epsilon^G = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title(c,'\epsilon_{xx}')
+    print(fullfile(output_dir, ['Fig 3 exx_map_iE=',num2str(iE),'.tiff']), '-dtiff');
     close;
 end
 
@@ -895,4 +916,4 @@ end
 
 %%
 save(fullfile(output_dir,'temp_WS.mat'),'-v7.3');
-
+% load(fullfile(output_dir,'temp_WS.mat'),'-v7.3');
