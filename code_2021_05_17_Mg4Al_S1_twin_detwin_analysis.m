@@ -3,11 +3,11 @@
 clear; close all; clc;
 addChenFunction;
 data_dir = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab';
-variant_data = 'D:\p\m\DIC_Analysis\temp_results\20200325_0506_new_variant_map_Mg4Al_S1.mat';
+variant_data = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab\previous result recovered\20200325_0506_new_variant_map_Mg4Al_S1.mat';
 dic_dir = 'E:\Mg4Al_S1_insitu\SEM Data\stitched_DIC';
 sample_name = 'Mg4Al_S1';
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis';
+output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis for paper';
 mkdir(output_dir);
 
 strains = [0, -0.0012, -0.0117, -0.0186, -0.0172, -0.0124, 0.0006]; % iE=0:6
@@ -564,9 +564,12 @@ for iE = 1:6
     plot(T.max_twin_SF(ind), T.max_basal_SF(ind),'.','markersize',12,'color','b'); % '#0072BD'
     xlabel('Max Twin Schmid Factor');
     ylabel('Max Basal Schmid Factor');
-    set(gca,'fontsize',16,'xTick',-0.5:0.25:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
+    set(gca,'fontsize',16,'xTick',-0.5:0.1:0.5,'xlim',[-0.5,0.5],'ylim',[0 0.5]);
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
     legend('Twinned', 'Not twinned', 'location','southwest');
+    
+    set(gca,'xlim', [ 0, 0.5]); % limit x positive
+    axis square;
     
     % title('');
     
@@ -808,12 +811,13 @@ for iE_ref = 3
     
 end
 %% [A1] Counts of significantly detwinned (and not) vs. twinSF 
-for iE = 4:6
+for iE = 6 % 4:6
     iB = iE + 1;
     edges = -0.5:0.05:0.5;
     
-    ind1 = (T4.iE==iE) & (T4.A_ratio < 0.9);    % 1: not significantly detwinned
-    ind2 = (T4.iE==iE) & (T4.A_ratio >= 0.9);
+    significantly_detwin_criterion = 0.9;
+    ind1 = (T4.iE==iE) & (T4.A_ratio < significantly_detwin_criterion);    % 1: not significantly detwinned
+    ind2 = (T4.iE==iE) & (T4.A_ratio >= significantly_detwin_criterion);
     
     N1 = histcounts(T4.variant_SF(ind1), edges);
     N2 = histcounts(T4.variant_SF(ind2), edges);
@@ -824,7 +828,7 @@ for iE = 4:6
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
     
-    set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 150]);
+    set(gca,'fontsize',12, 'XTick',-0.5:0.1:0.5,'ylim',[0 150], 'xlim',[0 0.5]);
     xlabel('Twin Variant Schmid Factor');
     ylabel('Counts');
     
@@ -832,6 +836,7 @@ for iE = 4:6
     set(gca, 'ycolor', 'k','fontsize',16);
     ylabel('Percent (%)');
     plot(-0.475:0.05:0.475, N2./(N1+N2) * 100,'-ko','linewidth',1.5);
+    set(gca,'ylim',[0 100]);
     
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
     legend({'Variants not significantly detwinned', 'Variants significantly detwinned','Percent of significantly detwinned'},'Location','northwest');
@@ -883,9 +888,12 @@ for iE = 0:6
     d = matfile(fullfile(dic_dir, ['_',num2str(iE),'_v73.mat']));
     exx = d.exx;
     exx = exx(1:reduce_ratio:end,1:reduce_ratio:end);
-    myplot(X,Y,exx,boundaryTF);
-    set(gca,'xTickLabel',[],'yTickLabel',[]);
-    title(['exx map, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    [f,a,c] = myplot(X,Y,exx,boundaryTF);
+    caxis([-0.08 0.01]);
+    set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
+    % title(['exx map, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title(['\epsilon^G = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
+    title(c,'\epsilon_{xx}')
     print(fullfile(output_dir, ['exx_map_iE=',num2str(iE),'.tiff']), '-dtiff');
     close;
 end
