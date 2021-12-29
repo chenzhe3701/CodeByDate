@@ -460,6 +460,11 @@ ylabel('Counts');
 legend('Twinned','Not twinned','location','northwest');
 % print('C:\Users\ZheChen\Desktop\twinTF vs twinSF','-dtiff');
 
+%% double check, illustrate which grains do not have slip traces
+map_no_slip = ID;
+map_no_slip(ismember(ID, gID_list_slip)) = 0;
+myplot(map_no_slip,boundaryTFB);
+print(fullfile(output_dir, ['grains no basal slip trace iE=',num2str(iE),'.tiff']),'-dtiff');
 end
 
 
