@@ -30,7 +30,7 @@ end
 variant_file = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab\previous result recovered\20200325_0506_new_variant_map_Mg4Al_S1.mat';
 load(variant_file, 'struCell','variantMapCell');
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis for paper b';
+output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis for paper a';
 mkdir(output_dir);
 %% calculate effective strain
 for iE = 1:6
