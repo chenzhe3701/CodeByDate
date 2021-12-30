@@ -2,6 +2,7 @@
 %% set up
 clear; close all; clc;
 addChenFunction;
+
 data_dir = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab';
 variant_data = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab\previous result recovered\20200325_0506_new_variant_map_Mg4Al_S1.mat';
 dic_dir = 'E:\Mg4Al_S1_insitu\SEM Data\stitched_DIC';
@@ -89,8 +90,8 @@ for iE = 0:6
 end
 
 save(fullfile(output_dir, 'temp_ws_1.mat'));
-%% Categorize twin data, on pixel level, and on grain level
-% pixel level, at each iE, there are:
+%% Pixel Level Summary
+% at each iE, there are:
 % (p1) current twin (directly from twin map)
 % (p2) past-or-present twin (obtained by accummulating twin map up to this iE) 
 % based on these two basic maps, we can get
@@ -102,7 +103,7 @@ save(fullfile(output_dir, 'temp_ws_1.mat'));
 % 
 % So, we have these pixel level maps:
 % [1] p1 map, current twin map;
-% [2] p2 map, ever twinned map; (p1 is a subset of p2)
+% [2] p2 map, past-or-present twin map; (p1 is a subset of p2)
 % [3] p3 + p4 + p5 map, fre/recurring/de-twin map; 
 p0 = 0;
 p1 = 1;
@@ -142,9 +143,9 @@ for iE = 0:6
         
     colors = parula(16);
     cmap = [1 1 1;      % backgrond, value < 2
-        colors(14,:);   % yellowis, new twin, value = 3
-        colors(2,:);    % blueish, retwin, value=4
-        .5, .5, .5];    % gray, detwin, value=5
+        colors(14,:);   % yellowis, fresh twin pixel, value = 3
+        colors(2,:);    % blueish, recurring twin pixel, value=4
+        .5, .5, .5];    % gray, detwin pixel, value=5
     caxis([1.5, 5.5]);
     colormap(cmap);
     
@@ -157,12 +158,12 @@ for iE = 0:6
 end
 
 
-%% Generating grain level map
-% current twin grain:
+%% Grain Level Summary
+% type-1 grain: current twin
 g1 = 1; % (g1) fresh twin
 g2 = 2; % (g2) de-twin then re-twin
 g3 = 3; % (g3) evolving current twin
-% ever twin grain
+% type-2 grain: 'past-or-present'
 g4 = 4; % (g4) evolving past-or-present twin
 g5 = 5; % (g5) completely de-twin
 
@@ -196,7 +197,7 @@ for iE = 0:6
        % index of ID_c_current
        inds = ismember(ID_c, ID_c_current);
        
-       % If this grain is a twin grain (contains twin pixel)
+       % If this grain is a twin grain (type-1 grain, contains twin pixel)
        grain_twinned_TF = any(current_twinTF_cell{iB}(inds));
        if grain_twinned_TF
            % determine twin map labels: g1 = new twin grain, g2 = mixed
@@ -212,7 +213,7 @@ for iE = 0:6
                current_twin_grain_label(inds) = g3;
            end
            
-           % current twin grain will contribute to the 'ever twin grain map' 
+           % current twin grain will contribute to the 'type-2 grain map' 
            ids = unique(past_or_present_twin_grain_ID(inds));
            ids(ids==0) = [];
            if isempty(ids)
@@ -231,7 +232,7 @@ for iE = 0:6
     end
     current_twin_grain_label_cell{iB} = current_twin_grain_label;
     
-    % [step-2] loop check every 'ever twin grain', find the completely detwinned grain ===> maybe need to move this to [step-1] 
+    % [step-2] loop check every 'type-2 grain', find the completely detwinned grain ===> maybe need to move this to [step-1] 
     pp_twin_grain_list = nan_unique(past_or_present_twin_grain_ID(:));
     pp_twin_grain_list(isnan(pp_twin_grain_list)) = []; % remove nan
     pp_twin_grain_list(pp_twin_grain_list==0) = [];     % remove 0 (if any)  
@@ -240,7 +241,7 @@ for iE = 0:6
         ID_current = pp_twin_grain_list(ii);
         inds = ismember(past_or_present_twin_grain_ID, ID_current);        
            
-        % make ever_twin_grain_ID and ever_twin_grain_label
+        % make type_2_grain_ID and type_2_grain_label
         labels = unique(frd_twin_cell{iB}(inds));
         if intersect(labels, [p3,p4,p5]) == p5
             % only contains conpletely detwinned pixels (p5), this ever twin grain should be labeled by (g4)   
@@ -287,7 +288,7 @@ for iE = 0:6
     colormap(cmap);
     caxis([-0.5, 5.5]);
     set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
-        'TickLabels', {'g1:fresh','g2:de-twin then re-twin','g3:evolving current','g4:evolving past or present','g5:completely detwin'})
+        'TickLabels', {'g1:new twin type-1','g2:detwin then retwin type-1','g3:evolving type-1','g4:evolving type-2','g5:completely detwin type-2'})
     title(['grain summary, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
     set(gcf,'position',[80,172,1000,600]);
     set(gca,'xTickLabel',[],'yTickLabel',[]);
@@ -297,8 +298,8 @@ end
 
 save(fullfile(output_dir, 'temp_ws_2.mat'));
 
-%% speicial make for iE=6, with only 3 types of grain labels (as there is no retwinnig for this sample)
-for iE = 4:6
+%% [paper Fig. 14a] speicial make for iE=6, with only 3 types of grain labels (as there is no retwinnig for this sample)
+for iE = 6 %4:6
     iB = iE + 1;
     
     map = zeros(nR,nC);
@@ -314,11 +315,11 @@ for iE = 4:6
     colors = plasma(25);
     cmap = zeros(6,3);
     cmap(1,:) = [1,1,1];    % 0 = untwinned, background
-    cmap(2,:) = colors(24,:);    % g1 = completely new twin, yellowish
-    cmap(3,:) = colors(10,:);     % g2 = de-twin then re-twin, purple
-    cmap(4,:) = colors(16,:);     % g3 = evoling current twin, pink
-    cmap(5,:) = [0.7, 0.7, 0.7];     % g4 = evolving past-or-present twin, light gray
-    cmap(6,:) = [0.2, 0.2, 0.2];    % g5 = completely de-twin, dark gray
+    cmap(2,:) = colors(24,:);    % g1 = new twin type-1 (current), yellow
+    cmap(3,:) = colors(10,:);     % g2 = detwin then retwin type-1, purple
+    cmap(4,:) = colors(16,:);     % g3 = evoling type-1, pink
+    cmap(5,:) = [0.7, 0.7, 0.7];     % g4 = evolving type-2 (past-or-present), light gray
+    cmap(6,:) = [0.2, 0.2, 0.2];    % g5 = completely detwin type-2, dark gray
     
     colormap(cmap);
     caxis([-0.5, 5.5]);
@@ -327,7 +328,7 @@ for iE = 4:6
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     set(gcf,'position',[80,172,1000,600]);
     set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
-    print(fullfile(output_dir,['detwin summary map iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 14a detwin summary map iE=',num2str(iE),'.tiff']),'-dtiff');
     close;
 end
 
@@ -433,7 +434,7 @@ ylabel('Counts');
 set(gca, 'xTick',-0.5:0.1:0.5, 'fontsize',16);
 print(fullfile(output_dir, 'twin variant SF.tiff'), '-dtiff');
 
-%% [paper Fig 9]. Counts of variants twinned & not-twinned vs. variant_SF
+%% [paper Fig 8]. Counts of variants twinned & not-twinned vs. variant_SF
 edges = -0.5:0.05:0.5;
 xstr = [];
 for ii=1:length(edges)-1
@@ -469,7 +470,7 @@ for iE=1:6
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
            
-    print(fullfile(output_dir,['fig 9 twin nontwin variant vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 8 twin nontwin variant vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 
     disp('row1: # twinned, row2: # not twinned, row3: pct');
     clear tt;
@@ -479,7 +480,7 @@ for iE=1:6
     close;
 end
 
-%% [plot combine of Fig 9] pct variants twinned for all iEs
+%% [plot combine of Fig 8] pct variants twinned for all iEs
 close all;
 colors = inferno(6);
 markers = {'-o','-d','-s','-.o','-.d','-.s'};
@@ -500,7 +501,7 @@ legend({'Load step 1','Load step 2','Load step 3','Load step 4','Load step 5','L
 
 print(fullfile(output_dir,'pct variants twinned vs SF all iEs.tiff'), '-dtiff');
 
-%% [paper Fig 10]. Counts grains twinned & not twinned vs. max_basal_SF
+%% [paper Fig 9]. Counts grains twinned & not twinned vs. max_basal_SF
 edges = 0:0.05:0.5;
 for iE=1:6
     iB = iE + 1;
@@ -531,7 +532,7 @@ for iE=1:6
     hbar(1).FaceColor = [0 0 1];
     hbar(2).FaceColor = [1 0 0];
         
-    print(fullfile(output_dir,['fig 10 twin nontwin grain vs basal SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 9 twin nontwin grain vs basal SF iE=',num2str(iE),'.tiff']),'-dtiff');
     
     disp(['iE = ',num2str(iE)]);
     tt = [N_t; N_nt; N_t./(N_t+N_nt)];
@@ -539,7 +540,7 @@ for iE=1:6
 
 end
 close all;
-%% [Fig 11]
+%% [Fig 10]
 for iE = 1:6
     iB = iE + 1;
     figure;disableDefaultInteractivity(gca); hold on;
@@ -581,12 +582,12 @@ for iE = 1:6
     
     % title('');
     
-    print(fullfile(output_dir,['fig 11 twin nontwin grain vs max SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 10 twin nontwin grain vs max SF iE=',num2str(iE),'.tiff']),'-dtiff');
     
     close all;
 end
 
-%% [Fig 12]. variant_area_fraction_in_grain vs. variant_SF
+%% [Fig 11]. variant_area_fraction_in_grain vs. variant_SF
 for iE = 1:6
     iB = iE + 1;
     ind = (T2.iE==iE)&(T2.vActiveTF==1);
@@ -612,7 +613,7 @@ for iE = 1:6
     title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     title([' ']);
     axis square;
-    print(fullfile(output_dir,['fig 12 variant fraction vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir,['fig 11 variant fraction vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 end
 close all;
 
@@ -664,91 +665,115 @@ for iE = [] %2:6
 %     size_2 = sort(size_2);
 end
 
-%% (A2) variant detwin area (as pct of twin area OR as pct of grain area?) vs. SF 
+%% (Fig 12 and 13) variant detwin area (as pct of twin area OR as pct of grain area?) vs. SF.  Note my summary is a little bit different from Reza.  
 % This can use pixel map, just compare iE=3 (max) vs iE=6 (min)
 
 variableNames3 = {'iE_ref','iE','ID','iTwin','variant_SF','vActiveTF','A_grain','A_ref','A_def','A_diff'};
 T3 = cell2table(cell(0,length(variableNames3)));
 T3.Properties.VariableNames = variableNames3;
 
-for iE_ref = 3
+ref_target_iEs = [3,4;
+    4,5;
+    5,6;
+    3,6;];
+ylims = {[-0.02, 0.1], [];
+    [-0.02, 0.15], [];
+    [-0.02, 0.5], [];
+    [], [0, 1.1]};
+
+for k = 1:size(ref_target_iEs,1)
+    
+    iE_ref = ref_target_iEs(k,1);
     iB_ref = iE_ref + 1;
     twin_map_ref = variant_cell{iB_ref};
     
-    for iE = 4:6
-        iB = iE + 1;
-        twin_map_def = variant_cell{iB};
+    iE = ref_target_iEs(k,2);
+    iB = iE + 1;
+    twin_map_def = variant_cell{iB};
+    
+    for ii = 1:length(gList)
+        ID_current = gList(ii);
         
-        for ii = 1:length(gList)
-            ID_current = gList(ii);
+        ind_g = find(ID_current==gID);
+        gd = gDiameter(ind_g);
+        
+        euler_current = [gPhi1(ind_g),gPhi(ind_g),gPhi2(ind_g)];
+        [abs_schmid_factor, ~, burgersXY] = trace_analysis_TiMgAl(euler_current, [0 0 0], [0 0 0], stressTensor, 'Mg', 'twin');
+        twin_SFs = abs_schmid_factor(19:24,2);
+        
+        inds = ID==ID_current;
+        
+        A_grain = sum(inds(:));
+        for iTwin = 1:6
+            A_ref = sum(twin_map_ref(inds) == iTwin);
+            A_def = sum(twin_map_def(inds) == iTwin);
+            A_diff = A_ref - A_def;
             
-            ind_g = find(ID_current==gID);
-            gd = gDiameter(ind_g);
-            
-            euler_current = [gPhi1(ind_g),gPhi(ind_g),gPhi2(ind_g)];
-            [abs_schmid_factor, ~, burgersXY] = trace_analysis_TiMgAl(euler_current, [0 0 0], [0 0 0], stressTensor, 'Mg', 'twin');
-            twin_SFs = abs_schmid_factor(19:24,2);
-            
-            inds = ID==ID_current;
-            
-            A_grain = sum(inds(:));
-            for iTwin = 1:6
-                A_ref = sum(twin_map_ref(inds) == iTwin);
-                A_def = sum(twin_map_def(inds) == iTwin);
-                A_diff = A_ref - A_def;
-                
-                if A_ref > 0
-                    vActiveTF = 1;
-                else
-                    vActiveTF = 0;
-                end
-                
-                T3 = [T3; {iE_ref, iE, ID_current, iTwin, twin_SFs(iTwin), vActiveTF, A_grain, A_ref, A_def, A_diff}];
+            if A_ref > 0
+                vActiveTF = 1;
+            else
+                vActiveTF = 0;
             end
+            
+            T3 = [T3; {iE_ref, iE, ID_current, iTwin, twin_SFs(iTwin), vActiveTF, A_grain, A_ref, A_def, A_diff}];
         end
-        
-        ind =  (T3.vActiveTF==1)&(T3.iE==iE)&(T3.iE_ref==iE_ref); 
-        t3 = T3(ind,:);
-        edges = 0:0.05:0.5;
-        vx = t3.variant_SF;
-        vy = t3.A_diff ./ t3.A_grain;
-        
-        gv = discretize(vx, edges);
-        nGroups = length(edges)-1;
-        clear labels;
-        for ii = 1:length(edges)-1
-            labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
-        end
-        figure;disableDefaultInteractivity(gca);
-        boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','on');   % prevent having empty group
-        set(gca,'ylim',[-0.1 0.7]);
-        
-        xlabel('Twin Variant Schmid Factor');
-        ylabel('Variant Detwin Area Fraction in Grain');
-        set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',14);
-        title(['load step ',num2str(iE), ' vs ',num2str(iE_ref), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-        print(fullfile(output_dir,['detwin fraction in grain vs SF iE_',num2str(iE),'_vs_',num2str(iE_ref),'.tiff']),'-dtiff');
-        
-        % The following uses variant fraction detwinned.
-        vy = t3.A_diff ./ t3.A_ref;
-        gv = discretize(vx, edges);
-        nGroups = length(edges)-1;
-        clear labels;
-        for ii = 1:length(edges)-1
-            labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
-        end
-        figure;disableDefaultInteractivity(gca);
-        boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','on');   % prevent having empty group
-        set(gca,'ylim',[-0.1 1.1]);
-        
-        xlabel('Twin Variant Schmid Factor');
-        ylabel('Variant Detwin Fraction ');
-        set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',14);
-        title(['load step ',num2str(iE), ' vs ',num2str(iE_ref), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
-        print(fullfile(output_dir,['detwin fraction vs SF iE_',num2str(iE),'_vs_',num2str(iE_ref),'.tiff']),'-dtiff');
-        
-        close all;
     end
+    
+    ind =  (T3.vActiveTF==1)&(T3.iE==iE)&(T3.iE_ref==iE_ref);
+    t3 = T3(ind,:);
+    
+    edges = 0:0.05:0.5;
+    clear labels;
+    for ii = 1:length(edges)-1
+        labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
+    end
+    
+    % [1] grain-level detwin fraction: detwin area / grain area
+    vx = t3.variant_SF;
+    vy = t3.A_diff ./ t3.A_grain;
+    gv = discretize(vx, edges);
+    nGroups = length(edges)-1;    
+    
+    figure;disableDefaultInteractivity(gca);
+    boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');   % prevent having empty group
+    set(gca,'ylim',[-0.1 0.7]);
+    if ~isempty(ylims{k,1})
+        set(gca,'ylim',ylims{k,1});
+    end
+    
+    xlabel('Twin Variant Schmid Factor');
+    % ylabel('Variant Detwin Area Fraction in Grain');
+    ylabel('Grain-Level Detwin Variant Area Fraction');
+    
+    set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',12);
+    title(['load step ',num2str(iE), ' vs ',num2str(iE_ref), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    print(fullfile(output_dir,['fig 12 detwin fraction in grain vs SF iE_',num2str(iE),'_vs_',num2str(iE_ref),'.tiff']),'-dtiff');
+    
+    
+    % [2] Normalized detwin fraction: detwin area / max twin area
+    vy = t3.A_diff ./ t3.A_ref;
+    gv = discretize(vx, edges);
+    nGroups = length(edges)-1;
+    clear labels;
+    for ii = 1:length(edges)-1
+        labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
+    end
+    figure;disableDefaultInteractivity(gca);
+    boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');   % prevent having empty group
+    set(gca,'ylim',[-0.1 1.1]);
+    if ~isempty(ylims{k,2})
+        set(gca,'ylim',ylims{k,2});
+    end
+    
+    xlabel('Twin Variant Schmid Factor');
+    % ylabel('Variant Detwin Fraction ');
+    ylabel('Normalized Detwin Variant Area Fraction');
+    set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',12);
+    title(['load step ',num2str(iE), ' vs ',num2str(iE_ref), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
+    print(fullfile(output_dir,['fig 13 detwin fraction vs SF iE_',num2str(iE),'_vs_',num2str(iE_ref),'.tiff']),'-dtiff');
+    
+    close all;
+    
     
 end
 %% Analyze 'significantly' detwin
@@ -821,7 +846,7 @@ for iE_ref = 3
     end
     
 end
-%% [A1, Fig 15] Counts of significantly detwinned (and not) vs. twinSF 
+%% [A1, Fig 14] Counts of significantly detwinned (and not) vs. twinSF 
 for iE = 6 % 4:6
     iB = iE + 1;
     edges = -0.5:0.05:0.5;
@@ -852,7 +877,7 @@ for iE = 6 % 4:6
     % title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
     title(' ');
     legend({'Variants not significantly detwinned', 'Variants significantly detwinned','Percent of significantly detwinned'},'Location','northwest');
-    print(fullfile(output_dir,['Fig 15 significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir,['fig 14 significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
     
     
     % plot to check. label the grains with 'significantly detwinned variants'
@@ -883,7 +908,7 @@ for iE = 6 % 4:6
     
     ids = T4.ID(ind2);
     label_map_with_ID(X,Y,ID,gcf,ids,'b',12,4);
-    print(fullfile(output_dir,['Fig 15 significantly detwin variant grain iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir,['fig 14 significantly detwin variant grain iE=',num2str(iE),'.tiff']), '-dtiff');
     
     close all;
 end
@@ -907,7 +932,7 @@ for iE = 0:6
     % title(['exx map, load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     title(['\epsilon^G = ',num2str(strains(iB),'%.4f')],'fontweight','normal');
     title(c,'\epsilon_{xx}')
-    print(fullfile(output_dir, ['Fig 3 exx_map_iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir, ['fig 3 exx_map_iE=',num2str(iE),'.tiff']), '-dtiff');
     close;
 end
 
