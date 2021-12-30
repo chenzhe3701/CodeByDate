@@ -54,7 +54,7 @@ xlabel('Grain Diameter (\mum)');
 ylabel('Counts');
 print(fullfile(output_dir, '\Mg4Al grain diameter distribution'),'-dtiff');
 
-%% Plot strain maps
+%% [Fig 2] Plot strain maps
 for iE = 1:6
    strain_str{iE} = ['\epsilon\fontsize{16}^G = ',num2str(strainPauses(iE),'%.4f')]; 
 end
@@ -64,22 +64,22 @@ for iE = 1:6
     caxis([-0.08, 0.01]);
     title(c,'\fontsize{18}\epsilon_x_x');
     title(strain_str{iE},'fontweight','normal');
-    print(fullfile(output_dir, ['exx_',num2str(iE)]),'-dtiff');
+    print(fullfile(output_dir, ['fig 2 exx_',num2str(iE)]),'-dtiff');
 end
 close all;
 
-%% For each iE, narrow colorbar range to differentiate tensile and compressive 
+%% [Fig 3] For each iE, narrow colorbar range to differentiate tensile and compressive 
 for iE = 1:6
     [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
     set(gca,'XTick',[],'YTick',[],'fontsize',18);
     title(c,'\fontsize{18}\epsilon_x_x');
     title(strain_str{iE},'fontweight','normal');
     caxis([-0.01, 0.01]);
-    print(fullfile(output_dir,['color_adjusted_exx_',num2str(iE)]),'-dtiff');
+    print(fullfile(output_dir,['fig 3 color_adjusted_exx_',num2str(iE)]),'-dtiff');
 end
 close all;
 
-%% Plot twin variant maps
+%% [Fig 6] Plot twin variant maps
 for iE = 1:6
    eG_str{iE} = ['\epsilon\fontsize{16}^G = ',num2str(strainPauses(iE),'%.4f')]; 
 end
@@ -92,7 +92,7 @@ for iE = 1:6
     set(c,'limits', [0.5, 6.5]);
     set(gca,'XTick',[],'YTick',[],'fontsize',18);
     title(eG_str{iE},'fontweight','normal');
-    print(fullfile(output_dir,['variantMap_',num2str(iE)]),'-dtiff');
+    print(fullfile(output_dir,['fig 6 variantMap_',num2str(iE)]),'-dtiff');
 end
 close all;
 
@@ -139,7 +139,7 @@ gID_list_special = [203, 5];    % manually add [grain ID, slip system other than
 if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'),'file')
     save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
 end
-%% (step 2) label strain map with slip trace for selected grains at iE=1
+%% (step 2) [Fig 5a] label strain map with slip trace for selected grains at iE=1
 iE = 1;
 [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
@@ -151,7 +151,7 @@ end
 
 title(c,'\fontsize{18}\epsilon_x_x');
 title(strain_str{iE},'fontweight','normal');
-print(fullfile(output_dir, ['exx_',num2str(iE),'_with_trace']),'-dtiff');
+print(fullfile(output_dir, ['fig 5a exx_',num2str(iE),'_with_trace']),'-dtiff');
 close all;
 
 %% (step 3) at iE = 2 (or higher, can change), continue actively selected grains with slip trace, with eEff map  
@@ -244,7 +244,7 @@ gID_list_special = [203, 5;
 if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'),'file')
     save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
 end
-%% (step 6) label strain map with slip trace for selected grains at iE=2
+%% (step 6) [Fig 5c] label strain map with slip trace for selected grains at iE=2
 iE = 3;
 [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
@@ -256,11 +256,11 @@ end
 
 title(c,'\fontsize{18}\epsilon_e_f_f');
 title(strain_str{iE},'fontweight','normal');
-print(fullfile(output_dir,['eeff_',num2str(iE),'_with_trace']),'-dtiff');
+print(fullfile(output_dir,['fig 5c eeff_',num2str(iE),'_with_trace']),'-dtiff');
 
 close all;
 
-%% Calculate grain Schmid factor. plot SF map and histogram
+%% [Fig 4] Calculate grain Schmid factor. plot SF map and histogram
 assert(eulerAligned==1,'check if euler is aligned to sample coordinate');
 ss = define_SS_cart(sampleMaterial,'twin');
 
@@ -275,14 +275,14 @@ myplot(X,Y,gSF_basal_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 title('Max Basal Schmid Factor','fontweight','normal','fontsize',18);
 caxis([0, 0.5]);
-print(fullfile(output_dir, 'basal_SF_map'),'-dtiff');
+print(fullfile(output_dir, 'fig 4 basal_SF_map'),'-dtiff');
 
 % [Figure] grain twin SF map
 myplot(X,Y,gSF_etwin_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 title('Max Twin Schmid Factor','fontweight','normal','fontsize',18);
 caxis([-0.1, 0.5]);
-print(fullfile(output_dir, 'etwin_SF_map'),'-dtiff');
+print(fullfile(output_dir, 'fig 4 etwin_SF_map'),'-dtiff');
 
 % [Figure] grain basal SF histogram
 figure;
@@ -291,7 +291,7 @@ histogram(t, 0:0.05:0.5);
 ylabel('Counts');
 xlabel('Max Basal Schmid Factor');
 set(gca,'fontsize',18);
-print(fullfile(output_dir, 'basal SF distribution'),'-dtiff');
+print(fullfile(output_dir, 'fig 4 basal SF distribution'),'-dtiff');
 
 % [Figure] grain twin SF histogram
 figure;
@@ -300,7 +300,7 @@ histogram(t, -0.1:0.05:0.5);
 ylabel('Counts');
 xlabel('Max Twin Schmid Factor');
 set(gca,'fontsize',18);
-print(fullfile(output_dir,'twin SF distribution'),'-dtiff');
+print(fullfile(output_dir,'fig 4 twin SF distribution'),'-dtiff');
 
 close all;
 
@@ -314,8 +314,7 @@ myplot(ismember(ID,ID_diff));
 gDiameter(ismember(gID,ID_diff))
 % -> Note: the result shows that the 3 grains are edge grains on EBSD map, possibly with no strain data  
 
-%% Calculate the slip Schmid factor distribution of active slip system at iE = 1 or 2,3 --> select
-%% And calculate the twin Schmid factor distribution of active twin 
+%% [fig 5bd] Calculate the slip Schmid factor distribution of active slip system at iEs. And calculate the twin Schmid factor distribution of active twin 
 
 for iE = 1:3
 load([saveDataPath,'\Mg4Al_gID_list_slip_iE_',num2str(iE),'.mat'], 'gID_list_slip');  
@@ -421,7 +420,7 @@ set(gca,'ycolor','k','ylim',[0 160]);
 ylabel('Percent (%)');
 
 legend('Without Slip Traces','With Slip Traces', 'Percent with Slip Traces');
-print(fullfile(output_dir, ['slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
+print(fullfile(output_dir, ['fig 5 slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
 
 
 % summarize twin_SF vs twin/no-twin, variant-wise
@@ -439,7 +438,7 @@ set(gca,'XTick',edges_2(1:end-1), 'XTickLabel',str, 'XTickLabelRotation',45, 'fo
 xlabel('Twin Schmid Factor');
 ylabel('Counts');
 legend('Twinned','Not twinned');
-% print('C:\Users\ZheChen\Desktop\twinTF vs variantSF','-dtiff');
+print(fullfile(output_dir, ['twinTF vs variantSF iE=',num2str(iE),'.tiff']),'-dtiff');
 
 
 % summarize twin_SF vs slip/non-slip, grain-wise
@@ -458,13 +457,14 @@ set(gca,'XTick',edges_3(1:end-1), 'XTickLabel',str, 'XTickLabelRotation',45, 'fo
 xlabel('Max Twin Schmid Factor');
 ylabel('Counts');
 legend('Twinned','Not twinned','location','northwest');
-% print('C:\Users\ZheChen\Desktop\twinTF vs twinSF','-dtiff');
+print(fullfile(output_dir, ['twinTF vs twinSF iE=',num2str(iE),'.tiff']),'-dtiff');
 
-%% double check, illustrate which grains do not have slip traces
-map_no_slip = ID;
-map_no_slip(ismember(ID, gID_list_slip)) = 0;
-myplot(map_no_slip,boundaryTFB);
-print(fullfile(output_dir, ['grains no basal slip trace iE=',num2str(iE),'.tiff']),'-dtiff');
+% double check, illustrate which grains do not have slip traces
+% map_no_slip = ID;
+% map_no_slip(ismember(ID, gID_list_slip)) = 0;
+% myplot(map_no_slip,boundaryTFB);
+% print(fullfile(output_dir, ['grains no basal slip trace iE=',num2str(iE),'.tiff']),'-dtiff');
+
 end
 
 

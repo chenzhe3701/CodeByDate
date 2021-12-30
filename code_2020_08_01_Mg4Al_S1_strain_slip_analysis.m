@@ -1,4 +1,10 @@
 %% try to modify and organize this code for paper
+% This looks like the vresion I tried to make, but Reza used the earlier
+% version with more redundant bar plots.
+% So this might just be a historic verison to keep.
+% 2021-12-29 noted.
+
+
 % (1) Identify slip traces (mainly basal + some prismatic)
 
 clear;
