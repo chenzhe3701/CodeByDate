@@ -7,7 +7,7 @@ mkdir(save_dir);
 
 %% [1] UM134 Mg_C3
 
-working_dir = 'E:\zhec umich Drive\2021-01-29 UM134 Mg_C3 insitu curve';
+working_dir = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
 fileName = '2021-01-29 UM134_Mg_C3 comp_ten_data.lvm';
 delimiterIn = '\t';
 headerlinesIn = 1;
