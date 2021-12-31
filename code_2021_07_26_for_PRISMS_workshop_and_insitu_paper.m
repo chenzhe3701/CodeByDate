@@ -865,9 +865,9 @@ for iE = [] %0:13
 end
 close all;
 
-%% 2021-10-20, Make 3 load steps (iE=3,7,9) as columns, and 4 maps as rows: (a) EBSD map, (b) variant map, (3) pixel level twin category map, (4) grain level twin category map
+%% [in-situ method paper Fig 10]  2021-10-20, Make 3 load steps (iE=3,7,9) as columns, and 4 maps as rows: (a) EBSD map, (b) variant map, (3) pixel level twin category map, (4) grain level twin category map
 
-I = inf * uint8(ones(3700,3500,3));
+I = inf * uint8(ones(3700,3900,3));
 close all;
 
 iE = 3;
@@ -888,11 +888,11 @@ image_4 = imread(fullfile(cat_dir, gcat_file));
 I_1 = imcrop(image_1, [0,0, inf,inf]);
 I_1 = imresize(I_1, [765, 765]);
 
-I_2 = imcrop(image_2, [200,70, 765,765]);
+I_2 = imcrop(image_2, [218,70, 765,765]);
 
-I_3 = imcrop(image_3, [217,72, 765,765]);
+I_3 = imcrop(image_3, [380,72, 765,765]);
 
-I_4 = imcrop(image_4, [703,72, 765,765]);
+I_4 = imcrop(image_4, [542,72, 765,765]);
 I_4 = imresize(I_4, 765/765);
 
 % stitch I_1
@@ -934,11 +934,11 @@ image_4 = imread(fullfile(cat_dir, gcat_file));
 I_1 = imcrop(image_1, [0,0, inf,inf]);
 I_1 = imresize(I_1, [765, 765]);
 
-I_2 = imcrop(image_2, [200,70, 765,765]);
+I_2 = imcrop(image_2, [220,70, 765,765]);
 
-I_3 = imcrop(image_3, [217,72, 765,765]);
+I_3 = imcrop(image_3, [380,72, 765,765]);
 
-I_4 = imcrop(image_4, [703,72, 765,765]);
+I_4 = imcrop(image_4, [542,72, 765,765]);
 I_4 = imresize(I_4, 765/765);
 
 % stitch I_1
@@ -980,11 +980,11 @@ image_4 = imread(fullfile(cat_dir, gcat_file));
 I_1 = imcrop(image_1, [0,0, inf,inf]);
 I_1 = imresize(I_1, [765, 765]);
 
-I_2 = imcrop(image_2, [200,70, 880,765]);
+I_2 = imcrop(image_2, [220,70, 880,765]);
 
-I_3 = imcrop(image_3, [217,72, inf,765]);
+I_3 = imcrop(image_3, [380,72, inf,765]);
 
-I_4 = imcrop(image_4, [703,72, inf,765]);
+I_4 = imcrop(image_4, [542,72, inf,765]);
 I_4 = imresize(I_4, 765/765);
 
 % stitch I_1

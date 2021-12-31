@@ -325,3 +325,82 @@ save(fullfile(output_dir, 'Mg4Al_U2 twin data.mat'), 'gList', 'ID_overlap', ...
     'past_or_present_twin_cell', 'type_2_grain_ID_cell', 'type_2_grain_label_cell');
 
 
+
+%% [in-situ method paper Fig 11] select an area, demonstrate the need to plot type-1 and type-2 grains on the same map
+close all;
+iE = 7;
+iB = iE + 1;
+
+indC_min = 250;
+indC_max = 370;
+indR_min = 320;
+indR_max = 440;
+
+colors = plasma(25);
+cmap = zeros(6,3);
+cmap(1,:) = [1,1,1];    % 0 = untwinned, background
+cmap(2,:) = colors(24,:);    % g1 = completely new twin, yellowish
+cmap(3,:) = colors(10,:);     % g2 = de-twin then re-twin, purple
+cmap(4,:) = colors(16,:);     % g3 = evoling current twin, pink
+cmap(5,:) = [0.7, 0.7, 0.7];     % g4 = evolving past-or-present twin, light gray
+cmap(6,:) = [0.2, 0.2, 0.2];    % g5 = completely de-twin, dark gray
+cmap(7,:) = [0 0 0];    % for grain boundary
+
+type_1_grain_map = type_1_grain_label_cell{iB};
+type_1_grain_map = type_1_grain_map(indR_min:indR_max, indC_min:indC_max);
+
+type_2_grain_map = type_2_grain_label_cell{iB};
+type_2_grain_map = type_2_grain_map(indR_min:indR_max, indC_min:indC_max);
+
+boundary_local = boundary_p_iB_to_1_cell{iB}(indR_min:indR_max, indC_min:indC_max);
+
+[f,a,c] = myplot(type_1_grain_map, grow_boundary(boundary_local));
+colormap(cmap);
+caxis([-0.5, 6.5]);
+set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
+    'TickLabels', {'g1: New Twin Type-1 Grain','g2: Detwin Then Retwin Type-1 Grain','g3: Evolving Type-1 Grain', ...
+    'g4: Evolving Type-2 Grain','g5: Completely Detwin Type-2 Grain'})   
+set(gcf,'position', get(gcf,'position').*[1 1 0 0]+[0,0,1400,600]);
+set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',18);
+title(' ');
+box on;
+print(fullfile(output_dir,['local type-1 iE=',num2str(iE),'.tiff']),'-dtiff','-r300');
+
+bd = find_one_boundary_from_ID_matrix(type_1_grain_map);
+[f,a,c] = myplot(type_2_grain_map, grow_boundary(boundary_local));
+colormap(cmap);
+caxis([-0.5, 6.5]);
+set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
+    'TickLabels', {'g1: New Twin Type-1 Grain','g2: Detwin Then Retwin Type-1 Grain','g3: Evolving Type-1 Grain', ...
+    'g4: Evolving Type-2 Grain','g5: Completely Detwin Type-2 Grain'})   
+set(gcf,'position', get(gcf,'position').*[1 1 0 0]+[0,0,1400,600]);
+set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',18);
+title(' ');
+box on;
+print(fullfile(output_dir,['local type-2 iE=',num2str(iE),'.tiff']),'-dtiff','-r300');
+    
+[f,a,c] = myplot(type_2_grain_map, grow_boundary(boundary_local)+ imdilate(bd,[1,1])+ imdilate(bd,[1;1]));
+colormap(cmap);
+caxis([-0.5, 6.5]);
+set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
+    'TickLabels', {'g1: New Twin Type-1 Grain','g2: Detwin Then Retwin Type-1 Grain','g3: Evolving Type-1 Grain', ...
+    'g4: Evolving Type-2 Grain','g5: Completely Detwin Type-2 Grain'})   
+set(gcf,'position', get(gcf,'position').*[1 1 0 0]+[0,0,1400,600]);
+set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',18);
+title(' ');
+box on;
+print(fullfile(output_dir,['local type-2 and 1 iE=',num2str(iE),'.tiff']),'-dtiff','-r300');
+
+I = imread(fullfile(working_dir, 'Mg4Al_U2 parent IPF ND iE=7.tif'));
+I = I(indR_min:indR_max, indC_min:indC_max, :);
+I = imresize(I, [1200,1200], 'nearest');  % make it bigger
+figure; imshow(I);
+
+imwrite(I, fullfile(output_dir, ['local IPF iE=',num2str(iE),'.tiff']));
+
+close all;
+
+
+
+
+
