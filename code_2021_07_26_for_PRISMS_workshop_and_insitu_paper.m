@@ -366,8 +366,8 @@ phi2 = d.phi2;
 
 grain_pair{3} = [18, 18;
     31, 29;
-    108, 96;
-    120, 110];
+    107, 96;
+    119, 110];
 
 
 % (step-2) Rough align using the selected control grains. The result is already decent
@@ -576,7 +576,7 @@ print(fullfile(output_dir, ['fig 3c correlated overlay iE=0 to ',num2str(iE),'.t
 %% (task 5) Identification, use parent data in folder 'step-4', child data in folder 'step-2'
 close all;
 %% (1) show reference load step, parent IPF?, ID_target = 74
-ID_target = 74;
+ID_target = 73;
 
 d = load(fullfile(working_dir, 'analysis', 'step-4', ['Mg4Al_U2_parent_grain_file_iE_0.mat']));
 iR_min = 261;
@@ -785,8 +785,10 @@ if 0
 end
 
 % sources of variant map, experimentally measured position
-vMap_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis\variant map';
-vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+% vMap_dir = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis\variant map';
+vMap_dir = 'E:\zhec umich Drive\0_temp_output\variant maps bgbk\Mg4Al_U2';
+% vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+vMap_file = ['Mg4Al_U2variant_pixel_map_iE_',num2str(iE),'.tiff'];
 
 % spatially deformed to iE=0 variant map
 vMap_spatially_dir = 'E:\zhec umich Drive\0_temp_output\2021-05-04 Analyze persistent twin\Mg4Al_U2';
@@ -873,7 +875,8 @@ iE = 3;
 IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
 image_1 = imread(fullfile(IPF_dir, IPF_file));
 % (2) twin variant map
-vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+% vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+vMap_file = ['Mg4Al_U2variant_pixel_map_iE_',num2str(iE),'.tiff'];
 image_2 = imread(fullfile(vMap_dir, vMap_file));
 % (3) pixel level category map
 cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
@@ -918,7 +921,8 @@ iE = 7;
 IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
 image_1 = imread(fullfile(IPF_dir, IPF_file));
 % (2) twin variant map
-vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+% vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+vMap_file = ['Mg4Al_U2variant_pixel_map_iE_',num2str(iE),'.tiff'];
 image_2 = imread(fullfile(vMap_dir, vMap_file));
 % (3) pixel level category map
 cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
@@ -963,7 +967,8 @@ iE = 9;
 IPF_file = ['Mg4Al_U2 parent IPF ND iE=',num2str(iE),'.tif'];
 image_1 = imread(fullfile(IPF_dir, IPF_file));
 % (2) twin variant map
-vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+% vMap_file = ['variant_pixel_map_iE_',num2str(iE),'.tiff'];
+vMap_file = ['Mg4Al_U2variant_pixel_map_iE_',num2str(iE),'.tiff'];
 image_2 = imread(fullfile(vMap_dir, vMap_file));
 % (3) pixel level category map
 cat_file = ['frd twinned iE=',num2str(iE),'.tiff'];
