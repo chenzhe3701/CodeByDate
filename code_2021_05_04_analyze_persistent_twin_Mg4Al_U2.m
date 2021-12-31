@@ -33,13 +33,8 @@ variant_point_wise = d.variant_point_wise;
 variant_grain_wise = d.variant_grain_wise;
 for iE = 0:13
    iB = iE + 1;
-   if iE==0
-      variant_pixel_iB_cell{iB} = zeros(size(ID_0));
-      variant_grain_iB_cell{iB} = zeros(size(ID_0));
-   else
-       variant_pixel_iB_cell{iB} = variant_point_wise{iE};
-       variant_grain_iB_cell{iB} = variant_grain_wise{iE};
-   end
+   variant_pixel_iB_cell{iB} = variant_point_wise{iB};
+   variant_grain_iB_cell{iB} = variant_grain_wise{iB};
 end
 
 % load the tforms
@@ -108,8 +103,7 @@ end
 variant_pixel_mode = mode(mapz,3);
 variant_pixel_mode(isnan(variant_pixel_mode)) = 0;  % change back to 0
 
-%% Categorize twin data, on pixel level, and on grain level
-% pixel level, at each iE, there are:
+%% (1) Pixel level summary, at each iE, there are:
 % (p1) current twin (directly from twin map)
 % (p2) past-or-present twin (obtained by accummulating twin map up to this iE) 
 % based on these two basic maps, we can get
@@ -133,10 +127,10 @@ p5_detwin = 5;
 for iE = 0:13
     iB = iE + 1;
     if iE==0
-        past_or_present_twin_cell{iB} = zeros(size(ID_0));    % max-twin area up to iE
-        fresh_twin_cell{iB} = zeros(size(ID_0));    % new-twin at iE. max_twin(iE-1) + new_twin(iE) = max_twin(iE)
-        recurring_twin_cell{iB} = zeros(size(ID_0));  % re_twin(iE) + new_twinned(iE) = twin(iE)
-        de_twin_cell{iB} = zeros(size(ID_0));  % max_twin(iE) - de_twin(iE) = twin(iE)
+        past_or_present_twin_cell{iB} = current_twin_cell{iB}>0;  % zeros(size(ID_0));    % pixels have twinned up to iE
+        fresh_twin_cell{iB} = zeros(size(ID_0));    
+        recurring_twin_cell{iB} = current_twin_cell{iB}>0;      % [Q1]===> existing polishing twins, as 'recurring twin' rather than 'fresh twin' pixel?
+        de_twin_cell{iB} = zeros(size(ID_0));  
     else
         past_or_present_twin_cell{iB} = double(past_or_present_twin_cell{iB-1} | current_twin_cell{iB}>0);
         fresh_twin_cell{iB} = double(current_twin_cell{iB}>0 & past_or_present_twin_cell{iB-1}==0);
@@ -163,39 +157,39 @@ for iE = 0:13
     colormap(cmap);
     
     set(gca,'xTickLabel',[],'yTickLabel',[]);
-    set(c,'limits',[2.5,5.5], 'Ticks',[3,4,5], 'TickLabels',{'Fresh Twin', 'Recurring Twin', 'Detwin'}); 
+    set(c,'limits',[2.5,5.5], 'Ticks',[3,4,5], 'TickLabels',{'p3: Fresh Twin Pixel', 'p4: Recurring Twin Pixel', 'p5: Detwin Pixel'}); 
     title(['\fontsize{16}Load Step ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
     set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
-
+    set(gcf,'position', get(gcf,'position') .* [1 1 0 0] + [0 0 1000 600]);
     print(fullfile(output_dir,['frd twinned iE=',num2str(iE),'.tiff']),'-dtiff');
     
     close all;
 end
 
 
-%% Generating grain level map
-% current twin grain:
-g1_fresh = 1; % (g1) fresh twin
-g2_detwin_retwin = 2; % (g2) de-twin then re-twin
-g3_evolving_current = 3; % (g3) evolving current twin
-% ever twin grain
-g4_evolving_past_or_present = 4; % (g4) evolving past-or-present twin
-g5_complete_detwin = 5; % (g5) completely de-twin
+%% (2) Grain level summary
+% type-1 grain, current twin grain:
+g1_new = 1; % (g1) new twin type-1 grain
+g2_detwin_retwin = 2; % (g2) detwin then retwin type-1 grain
+g3_evolving_1 = 3; % (g3) evolving type-1 grain
+% type-2 grain, past-or-present twin grain (ever twinned up to iE)
+g4_evolving_2 = 4; % (g4) evolving type-2 twin
+g5_detwin_2 = 5; % (g5) completely detwin type-2 grain
 
 [nR,nC] = size(ID_0);
 
 for iE = 0:13
     iB = iE + 1;
     
-    current_twin_grain_label = zeros(nR,nC);    
+    type_1_grain_label = zeros(nR,nC);    
     if iE==0
-        past_or_present_twin_grain_ID = zeros(nR,nC);
-        past_or_present_twin_grain_label = zeros(nR,nC);
+        type_2_grain_ID = zeros(nR,nC);
+        type_2_grain_label = zeros(nR,nC);
     else
-        past_or_present_twin_grain_ID = past_or_present_twin_grain_ID_cell{iB-1};
-        past_or_present_twin_grain_label = past_or_present_twin_grain_label_cell{iB-1};
+        type_2_grain_ID = type_2_grain_ID_cell{iB-1};
+        type_2_grain_label = type_2_grain_label_cell{iB-1};
     end
-    ID_assign = max(past_or_present_twin_grain_ID(:)) + 1;  % initial ID to be assigned to ever twin grain 
+    ID_assign = max(type_2_grain_ID(:)) + 1;  % initial ID to be assigned to ever twin grain 
     
     ID_c = ID_c_iB_to_1_cell{iB};  
     ID_c(ID_overlap==0) = 0;    % ONLY use valid/overlap area !
@@ -215,67 +209,72 @@ for iE = 0:13
        
        % If this grain is a twin grain (contains twin pixel)
        grain_twinned_TF = any(current_twin_cell{iB}(inds));
-       if grain_twinned_TF
-           % Task: determine current twin map labels: g1 = new twin grain, g2 = detwin then retwinned, g3 = evolving current twin  
-           % to determine label, look at the pixel level label at previous load step    
-           labels = frd_twin_cell{iB-1}(inds);
-           if sum(labels==p0_notwin)/numel(labels) >0.9    % intersect(labels, [p0,p3,p4,p5]) == p0
-               % the grain is completely new twin (g1/new twin), as it does not overlap with any previously twinned pixel  
-               current_twin_grain_label(inds) = g1_fresh;
-           elseif intersect(labels, [p3_fresh, p4_recur, p5_detwin]) == p5_detwin
-               % if most are p5, we can allow a little bit p0 pixels
-               current_twin_grain_label(inds) = g2_detwin_retwin;
+       if grain_twinned_TF 
+           if iE == 0
+               type_1_grain_label(inds) = g3_evolving_1;    % [Q1]===> existing twin, evolving grain?
            else
-               % evolving grain
-               current_twin_grain_label(inds) = g3_evolving_current;
+               % Task: determine current twin map labels: g1 = new twin grain, g2 = detwin then retwinned, g3 = evolving current twin
+               % to determine label, look at the pixel level label at previous load step
+               labels = frd_twin_cell{iB-1}(inds);
+               if sum(labels==p0_notwin)/numel(labels) >0.9    % intersect(labels, [p0,p3,p4,p5]) == p0
+                   % the grain is completely new twin (g1/new twin), as it does not overlap with any previously twinned pixel
+                   type_1_grain_label(inds) = g1_new;
+               elseif intersect(labels, [p3_fresh, p4_recur, p5_detwin]) == p5_detwin
+                   % if most are p5, we can allow a little bit p0 pixels
+                   type_1_grain_label(inds) = g2_detwin_retwin;
+               else
+                   % evolving grain
+                   type_1_grain_label(inds) = g3_evolving_1;
+               end
            end
            
            % Task: generate past_or_present_twin_grain_ID: current twin grain will contribute to the 'ever twin grain map' 
-           ids = unique(past_or_present_twin_grain_ID(inds));
+           ids = unique(type_2_grain_ID(inds));
            ids(ids==0) = [];
            if isempty(ids)
                % if current twin grain does not overlap with any ever-twinned grain, ADD this grain to the ever twin grain map 
-               past_or_present_twin_grain_ID(inds) = ID_assign;
+               type_2_grain_ID(inds) = ID_assign;
            else
                % if this grain overlap with ever twinned grain, MERGE them. (modify inds to include all grains)  
-               inds = ismember(past_or_present_twin_grain_ID, ids) | inds;
-               past_or_present_twin_grain_ID(inds) = ID_assign;
+               inds = ismember(type_2_grain_ID, ids) | inds;
+               type_2_grain_ID(inds) = ID_assign;
            end
            ID_assign = ID_assign + 1;
            
            % this 'merged ever twin grain' contains 'current twin', so at least p4/re-twin, maybe p3/new-twin pixels
-           past_or_present_twin_grain_label(inds) = g4_evolving_past_or_present;    % 'g4/evolving'
+           type_2_grain_label(inds) = g4_evolving_2;    % 'g4/evolving'
+           
        end
     end
-    current_twin_grain_label_cell{iB} = current_twin_grain_label;
+    type_1_grain_label_cell{iB} = type_1_grain_label;
     
     % [step-2] loop check every 'ever twin grain', find the completely detwinned grain ===> maybe need to move this to [step-1] 
-    pp_twin_grain_list = nan_unique(past_or_present_twin_grain_ID(:));
-    pp_twin_grain_list(isnan(pp_twin_grain_list)) = []; % remove nan
-    pp_twin_grain_list(pp_twin_grain_list==0) = [];     % remove 0 (if any)  
+    type_2_grain_list = nan_unique(type_2_grain_ID(:));
+    type_2_grain_list(isnan(type_2_grain_list)) = []; % remove nan
+    type_2_grain_list(type_2_grain_list==0) = [];     % remove 0 (if any)  
     
-    for ii = 1:length(pp_twin_grain_list)
-        ID_current = pp_twin_grain_list(ii);
-        inds = ismember(past_or_present_twin_grain_ID, ID_current);        
+    for ii = 1:length(type_2_grain_list)
+        ID_current = type_2_grain_list(ii);
+        inds = ismember(type_2_grain_ID, ID_current);        
            
         % Task: make past_or_present_twin_grain_label   
         % Check the pixel level label at the current load step
         labels = unique(frd_twin_cell{iB}(inds));
         if intersect(labels, [p3_fresh,p4_recur,p5_detwin]) == p5_detwin
             % only contains conpletely detwinned pixels (p5), this ever twin grain should be labeled by (g4)   
-            past_or_present_twin_grain_label(inds) = g5_complete_detwin;    % 'g5/completely detwin'
+            type_2_grain_label(inds) = g5_detwin_2;    % 'g5/completely detwin'
         else
             % this currently twinned contains p3/new-twin or p4/re-twin pixels.   
-            past_or_present_twin_grain_label(inds) = g4_evolving_past_or_present;    % 'g4/mixed'
+            type_2_grain_label(inds) = g4_evolving_2;    % 'g4/mixed'
         end
     end
     
     if iE>0
         % remake IDs
-        past_or_present_twin_grain_ID = hungarian_assign_ID_map(past_or_present_twin_grain_ID, past_or_present_twin_grain_ID_cell{iB-1});
+        type_2_grain_ID = hungarian_assign_ID_map(type_2_grain_ID, type_2_grain_ID_cell{iB-1});
     end
-    past_or_present_twin_grain_ID_cell{iB} = past_or_present_twin_grain_ID;
-    past_or_present_twin_grain_label_cell{iB} = past_or_present_twin_grain_label;
+    type_2_grain_ID_cell{iB} = type_2_grain_ID;
+    type_2_grain_label_cell{iB} = type_2_grain_label;
     
 end
 
@@ -286,11 +285,11 @@ for iE = 0:13
     
     map = zeros(nR,nC);
     
-    inds = past_or_present_twin_grain_label_cell{iB}>0;
-    map(inds) = past_or_present_twin_grain_label_cell{iB}(inds);
+    inds = type_2_grain_label_cell{iB}>0;
+    map(inds) = type_2_grain_label_cell{iB}(inds);
     
-    inds = current_twin_grain_label_cell{iB}>0;
-    map(inds) = current_twin_grain_label_cell{iB}(inds);
+    inds = type_1_grain_label_cell{iB}>0;
+    map(inds) = type_1_grain_label_cell{iB}(inds);
     
     [f,a,c] = myplot(x,y, map, boundary_p_iB_to_1_cell{iB});
     
@@ -306,9 +305,10 @@ for iE = 0:13
     colormap(cmap);
     caxis([-0.5, 5.5]);
     set(c,'limits',[0.5, 5.5], 'Ticks', 1:5, ...
-        'TickLabels', {'Fresh Twin','Detwin Then Retwin','Evolving Twin','Evolving of Past-or-Present Twin','Completely Detwin of Past-or-Present Twin'})
+        'TickLabels', {'g1: New Twin Type-1 Grain','g2: Detwin Then Retwin Type-1 Grain','g3: Evolving Type-1 Grain', ...
+            'g4: Evolving Type-2 Grain','g5: Completely Detwin Type-2 Grain'})
     title(['\fontsize{16}Load Step ',num2str(iE), ', \epsilon = ',num2str(strain_ebsd(iB),'%.3f')],'fontweight','norma');
-    set(gcf,'position',[80,172,1400,600]);
+    set(gcf,'position',[80,172,1200,600]);
     set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',16);
     print(fullfile(output_dir,['grain label iE=',num2str(iE),'.tiff']),'-dtiff');
     close;
@@ -321,7 +321,7 @@ save(fullfile(output_dir, 'Mg4Al_U2 twin data.mat'), 'gList', 'ID_overlap', ...
     'variant_grain_iB_to_1_cell', 'variant_pixel_iB_to_1_cell', ...
     'variant_pixel_cell', 'variant_pixel_mode', ...
     'frd_twin_cell', ...
-    'current_twin_cell', 'current_twin_grain_label_cell', ...
-    'past_or_present_twin_cell', 'past_or_present_twin_grain_ID_cell', 'past_or_present_twin_grain_label_cell');
+    'current_twin_cell', 'type_1_grain_label_cell', ...
+    'past_or_present_twin_cell', 'type_2_grain_ID_cell', 'type_2_grain_label_cell');
 
 

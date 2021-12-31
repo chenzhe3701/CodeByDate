@@ -1,5 +1,7 @@
 % analyze persistent twinning, using overlap
-
+% 2021-12-30 note: looks like this is only for pixel-level.
+% We should look at later codes with both pixel-level and grain-level
+% summary.
 
 %% [1] Mg4Al_U2
 clear; clc; close all;
