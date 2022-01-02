@@ -1,4 +1,5 @@
 %% Suggest to run step by step
+addChenFunction;
 output_dir = 'E:\zhec umich Drive\0_temp_output\all curve yield stress';
 mkdir(output_dir);
 clear colors;
