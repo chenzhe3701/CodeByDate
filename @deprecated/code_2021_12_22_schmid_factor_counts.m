@@ -1,7 +1,8 @@
 % Analyze Schmid factor distribution for twins in all samples
+% ==> this (used data) that does not eliminate pre-existing twins. There are updated codes, so this one seems no longer needed.   
 
 addChenFunction;
-input_dir = 'E:\zhec umich Drive\0_temp_output\2021-12-22 analyze grains and twins';
+input_dir = 'E:\zhec umich Drive\0_temp_output\2021-12-22 analyze grains and twins';    % load twin pct from table.
 output_dir = 'E:\zhec umich Drive\0_temp_output\2021-12-22 twin schmid factor';
 mkdir(output_dir);
 
