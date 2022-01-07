@@ -4,8 +4,10 @@ output_dir = 'E:\zhec umich Drive\0_temp_output\PF individual scale';
 clims = [];
 
 % comment to choose clims
-% output_dir = 'E:\zhec umich Drive\0_temp_output\PF same scale';
-% clims = {[0,7.2], [0,4.2]};
+output_dir = 'E:\zhec umich Drive\0_temp_output\PF same scale';
+clims = {[0,7.2], [0,4.2]};
+output_dir = 'E:\zhec umich Drive\0_temp_output\PF same scale 2';
+clims = {[0,5.7], [0,4.2]};
 
 mkdir(output_dir);
 mkdir(fullfile(output_dir, 'big AOI'));
