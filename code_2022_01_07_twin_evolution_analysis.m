@@ -46,8 +46,8 @@ for icell = 1:size(cells,1)
     variant_grain_wise = d.variant_grain_wise;
     for iE = 0:13
         iB = iE + 1;
-        variant_pixel_iB_cell{iB} = variant_point_wise{iB};
-        variant_grain_iB_cell{iB} = variant_grain_wise{iB};
+        vp_iB_cell{iB} = variant_point_wise{iB};
+        vg_iB_cell{iB} = variant_grain_wise{iB};
     end
     
     % load the tforms
@@ -75,8 +75,8 @@ for icell = 1:size(cells,1)
         boundary_c_iB_to_1_cell{iB} = interp_data(x,y,boundary_c, x,y, tforms{iB}.invert, 'interp', 'nearest');
         
         % variant maps
-        variant_pixel_iB_to_1_cell{iB} = interp_data(x,y,variant_pixel_iB_cell{iB}, x,y, tforms{iB}.invert, 'interp', 'nearest');
-        variant_grain_iB_to_1_cell{iB} = interp_data(x,y,variant_grain_iB_cell{iB}, x,y, tforms{iB}.invert, 'interp', 'nearest');
+        vp_iB_to_1_cell{iB} = interp_data(x,y,vp_iB_cell{iB}, x,y, tforms{iB}.invert, 'interp', 'nearest');
+        vg_iB_to_1_cell{iB} = interp_data(x,y,vg_iB_cell{iB}, x,y, tforms{iB}.invert, 'interp', 'nearest');
         
         ID_overlap(ID_overlap~=ID_p_iB_to_1_cell{iB}) = 0;
     end
@@ -102,18 +102,29 @@ for icell = 1:size(cells,1)
     %% get variantID in geotransformed + valid area, for each iE
     for iE = 0:13
         iB = iE + 1;
-        map = variant_pixel_iB_to_1_cell{iB};
-        map(ID_overlap==0) = 0;
-        variant_pixel_cell{iB} = map;   % [map] variant number 1-6, transformed, valid area
+
+        % I think we need to further clean up the map. Because non-valid areas are removed, there might be some small isolated 'twin grains' left.  
+        % purpose: in overlap area, connected twin area of a child grain should be large enough  
+        map_t = ID_c_iB_to_1_cell{iB};   % map_t = all child grains
+        twinTF = vp_iB_to_1_cell{iB}>0; % twin area
+        map_t(~twinTF) = 0;  % now, map_t = twinned child grains  
+        map_t(ID_overlap==0) = 0;   % now, map_t = twinned child grains in overlap area 
+        map_t = one_pass_clean(map_t,16);   % now, map_t = twinned child grains in overlap area, and are big enough  
+        big_twin_grain_in_overlap_area_cell{iB} = map_t;
+        
+        vp_map = vp_iB_to_1_cell{iB};
+        vp_map(big_twin_grain_in_overlap_area_cell{iB}==0) = 0;
+        
+        variant_pixel_cell{iB} = vp_map;   % [map] variant number 1-6, transformed, valid area
         current_twin_cell{iB} = double(variant_pixel_cell{iB}>0);  % [map] twin/not twin (type_double) 0 or 1, transformed, valid area
         
         % cat variant_pixel in 3D to take mode. But first change variant=0 to
         % nan, to prevent 0 be counted by function mode.
-        map(map==0) = nan;
+        vp_map(vp_map==0) = nan;
         if iE==0
-            mapz = map;
+            mapz = vp_map;
         else
-            mapz = cat(3,mapz,map);
+            mapz = cat(3,mapz,vp_map);
         end
     end
     % the major variant identified at each pixel, if that pixel is ever twinned
@@ -200,6 +211,7 @@ for icell = 1:size(cells,1)
     for iE = 0:13
         iB = iE + 1;
         
+        type_1_grain_ID = zeros(nR,nC);
         type_1_grain_label = zeros(nR,nC);
         if iE==0
             type_2_grain_ID = zeros(nR,nC);
@@ -208,10 +220,10 @@ for icell = 1:size(cells,1)
             type_2_grain_ID = type_2_grain_ID_cell{iB-1};
             type_2_grain_label = type_2_grain_label_cell{iB-1};
         end
-        ID_assign = max(type_2_grain_ID(:)) + 1;  % initial ID to be assigned to type-2 grain
+        ID2_assign = max(type_2_grain_ID(:)) + 1;  % initial ID to be assigned to type-2 grain
         
         ID_c = ID_c_iB_to_1_cell{iB};
-        ID_c(ID_overlap==0) = 0;    % ONLY use valid/overlap area !
+        ID_c(big_twin_grain_in_overlap_area_cell{iB}==0) = 0;    % ONLY use valid/overlap area !
         
         % [step-1] loop check every 'current twin grain'
         twin_grain_list = nan_unique(ID_c(:));
@@ -229,6 +241,7 @@ for icell = 1:size(cells,1)
             % If this grain is a twin grain (contains twin pixel)
             grain_twinned_TF = any(current_twin_cell{iB}(inds));
             if grain_twinned_TF
+                type_1_grain_ID(inds) = ID_c_current;
                 if iE == 0
                     type_1_grain_label(inds) = g3_evolving_1;    % [Q1]===> existing twin, evolving grain?
                 else
@@ -252,19 +265,20 @@ for icell = 1:size(cells,1)
                 ids(ids==0) = [];
                 if isempty(ids)
                     % if current twin grain does not overlap with any type-2 grain, ADD this grain to the ever twin grain map
-                    type_2_grain_ID(inds) = ID_assign;
+                    type_2_grain_ID(inds) = ID2_assign;
                 else
                     % if this grain overlap with type-2 grain, MERGE them. (modify inds to include all grains)
                     inds = ismember(type_2_grain_ID, ids) | inds;
-                    type_2_grain_ID(inds) = ID_assign;
+                    type_2_grain_ID(inds) = ID2_assign;
                 end
-                ID_assign = ID_assign + 1;
+                ID2_assign = ID2_assign + 1;
                 
                 % this 'merged type-2 grain' contains 'current twin', so at least p4/re-twin, maybe p3/new-twin pixels
                 type_2_grain_label(inds) = g4_evolving_2;    % 'g4/evolving'
                 
             end
         end
+        type_1_grain_ID_cell{iB} = type_1_grain_ID;
         type_1_grain_label_cell{iB} = type_1_grain_label;
         
         % [step-2] loop check every type-2 grain, find the completely detwinned grain ===> maybe need to move this to [step-1]
@@ -335,13 +349,13 @@ for icell = 1:size(cells,1)
     end
     
     %% save data
-    save(fullfile(output_dir, [sample_name, ' twin evolution label.mat']), 'gList', 'ID_overlap', ...
+    save(fullfile(output_dir, [sample_name, ' twin evolution label.mat']), 'gList', 'ID_overlap', 'big_twin_grain_in_overlap_area_cell', ...
         'ID_p_iB_to_1_cell', 'ID_c_iB_to_1_cell', ...
         'boundary_p_iB_to_1_cell', 'boundary_c_iB_to_1_cell', ...
-        'variant_grain_iB_to_1_cell', 'variant_pixel_iB_to_1_cell', ...
+        'vg_iB_to_1_cell', 'vp_iB_to_1_cell', ...
         'variant_pixel_cell', 'variant_pixel_mode', ...
         'current_twin_cell', 'past_or_present_twin_cell', 'frd_twin_cell', ...
-        'type_1_grain_label_cell', ...
+        'type_1_grain_ID_cell', 'type_1_grain_label_cell', ...
         'type_2_grain_ID_cell', 'type_2_grain_label_cell');
     
 end
