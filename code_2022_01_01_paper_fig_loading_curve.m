@@ -53,7 +53,7 @@ p = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
 f = 'UM129_Mg_C3_processed_loading_data.mat';
 
 %%
-for n = 1:6
+for n = 1:8
     switch n
         case 1
             % Mg4Al, fine grain
@@ -99,7 +99,17 @@ for n = 1:6
             title_str = 'Mg UM129 C2 coarse grain';
             ylim = [-75 75];
             
-        case 5
+        case 6
+            p = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
+            f = 'Mg4Al_B1_processed_loading_data';
+            d = matfile(fullfile(p,f));
+            stress = d.stress;
+            strain = d.strain;
+            ind_stop = d.ind_stop;
+            title_str = 'Mg4Al B1 coarse grain';
+            ylim = [-150 150];
+            
+        case 7
             % Pure Mg, fine grain
             p = 'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu curve';
             f = 'UM134_Mg_C2_processed_loading_data.mat';
@@ -110,7 +120,7 @@ for n = 1:6
             title_str = 'Mg UM134 C2 fine grain';
             ylim = [-75 75];
             
-        case 6
+        case 8
             % Pure Mg, coarse grain
             p = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
             f = 'UM129_Mg_C3_processed_loading_data.mat';
