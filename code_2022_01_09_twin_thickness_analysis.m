@@ -200,13 +200,14 @@ for iE = 1:3
         sample_dir = cells{icell,1};
         sample_name = cells{icell,2};
         sample_ID = cells{icell,3};
+        sample_material = cells{icell,7};
         % load tbl, for sample, for all iEs
         load(fullfile(output_dir, [sample_name, '_twin_thickness_table.mat']), 'tbl');
         
         ind = (tbl.iE==iE);
         thickness = [thickness; tbl.b(ind) * 2];
         gN = [gN; repmat(iG, sum(ind),1)];
-        gLabel{iG} = sample_name;
+        gLabel{iG} = sample_material;
         iG = iG + 1;
     end
     
@@ -215,7 +216,7 @@ for iE = 1:3
     title(['Load Step ',num2str(iE)], 'fontweight', 'normal');
     ylabel('Twin Thickness (\mum)');
     set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
-    set(gca,'fontsize',13, 'ylim',[0 quantile(thickness,0.987)]);
+    set(gca,'fontsize',14, 'ylim',[0 quantile(thickness,0.987)]);
     print(fullfile(output_dir,'abs thick vs mater', ['iE_',num2str(iE),'.tiff']),'-dtiff');
 end
 close all;
@@ -239,6 +240,7 @@ for iE = 1:3
         sample_dir = cells{icell,1};
         sample_name = cells{icell,2};
         sample_ID = cells{icell,3};
+        sample_material = cells{icell,7};
         % load tbl, for sample, for all iEs
         load(fullfile(output_dir, [sample_name, '_twin_thickness_table.mat']), 'tbl');
         
@@ -247,7 +249,7 @@ for iE = 1:3
         gd = [gd; tbl.gd(ind)];
         thick_norm = [thick_norm; tbl.b(ind) * 2 ./ tbl.gd(ind)];
         gN = [gN; repmat(iG, sum(ind),1)];
-        gLabel{iG} = sample_name;
+        gLabel{iG} = sample_material;
         iG = iG + 1;
     end
     
@@ -256,7 +258,7 @@ for iE = 1:3
     title(['Load Step ',num2str(iE)], 'fontweight', 'normal');
     ylabel(['Twin Thickness Normalized',char(10),'by 2D Grain Diameter']);
     set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
-    set(gca,'fontsize',13, 'ylim',[0 quantile(thick_norm,0.987)]);
+    set(gca,'fontsize',14, 'ylim',[0 quantile(thick_norm,0.987)]);
     print(fullfile(output_dir,'normalized thick vs mater', ['iE_',num2str(iE),'.tiff']),'-dtiff');
 end
 close all;
