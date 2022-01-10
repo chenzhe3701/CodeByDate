@@ -466,7 +466,7 @@ end
 close all;
 
 
-%% [2 box plot: twin fraction vs SF]
+%% [2 box plot: twin fraction vs SF] ==> actually, this AREA-based analysis, it might be better to do based on the 'variant_pixel_mode' after twin_evolution_analysis.
 mkdir(fullfile(output_dir, 'boxplot'));
 close all;
 edges = -0.5:0.05:0.5;
