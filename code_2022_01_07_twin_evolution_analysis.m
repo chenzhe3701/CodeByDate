@@ -25,7 +25,7 @@ variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
 output_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
 mkdir(output_dir);
 
-%%
+%% Make twin type maps, pixel level summary and grain level summary
 for icell = 1:size(cells,1)
     sample_dir = cells{icell,1};
     sample_name = cells{icell,2};
