@@ -24,7 +24,7 @@ variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
 % Where to save the output figures
 output_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
 mkdir(output_dir);
-
+mkdir(output_dir,'evolution map');
 %% Make twin type maps, pixel level summary and grain level summary
 for icell = 1:size(cells,1)
     sample_dir = cells{icell,1};
@@ -95,7 +95,7 @@ for icell = 1:size(cells,1)
             plot(x(ind), y(ind), '.', 'color',colors(iB,:));
         end
         axis equal;
-        print(fullfile(output_dir,[sample_name,' gb_oly_quality.tiff']),'-dtiff');
+        print(fullfile(output_dir,'evolution map',[sample_name,' gb_oly_quality.tiff']),'-dtiff');
         close;
     end
     
@@ -191,7 +191,7 @@ for icell = 1:size(cells,1)
         title(['\fontsize{16}Load Step ',num2str(iE)],'fontweight','normal');
         set(gca,'xTickLabel',[],'yTickLabel',[], 'fontsize',16);
         set(gcf,'position', get(gcf,'position') .* [1 1 0 0] + [0 0 1000 600]);
-        print(fullfile(output_dir,[sample_name ' frd twinned iE=',num2str(iE),'.tiff']),'-dtiff');
+        print(fullfile(output_dir,'evolution map',[sample_name ' frd twinned iE=',num2str(iE),'.tiff']),'-dtiff');
         
         close all;
     end
@@ -344,7 +344,7 @@ for icell = 1:size(cells,1)
         title(['\fontsize{16}Load Step ',num2str(iE)],'fontweight','normal')
         set(gcf,'position',[80,172,1200,600]);
         set(gca,'xTickLabel',[],'yTickLabel',[],'fontsize',16);
-        print(fullfile(output_dir,[sample_name, ' grain label iE=',num2str(iE),'.tiff']),'-dtiff');
+        print(fullfile(output_dir,'evolution map',[sample_name, ' grain label iE=',num2str(iE),'.tiff']),'-dtiff');
         close;
     end
     
