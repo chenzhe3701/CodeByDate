@@ -221,6 +221,48 @@ for iE = 1:3
 end
 close all;
 
+%% [1A] multiple on same plot
+mkdir(fullfile(output_dir,'abs thick vs mater'));
+close all;
+
+iG = 1; % record current group number
+thickness = [];
+gN = [];
+gLabel = [];
+
+
+for icell = [2,5,7,10] %1:size(cells,1)
+    sample_dir = cells{icell,1};
+    sample_name = cells{icell,2};
+    sample_ID = cells{icell,3};
+    sample_material = cells{icell,7};
+    
+    % plot for each load step
+    for iE = 1:3
+        iB = iE + 1;
+        
+        % load tbl, for sample, for all iEs
+        load(fullfile(output_dir, [sample_name, '_twin_thickness_table.mat']), 'tbl');
+        
+        ind = (tbl.iE==iE);
+        thickness = [thickness; tbl.b(ind) * 2];
+        gN = [gN; repmat(iG, sum(ind),1)];
+        gLabel{iG} = [sample_material, ' Ls',num2str(iE)];
+        iG = iG + 1;
+    end
+end
+figure;
+boxplot(thickness, gN);
+title([' '], 'fontweight', 'normal');
+ylabel('Twin Thickness (\mum)');
+set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
+set(gca,'fontsize',14, 'yscale','log','YTick',[5,10,20,50,100])
+
+print(fullfile(output_dir,'abs thick vs mater', 'abs thick log.tiff'),'-dtiff');
+
+close all;
+
+
 %% [explore 2] Boxplot: 2D grian diameter normalized twin thickness. The fine grain alloys show higher normalized thickness.  Compare at given iE.
 mkdir(fullfile(output_dir,'normalized thick vs mater'));
 close all;
@@ -262,6 +304,51 @@ for iE = 1:3
     print(fullfile(output_dir,'normalized thick vs mater', ['iE_',num2str(iE),'.tiff']),'-dtiff');
 end
 close all;
+
+%% [2A] multiple on same plot
+mkdir(fullfile(output_dir,'normalized thick vs mater'));
+close all;
+
+thickness = [];
+gd = [];
+thick_norm = [];
+gN = [];
+gLabel = [];
+
+iG = 1; % record current group number
+
+% plot for each load step
+for icell = [2,5,7,10] %1:size(cells,1)
+    sample_dir = cells{icell,1};
+    sample_name = cells{icell,2};
+    sample_ID = cells{icell,3};
+    sample_material = cells{icell,7};
+    
+    for iE = 1:3
+        iB = iE + 1;
+        
+        % load tbl, for sample, for all iEs
+        load(fullfile(output_dir, [sample_name, '_twin_thickness_table.mat']), 'tbl');
+        
+        ind = (tbl.iE==iE);
+        thickness = [thickness; tbl.b(ind) * 2];
+        gd = [gd; tbl.gd(ind)];
+        thick_norm = [thick_norm; tbl.b(ind) * 2 ./ tbl.gd(ind)];
+        gN = [gN; repmat(iG, sum(ind),1)];
+        gLabel{iG} = [sample_material, ' Ls',num2str(iE)];
+        iG = iG + 1;
+    end
+end
+
+figure;
+boxplot(thick_norm, gN);
+title(' ', 'fontweight', 'normal');
+ylabel(['Twin Thickness Normalized',char(10),'by 2D Grain Diameter']);
+set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
+set(gca,'fontsize',14, 'yTick', 0:0.1:0.8, 'ylim',[0 0.8]);
+print(fullfile(output_dir,'normalized thick vs mater', 'normlized thick.tiff'),'-dtiff');
+close all;
+
 
 %% [explore 3] boxplot: [twin thickness] vs [SF]. Mg4Al has more outliers at high SF
 mkdir(fullfile(output_dir,'thick vs SF'));
@@ -341,7 +428,7 @@ for icell =  [2,5,7,10] %1:size(cells,1)
     end
 end
 
-%% [explore 5] # of twins per grain area
+%% [explore 5 ] Twin density, # of twins per grain area
 
 mkdir(fullfile(output_dir,'twin density'));
 close all;
@@ -389,7 +476,7 @@ for icell = [2,5,7,10] %1:size(cells,1)
         ind = tbl_local.count>0;
         tbl_local = tbl_local(ind,:);
         
-        nPerA = [nPerA; tbl_local.count ./ tbl_local.ga];
+        nPerA = [nPerA; tbl_local.count ./ (tbl_local.ga / 1000000)];
         gN = [gN; repmat(iG, size(tbl_local,1), 1)];
         gLabel{iG} = [sample_material, ' Ls',num2str(iE)];
         iG = iG + 1;
@@ -399,12 +486,28 @@ end
 
 figure;
 boxplot(nPerA, gN);
-ylabel(['# Twins per 2D Grain Area (1/\mum^2)']);
-set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45, 'yTick',[1e-5,1e-4,1e-3,1e-2]);
+ylabel(['# Twins per 2D Grain Area (mm^{-2})']);
+set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45, 'yTick',[10,100,1000,10000]);
 set(gca,'fontsize',12,  'yscale','log');
 title(' ', 'fontweight', 'normal');
 
 print(fullfile(output_dir,'twin density', ['twin density.tiff']),'-dtiff');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
