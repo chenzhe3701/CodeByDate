@@ -14,7 +14,7 @@ load_settings(fullfile(pathSetting,fileSetting),'sampleName','sampleMaterial','s
 % path for saved data
 saveDataPath = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab';
 saveDataFile = fullfile(saveDataPath,'Mg4Al_S1_EbsdToSemForTraceAnalysis.mat');
-cd(saveDataPath);
+% cd(saveDataPath);
 
 dataFile = matfile(saveDataFile)
 load(saveDataFile,'ID','X','Y','boundaryTF','boundaryTFB','gDiameter','gID','gNeighbors','gNNeighbors','gPhi1','gPhi','gPhi2','eulerAligned');
@@ -28,9 +28,10 @@ end
 
 % twin variant data
 variant_file = 'E:\Mg4Al_S1_insitu\Analysis_by_Matlab\previous result recovered\20200325_0506_new_variant_map_Mg4Al_S1.mat';
-load(variant_file, 'struCell','variantMapCell');
+load(variant_file, 'struCell','variantMapCleanedCell');
+variantMapCell = variantMapCleanedCell;  % need to use the cleaned data
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 analysis for paper a';
+output_dir = 'E:\zhec umich Drive\0_temp_output\Mg4Al_S1 Figure for paper';
 mkdir(output_dir);
 %% calculate effective strain
 for iE = 1:6
@@ -52,7 +53,7 @@ histogram(gd,0:10:120);
 set(gca,'fontsize',18);
 xlabel('Grain Diameter (\mum)');
 ylabel('Counts');
-print(fullfile(output_dir, '\Mg4Al grain diameter distribution'),'-dtiff');
+% print(fullfile(output_dir, '\Mg4Al grain diameter distribution'),'-dtiff');
 
 %% [Fig 2] Plot strain maps
 for iE = 1:6
@@ -68,18 +69,18 @@ for iE = 1:6
 end
 close all;
 
-%% [Fig 3] For each iE, narrow colorbar range to differentiate tensile and compressive 
+%% [Fig Appendix 1] For each iE, narrow colorbar range to differentiate tensile and compressive 
 for iE = 1:6
     [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
     set(gca,'XTick',[],'YTick',[],'fontsize',18);
     title(c,'\fontsize{18}\epsilon_x_x');
     title(strain_str{iE},'fontweight','normal');
     caxis([-0.01, 0.01]);
-    print(fullfile(output_dir,['fig 3 color_adjusted_exx_',num2str(iE)]),'-dtiff');
+    print(fullfile(output_dir,['fig append 1 color_adjusted_exx_',num2str(iE)]),'-dtiff');
 end
 close all;
 
-%% [Fig 6] Plot twin variant maps
+%% [Fig 5] Plot twin variant maps
 for iE = 1:6
    eG_str{iE} = ['\epsilon\fontsize{16}^G = ',num2str(strainPauses(iE),'%.4f')]; 
 end
@@ -92,7 +93,7 @@ for iE = 1:6
     set(c,'limits', [0.5, 6.5]);
     set(gca,'XTick',[],'YTick',[],'fontsize',18);
     title(eG_str{iE},'fontweight','normal');
-    print(fullfile(output_dir,['fig 6 variantMap_',num2str(iE)]),'-dtiff');
+    print(fullfile(output_dir,['fig 5 variantMap_',num2str(iE)]),'-dtiff');
 end
 close all;
 
@@ -100,47 +101,12 @@ close all;
 myplot(X,Y,ID,boundaryTFB);
 label_map_with_ID(X,Y,ID,gcf,unique(ID(:)));
 
-%% (step 1) @ iE=1, use exx_map to actively selected grains with slip trace.  
-addpath('D:\p\m\DIC_Analysis\on_going_work');
+%% The following part is not working well in Matlab 2019, but not in 2021. !!!
+% So, just run code, no interactive selection (note 2022-03-18)
 
+% [Fig 4a] label strain map with slip trace for selected grains at iE=1
 iE = 1;
-[f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
-label_map_with_trace(X,Y,ID,gID_list, 1, gca);
-label_map_with_trace(X,Y,ID,203, 5, gca);
-title('double click to add grain, click x to exit', 'fontweight','normal'); 
-
-try
-    load([saveDataPath,'\Mg4Al_gID_list_slip_iE_1.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
-catch
-    pos_list = [];
-end
-gID_list_slip = [];    
-
-% draw existing ones, then keep select new ones, until hit 'x' to exit
-iPos = 1;
-while true
-    try
-        pos = pos_list(iPos,:);
-        drawpoint(gca,'Position',pos);
-    catch
-        h = drawpoint;
-        customWait(h);
-        pos = round(h.Position);
-    end
-    [~,indc] = min(abs(pos(1)-X(1,:)));
-    [~,indr] = min(abs(pos(2)-Y(:,1)));
-    pos_list(iPos,:) = pos;
-    gID_list_slip(iPos) = ID(indr,indc)
-    iPos = iPos + 1;
-end
-%%
-gID_list_special = [203, 5];    % manually add [grain ID, slip system other than basal];
-
-if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'),'file')
-    save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
-end
-%% (step 2) [Fig 5a] label strain map with slip trace for selected grains at iE=1
-iE = 1;
+load([saveDataPath,'\Mg4Al_gID_list_slip_iE_1.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');
 [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 
@@ -151,101 +117,12 @@ end
 
 title(c,'\fontsize{18}\epsilon_x_x');
 title(strain_str{iE},'fontweight','normal');
-print(fullfile(output_dir, ['fig 5a exx_',num2str(iE),'_with_trace']),'-dtiff');
+print(fullfile(output_dir, ['fig 4a exx_',num2str(iE),'_with_trace']),'-dtiff');
 close all;
 
-%% (step 3) at iE = 2 (or higher, can change), continue actively selected grains with slip trace, with eEff map  
-iE = 2;
-[f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
-
-label_map_with_trace(X,Y,ID,gID_list, 1, gca);
-label_map_with_trace(X,Y,ID,203, 5, gca);   % something special to be modified   
-
-try
-    load([saveDataPath,'\Mg4Al_gID_list_slip_iE_2.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
-catch
-    load([saveDataPath,'\Mg4Al_gID_list_slip_iE_1.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
-end
-gID_list_slip = [];    
-
-% draw existing ones, then keep select new ones, until hit 'x' to exit
-iPos = 1;
-while true
-    try
-        pos = pos_list(iPos,:);
-        drawpoint(gca,'Position',pos,'color','r');
-    catch
-        h = drawpoint;
-        customWait(h);
-        pos = round(h.Position);
-    end
-    [~,indc] = min(abs(pos(1)-X(1,:)));
-    [~,indr] = min(abs(pos(2)-Y(:,1)));
-    pos_list(iPos,:) = pos;
-    gID_list_slip(iPos) = ID(indr,indc)
-    iPos = iPos + 1;
-end
-%%
-gID_list_special = [203, 5;
-    232, 5];    % manually add [grain ID, slip system other than basal]; -> grain 52, don't know ss.
-if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_2.mat'),'file')
-    save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_2.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
-end
-%% (step 4) label strain map with slip trace for selected grains at iE=2
-iE = 2;
-[f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
-set(gca,'XTick',[],'YTick',[],'fontsize',18);
-
-label_map_with_trace_for_Mg4Al(X,Y,ID,gID_list_slip, 1, gca);
-for ii = 1:size(gID_list_special,1)
-    label_map_with_trace_for_Mg4Al(X,Y,ID, gID_list_special(ii,1), gID_list_special(ii,2), gca);   % can modify this code to plot trace as black
-end
-
-title(c,'\fontsize{18}\epsilon_e_f_f');
-title(strain_str{iE},'fontweight','normal');
-print(fullfile(output_dir, ['eeff_',num2str(iE),'_with_trace']),'-dtiff');
-close all;
-
-%% (step 5) at iE = 3 (or higher, can change), continue actively selected grains with slip trace, with eEff map  
+% [Fig 4c] label strain map with slip trace for selected grains at iE=3
 iE = 3;
-[f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
-
-label_map_with_trace(X,Y,ID,gID_list, 1, gca);
-label_map_with_trace(X,Y,ID,203, 5, gca);   % something special to be modified   
-
-try
-    load([saveDataPath,'\Mg4Al_gID_list_slip_iE_3.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
-catch
-    load([saveDataPath,'\Mg4Al_gID_list_slip_iE_2.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
-end
-gID_list_slip = [];    
-
-% draw existing ones, then keep select new ones, until hit 'x' to exit
-iPos = 1;
-while true
-    try
-        pos = pos_list(iPos,:);
-        drawpoint(gca,'Position',pos,'color','r');
-    catch
-        h = drawpoint;
-        customWait(h);
-        pos = round(h.Position);
-    end
-    [~,indc] = min(abs(pos(1)-X(1,:)));
-    [~,indr] = min(abs(pos(2)-Y(:,1)));
-    pos_list(iPos,:) = pos;
-    gID_list_slip(iPos) = ID(indr,indc)
-    iPos = iPos + 1;
-end
-%%
-gID_list_special = [203, 5;
-    232, 5];    % manually add [grain ID, slip system other than basal]; -> grain 52, don't know ss.
-
-if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'),'file')
-    save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
-end
-%% (step 6) [Fig 5c] label strain map with slip trace for selected grains at iE=2
-iE = 3;
+load([saveDataPath,'\Mg4Al_gID_list_slip_iE_3.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special'); 
 [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 
@@ -256,11 +133,172 @@ end
 
 title(c,'\fontsize{18}\epsilon_e_f_f');
 title(strain_str{iE},'fontweight','normal');
-print(fullfile(output_dir,['fig 5c eeff_',num2str(iE),'_with_trace']),'-dtiff');
+print(fullfile(output_dir,['fig 4c eeff_',num2str(iE),'_with_trace']),'-dtiff');
 
 close all;
 
-%% [Fig 4] Calculate grain Schmid factor. plot SF map and histogram
+%% (step 1) @ iE=1, use exx_map to actively selected grains with slip trace.  
+% % addpath('D:\p\m\DIC_Analysis\on_going_work');
+% 
+% iE = 1;
+% [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
+% label_map_with_trace(X,Y,ID,gID_list, 1, gca);
+% label_map_with_trace(X,Y,ID,203, 5, gca);
+% title('double click to add grain, click x to exit', 'fontweight','normal'); 
+% disableDefaultInteractivity(gca);
+% 
+% try
+%     load([saveDataPath,'\Mg4Al_gID_list_slip_iE_1.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
+% catch
+%     pos_list = [];
+% end
+% gID_list_slip = [];    
+% 
+% % draw existing ones, then keep select new ones, until hit 'x' to exit
+% iPos = 1;
+% while true
+%     try
+%         pos = pos_list(iPos,:);
+%         drawpoint(gca,'Position',pos);
+%     catch
+%         h = drawpoint;
+%         customWait(h);
+%         pos = round(h.Position);
+%     end
+%     [~,indc] = min(abs(pos(1)-X(1,:)));
+%     [~,indr] = min(abs(pos(2)-Y(:,1)));
+%     pos_list(iPos,:) = pos;
+%     gID_list_slip(iPos) = ID(indr,indc)
+%     iPos = iPos + 1;
+% end
+% %%
+% gID_list_special = [203, 5];    % manually add [grain ID, slip system other than basal];
+% 
+% if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'),'file')
+%     save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_1.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
+% end
+% %% (step 2) [Fig 5a] label strain map with slip trace for selected grains at iE=1
+% iE = 1;
+% [f,a,c] = myplot(X,Y,dicData{iE}.exx,boundaryTFB);
+% set(gca,'XTick',[],'YTick',[],'fontsize',18);
+% 
+% label_map_with_trace_for_Mg4Al(X,Y,ID,gID_list_slip, 1, gca);
+% for ii = 1:size(gID_list_special,1)
+%     label_map_with_trace_for_Mg4Al(X,Y,ID, gID_list_special(ii,1), gID_list_special(ii,2), gca);   % can modify this code to plot trace as black
+% end
+% 
+% title(c,'\fontsize{18}\epsilon_x_x');
+% title(strain_str{iE},'fontweight','normal');
+% print(fullfile(output_dir, ['fig 5a exx_',num2str(iE),'_with_trace']),'-dtiff');
+% close all;
+% 
+% %% (step 3) at iE = 2 (or higher, can change), continue actively selected grains with slip trace, with eEff map  
+% iE = 2;
+% [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
+% 
+% label_map_with_trace(X,Y,ID,gID_list, 1, gca);
+% label_map_with_trace(X,Y,ID,203, 5, gca);   % something special to be modified   
+% 
+% try
+%     load([saveDataPath,'\Mg4Al_gID_list_slip_iE_2.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
+% catch
+%     load([saveDataPath,'\Mg4Al_gID_list_slip_iE_1.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
+% end
+% gID_list_slip = [];    
+% 
+% % draw existing ones, then keep select new ones, until hit 'x' to exit
+% iPos = 1;
+% while true
+%     try
+%         pos = pos_list(iPos,:);
+%         drawpoint(gca,'Position',pos,'color','r');
+%     catch
+%         h = drawpoint;
+%         customWait(h);
+%         pos = round(h.Position);
+%     end
+%     [~,indc] = min(abs(pos(1)-X(1,:)));
+%     [~,indr] = min(abs(pos(2)-Y(:,1)));
+%     pos_list(iPos,:) = pos;
+%     gID_list_slip(iPos) = ID(indr,indc)
+%     iPos = iPos + 1;
+% end
+% %%
+% gID_list_special = [203, 5;
+%     232, 5];    % manually add [grain ID, slip system other than basal]; -> grain 52, don't know ss.
+% if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_2.mat'),'file')
+%     save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_2.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
+% end
+% %% (step 4) label strain map with slip trace for selected grains at iE=2
+% iE = 2;
+% [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
+% set(gca,'XTick',[],'YTick',[],'fontsize',18);
+% 
+% label_map_with_trace_for_Mg4Al(X,Y,ID,gID_list_slip, 1, gca);
+% for ii = 1:size(gID_list_special,1)
+%     label_map_with_trace_for_Mg4Al(X,Y,ID, gID_list_special(ii,1), gID_list_special(ii,2), gca);   % can modify this code to plot trace as black
+% end
+% 
+% title(c,'\fontsize{18}\epsilon_e_f_f');
+% title(strain_str{iE},'fontweight','normal');
+% print(fullfile(output_dir, ['eeff_',num2str(iE),'_with_trace']),'-dtiff');
+% close all;
+% 
+% %% (step 5) at iE = 3 (or higher, can change), continue actively selected grains with slip trace, with eEff map  
+% iE = 3;
+% [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
+% 
+% label_map_with_trace(X,Y,ID,gID_list, 1, gca);
+% label_map_with_trace(X,Y,ID,203, 5, gca);   % something special to be modified   
+% 
+% try
+%     load([saveDataPath,'\Mg4Al_gID_list_slip_iE_3.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
+% catch
+%     load([saveDataPath,'\Mg4Al_gID_list_slip_iE_2.mat'], 'gID_list_slip', 'pos_list', 'gID_list_special');       % first try to load previous result
+% end
+% gID_list_slip = [];    
+% 
+% % draw existing ones, then keep select new ones, until hit 'x' to exit
+% iPos = 1;
+% while true
+%     try
+%         pos = pos_list(iPos,:);
+%         drawpoint(gca,'Position',pos,'color','r');
+%     catch
+%         h = drawpoint;
+%         customWait(h);
+%         pos = round(h.Position);
+%     end
+%     [~,indc] = min(abs(pos(1)-X(1,:)));
+%     [~,indr] = min(abs(pos(2)-Y(:,1)));
+%     pos_list(iPos,:) = pos;
+%     gID_list_slip(iPos) = ID(indr,indc)
+%     iPos = iPos + 1;
+% end
+% %%
+% gID_list_special = [203, 5;
+%     232, 5];    % manually add [grain ID, slip system other than basal]; -> grain 52, don't know ss.
+% 
+% if ~exist(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'),'file')
+%     save(fullfile(saveDataPath,'Mg4Al_gID_list_slip_iE_3.mat'), 'gID_list_slip', 'pos_list', 'gID_list_special');       % can choose to save this for record
+% end
+% %% (step 6) [Fig 5c] label strain map with slip trace for selected grains at iE=2
+% iE = 3;
+% [f,a,c] = myplot(X,Y,eEff{iE},boundaryTFB);
+% set(gca,'XTick',[],'YTick',[],'fontsize',18);
+% 
+% label_map_with_trace_for_Mg4Al(X,Y,ID,gID_list_slip(~ismember(gID_list_slip, gID_list_special(:,1))), 1, gca);
+% for ii = 1:size(gID_list_special,1)
+%     label_map_with_trace_for_Mg4Al(X,Y,ID, gID_list_special(ii,1), gID_list_special(ii,2), gca);   % can modify this code to plot trace as black
+% end
+% 
+% title(c,'\fontsize{18}\epsilon_e_f_f');
+% title(strain_str{iE},'fontweight','normal');
+% print(fullfile(output_dir,['fig 5c eeff_',num2str(iE),'_with_trace']),'-dtiff');
+% 
+% close all;
+
+%% [Fig 3 abcd] Calculate grain Schmid factor. plot SF map and histogram
 assert(eulerAligned==1,'check if euler is aligned to sample coordinate');
 ss = define_SS_cart(sampleMaterial,'twin');
 
@@ -275,14 +313,14 @@ myplot(X,Y,gSF_basal_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 title('Max Basal Schmid Factor','fontweight','normal','fontsize',18);
 caxis([0, 0.5]);
-print(fullfile(output_dir, 'fig 4 basal_SF_map'),'-dtiff');
+print(fullfile(output_dir, 'fig 3a basal_SF_map'),'-dtiff');
 
 % [Figure] grain twin SF map
 myplot(X,Y,gSF_etwin_map,boundaryTFB);
 set(gca,'XTick',[],'YTick',[],'fontsize',18);
 title('Max Twin Schmid Factor','fontweight','normal','fontsize',18);
 caxis([-0.1, 0.5]);
-print(fullfile(output_dir, 'fig 4 etwin_SF_map'),'-dtiff');
+print(fullfile(output_dir, 'fig 3b etwin_SF_map'),'-dtiff');
 
 % [Figure] grain basal SF histogram
 figure;
@@ -291,7 +329,7 @@ histogram(t, 0:0.05:0.5);
 ylabel('Counts');
 xlabel('Max Basal Schmid Factor');
 set(gca,'fontsize',18);
-print(fullfile(output_dir, 'fig 4 basal SF distribution'),'-dtiff');
+print(fullfile(output_dir, 'fig 3c basal SF distribution'),'-dtiff');
 
 % [Figure] grain twin SF histogram
 figure;
@@ -300,34 +338,34 @@ histogram(t, -0.1:0.05:0.5);
 ylabel('Counts');
 xlabel('Max Twin Schmid Factor');
 set(gca,'fontsize',18);
-print(fullfile(output_dir,'fig 4 twin SF distribution'),'-dtiff');
+print(fullfile(output_dir,'fig 3d twin SF distribution'),'-dtiff');
 
 close all;
 
 %% [] explore. struCell has only 177 grains, gID_list has 180. find the difference
-ID_in_struCell = [];
-for ii = 1:length(struCell{2})
-    ID_in_struCell = [ID_in_struCell, struCell{2}(ii).gID];
-end
-ID_diff = gID_list(~ismember(gID_list, ID_in_struCell));
-myplot(ismember(ID,ID_diff));
-gDiameter(ismember(gID,ID_diff))
-% -> Note: the result shows that the 3 grains are edge grains on EBSD map, possibly with no strain data  
+% ID_in_struCell = [];
+% for ii = 1:length(struCell{2})
+%     ID_in_struCell = [ID_in_struCell, struCell{2}(ii).gID];
+% end
+% ID_diff = gID_list(~ismember(gID_list, ID_in_struCell));
+% myplot(ismember(ID,ID_diff));
+% gDiameter(ismember(gID,ID_diff))
+% % -> Note: the result shows that the 3 grains are edge grains on EBSD map, possibly with no strain data  
 
-%% [fig 5bd] Calculate the slip Schmid factor distribution of active slip system at iEs. And calculate the twin Schmid factor distribution of active twin 
+%% [fig 4 bd] Calculate the slip Schmid factor distribution of active slip system at iEs. And calculate the twin Schmid factor distribution of active twin 
 
 for iE = 1:3
 load([saveDataPath,'\Mg4Al_gID_list_slip_iE_',num2str(iE),'.mat'], 'gID_list_slip');  
 
-T1 = cell2table(cell(0,3));
+T1 = cell2table(cell(0,3)); % grain-level
 T1.Properties.VariableNames = {'gID','SF_basal','slip_TF'};
 t1_template = T1;
 
-T2 = cell2table(cell(0,4));
+T2 = cell2table(cell(0,4)); % variant-level
 T2.Properties.VariableNames = {'gID','variant','SF_twin','twin_TF'};
 t2_template = T2;
 
-T3 = cell2table(cell(0,3));
+T3 = cell2table(cell(0,3)); % grain-level
 T3.Properties.VariableNames = {'gID','SF_twin','twin_TF'};
 t3_template = T3;
 
@@ -420,10 +458,11 @@ set(gca,'ycolor','k','ylim',[0 160]);
 ylabel('Percent (%)');
 
 legend('Without Slip Traces','With Slip Traces', 'Percent with Slip Traces');
-print(fullfile(output_dir, ['fig 5 slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
+if ismember(iE,[1,3])
+    print(fullfile(output_dir, ['fig 4 slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
+end
 
-
-% summarize twin_SF vs twin/no-twin, variant-wise
+% summarize counts, x = twin_SF, hue = twin/no-twin, variant-wise
 str = [];
 for ii = 1:length(edges_2)-1
     str{ii} = [num2str(edges_2(ii),2),'-',num2str(edges_2(ii+1),2)];
@@ -437,11 +476,11 @@ bar(edges_2(1:end-1), [h_T;h_F]');
 set(gca,'XTick',edges_2(1:end-1), 'XTickLabel',str, 'XTickLabelRotation',45, 'fontsize',16);
 xlabel('Twin Schmid Factor');
 ylabel('Counts');
-legend('Twinned','Not twinned');
-print(fullfile(output_dir, ['twinTF vs variantSF iE=',num2str(iE),'.tiff']),'-dtiff');
+legend('Variant twinned','Variant not twinned');
+% print(fullfile(output_dir, ['twinTF vs variantSF iE=',num2str(iE),'.tiff']),'-dtiff');
 
 
-% summarize twin_SF vs slip/non-slip, grain-wise
+% summarize counts, x = twin_SF, hue = slip/non-slip, grain-wise
 str = [];
 for ii = 1:length(edges_3)-1
     str{ii} = [num2str(edges_3(ii)),'-',num2str(edges_3(ii+1))];
@@ -457,13 +496,15 @@ set(gca,'XTick',edges_3(1:end-1), 'XTickLabel',str, 'XTickLabelRotation',45, 'fo
 xlabel('Max Twin Schmid Factor');
 ylabel('Counts');
 legend('Twinned','Not twinned','location','northwest');
-print(fullfile(output_dir, ['twinTF vs twinSF iE=',num2str(iE),'.tiff']),'-dtiff');
+% print(fullfile(output_dir, ['twinTF vs twinSF iE=',num2str(iE),'.tiff']),'-dtiff');
 
 % double check, illustrate which grains do not have slip traces
 % map_no_slip = ID;
 % map_no_slip(ismember(ID, gID_list_slip)) = 0;
 % myplot(map_no_slip,boundaryTFB);
 % print(fullfile(output_dir, ['grains no basal slip trace iE=',num2str(iE),'.tiff']),'-dtiff');
+
+close all;
 
 end
 
