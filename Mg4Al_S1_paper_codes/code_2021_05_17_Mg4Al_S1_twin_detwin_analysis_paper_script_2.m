@@ -493,7 +493,7 @@ plot(xpos(11:20), pct(6,11:20) * 100,'-.bd','linewidth',1.5);
 xlabel('Twin Variant Schmid Factor');
 ylabel('Percent (%)');
 
-legend({['load step = 3, \epsilon = ',num2str(strains(3+1),'%.4f')],['load step = 6, \epsilon = ',num2str(strains(6+1),'%.4f')]},'location','northwest');
+legend({['\epsilon^G = ',num2str(strains(3+1),'%.4f')],['\epsilon^G = ',num2str(strains(6+1),'%.4f')]},'location','northwest');
 set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,100]);
 set(gca,'xTick',xpos,'xTicklabel',xstr,'xTickLabelRotation',45);
 
@@ -506,9 +506,12 @@ for ip = 11:length(xpos)
 end
 print(fullfile(output_dir,['fig 17 twin variant pct vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 
-%% combine all load steps, view, pct variants twinned 
+%% [fig 17 overall more steps] with sample size indicated
 close all;
-colors = inferno(6);
+xpos = -0.475:0.05:0.475;
+figure; hold on;
+
+colors = parula(6);
 markers = {'-o','-d','-s','-.o','-.d','-.s'};
 
 xstr = [];
@@ -517,15 +520,48 @@ for ii=1:length(edges)-1
 end
 
 figure; hold on;
-for iE = 1:6
-    plot(edges(1:end-1)+0.025, 100*pct(iE,:), markers{iE}, 'color', colors(iE,:), 'linewidth', 1.5);
+legend_str = {};
+for iE = 2:6
+    plot(xpos(11:20), 100*pct(iE,11:20), markers{iE}, 'color', colors(iE-1,:), 'linewidth', 1.5);
+    legend_str = {legend_str{:}, ['\epsilon^G = ',num2str(strains(iE+1),'%.4f')]};
 end
+
 xlabel('Twin Variant Schmid Factor');
-ylabel('Percent Twinned (%)');
-set(gca, 'fontsize', 16, 'xTick',edges(1:2:end), 'ylim', [0,80],'XTickLabelRotation',0.1);
+ylabel('Percent (%)');
 
-legend({'Load step 1','Load step 2','Load step 3','Load step 4','Load step 5','Load step 6'},'location','northwest');
+legend(legend_str, 'location','northwest');
+set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,100]);
+set(gca,'xTick',xpos,'xTicklabel',xstr,'xTickLabelRotation',45);
 
+% label population
+popu = (N_t+N_nt);
+for ip = 11:length(xpos)
+    text(xpos(ip)-0.018, -10, ...
+        ['(',num2str(popu(ip)),')'], ...
+        'FontSize',12, 'Color','k');
+end
+print(fullfile(output_dir,['fig 17 more twin variant pct vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+
+%% combine all load steps, view, pct variants twinned 
+% close all;
+% colors = inferno(6);
+% markers = {'-o','-d','-s','-.o','-.d','-.s'};
+% 
+% xstr = [];
+% for ii=1:length(edges)-1
+%     xstr{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
+% end
+% 
+% figure; hold on;
+% for iE = 1:6
+%     plot(edges(1:end-1)+0.025, 100*pct(iE,:), markers{iE}, 'color', colors(iE,:), 'linewidth', 1.5);
+% end
+% xlabel('Twin Variant Schmid Factor');
+% ylabel('Percent Twinned (%)');
+% set(gca, 'fontsize', 16, 'xTick',edges(1:2:end), 'ylim', [0,80],'XTickLabelRotation',0.1);
+% 
+% legend({'Load step 1','Load step 2','Load step 3','Load step 4','Load step 5','Load step 6'},'location','northwest');
+% 
 % print(fullfile(output_dir,'pct variants twinned vs SF all iEs.tiff'), '-dtiff');
 
 %% [Fig 18 individual]. Counts grains twinned & not twinned vs. max_basal_SF
@@ -585,7 +621,7 @@ plot(xpos, pct(6,:) * 100,'-.bd','linewidth',1.5);
 xlabel('Maximum Basal Schmid Factor');
 ylabel('Percent (%)');
 
-legend({['load step = 3, \epsilon = ',num2str(strains(3+1),'%.4f')],['load step = 6, \epsilon = ',num2str(strains(6+1),'%.4f')]},'location','northeast');
+legend({['\epsilon^G = ',num2str(strains(3+1),'%.4f')],['\epsilon^G = ',num2str(strains(6+1),'%.4f')]},'location','northeast');
 set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,115]);
 set(gca,'xTick',xpos,'xTicklabel',xstr,'xTickLabelRotation',45);
 
@@ -597,6 +633,38 @@ for ip = 1:length(xpos)
         'FontSize',12, 'Color','k');
 end
 print(fullfile(output_dir,['fig 18 twinned grain pct vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
+
+%% [fig 18 overall more load steps]
+close all;
+edges = 0:0.05:0.5;
+d_int = (edges(3)-edges(2))/2;
+xpos = [edges(2)-d_int, edges(2:end-1)+d_int];
+
+colors = parula(6);
+markers = {'-o','-d','-s','-.o','-.d','-.s'};
+
+figure; hold on;
+legend_str = {};
+for iE = 2:6
+    plot(xpos, 100*pct(iE,:), markers{iE}, 'color', colors(iE-1,:), 'linewidth', 1.5);
+    legend_str = {legend_str{:}, ['\epsilon^G = ',num2str(strains(iE+1),'%.4f')]};
+end
+
+xlabel('Maximum Basal Schmid Factor');
+ylabel('Percent (%)');
+
+legend(legend_str, 'location','northeast');
+set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,165], 'YTick',[0:25:150]);
+set(gca,'xTick',xpos,'xTicklabel',xstr,'xTickLabelRotation',45);
+
+% label population
+popu = (N_t+N_nt);
+for ip = 1:length(xpos)
+    text(xpos(ip)-0.011, -10, ...
+        ['(',num2str(popu(ip)),')'], ...
+        'FontSize',12, 'Color','k');
+end
+print(fullfile(output_dir,['fig 18 more twinned grain pct vs SF iE=',num2str(iE),'.tiff']),'-dtiff');
 
 %% [Fig 19] scatter plot, x=max twin SF, y=max basal SF, hue = twinned/not-twinned
 for iE = 1:6
