@@ -521,7 +521,7 @@ end
 
 figure; hold on;
 legend_str = {};
-for iE = 2:6
+for iE = [2,3,5,6]
     plot(xpos(11:20), 100*pct(iE,11:20), markers{iE}, 'color', colors(iE-1,:), 'linewidth', 1.5);
     legend_str = {legend_str{:}, ['\epsilon^G = ',num2str(strains(iE+1),'%.4f')]};
 end
@@ -645,7 +645,7 @@ markers = {'-o','-d','-s','-.o','-.d','-.s'};
 
 figure; hold on;
 legend_str = {};
-for iE = 2:6
+for iE = [2,3,5,6]
     plot(xpos, 100*pct(iE,:), markers{iE}, 'color', colors(iE-1,:), 'linewidth', 1.5);
     legend_str = {legend_str{:}, ['\epsilon^G = ',num2str(strains(iE+1),'%.4f')]};
 end
@@ -654,7 +654,7 @@ xlabel('Maximum Basal Schmid Factor');
 ylabel('Percent (%)');
 
 legend(legend_str, 'location','northeast');
-set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,165], 'YTick',[0:25:150]);
+set(gca,'fontsize',14,'xlim',[0,0.5], 'ylim',[-19,145], 'YTick',[0:25:100]);
 set(gca,'xTick',xpos,'xTicklabel',xstr,'xTickLabelRotation',45);
 
 % label population
@@ -1008,6 +1008,11 @@ for iE = 6 % 4:6
     iB = iE + 1;
     edges = -0.5:0.05:0.5;
     
+    xstr = [];
+    for ii=1:length(edges)-1
+        xstr{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
+    end
+
     significantly_detwin_criterion = 0.9;
     ind1 = (T4.iE==iE) & (T4.A_ratio < significantly_detwin_criterion);    % 1: not significantly detwinned
     ind2 = (T4.iE==iE) & (T4.A_ratio >= significantly_detwin_criterion);
@@ -1034,9 +1039,33 @@ for iE = 6 % 4:6
     % title(['load step = ',num2str(iE), ', \epsilon = ',num2str(strains(iB),'%.4f')],'fontweight','norma');
     title(' ');
     legend({'Variants not significantly detwinned', 'Variants significantly detwinned','Percent of significantly detwinned'},'Location','northwest');
-    print(fullfile(output_dir,['fig 15b significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
+    print(fullfile(output_dir,['fig 15c significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-dtiff');
     
     
+    % [clean version]
+    figure;
+    set(gcf,'position', get(gcf,'position') + [0,0,0,10]);
+    xpos = -0.475:0.05:0.475;
+    plot(xpos, N2./(N1+N2) * 100,'-ko','linewidth',1.5);
+    set(gca,'fontsize',12,'xlim',[0,0.5],'ylim',[-19,100], ...
+        'xTicklabel',xstr,'xTickLabelRotation',45, ...
+        'XTick',xpos);
+
+    % label population
+    popu = (N1+N2);
+    for ip = 11:length(xpos)
+        text(xpos(ip)-0.011, -10, ...
+            ['(',num2str(popu(ip)),')'], ...
+            'FontSize',12, 'Color','k');
+    end
+
+    xlabel('Twin Variant Schmid Factor');
+    ylabel('Percent of Variants Significantly Detwinned (%)');
+    
+    print(fullfile(output_dir,['fig 15b significantly detwin variant summary iE=',num2str(iE),'.tiff']), '-r300', '-dtiff');
+    
+
+
     % plot to check. label the grains with 'significantly detwinned variants'
     map = zeros(nR,nC);
     inds = past_or_present_twin_grain_label_cell{iB}>0;

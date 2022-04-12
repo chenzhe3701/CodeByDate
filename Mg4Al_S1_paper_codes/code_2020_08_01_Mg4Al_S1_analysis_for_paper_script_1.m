@@ -354,7 +354,7 @@ close all;
 
 %% [fig 4 bd] Calculate the slip Schmid factor distribution of active slip system at iEs. And calculate the twin Schmid factor distribution of active twin 
 
-for iE = 1:3
+for iE = [1,3]
 load([saveDataPath,'\Mg4Al_gID_list_slip_iE_',num2str(iE),'.mat'], 'gID_list_slip');  
 
 T1 = cell2table(cell(0,3)); % grain-level
@@ -458,8 +458,27 @@ set(gca,'ycolor','k','ylim',[0 160]);
 ylabel('Percent (%)');
 
 legend('Without Slip Traces','With Slip Traces', 'Percent with Slip Traces');
+if ismember(iE,[])
+    print(fullfile(output_dir, ['fig 4old slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
+end
+
+% [clean version]
+figure;
+xpos = edges_basal(1:end-1)+0.025;
+plot(xpos, h_T./(h_T+h_F)*100, '-ok', 'linewidth',1.5);
+set(gca,'XTick',xpos, 'XTickLabel',str, 'XTickLabelRotation',45, 'fontsize',14, 'ylim',[-19, 119]);
+xlabel('Max Basal Schmid Factor');
+ylabel('Percent of Grains with Slip Traces (%)')
+
+% label population
+popu = (h_T + h_F);
+for ip = 1:length(xpos)
+    text(xpos(ip)-0.011, -10, ...
+        ['(',num2str(popu(ip)),')'], ...
+        'FontSize',12, 'Color','k');
+end
 if ismember(iE,[1,3])
-    print(fullfile(output_dir, ['fig 4 slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-dtiff');
+    print(fullfile(output_dir, ['fig 4 slipTF vs basalSF iE=',num2str(iE),'.tiff']),'-r300','-dtiff');
 end
 
 % summarize counts, x = twin_SF, hue = twin/no-twin, variant-wise
