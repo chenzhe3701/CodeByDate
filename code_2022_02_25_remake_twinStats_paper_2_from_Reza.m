@@ -2,7 +2,7 @@
 % remake figures from Reza for WE43-T6 paper part 2, matching the style of
 % my other figures
 
-working_dir = 'C:\Users\chenz\Downloads\FiguresOrigin';
+working_dir = 'D:\UMich Folder\42 Paper\[20] WE43 2020 paper 2\2 Reject and remake\Remade figures from Reza';
 
 figure;
 fig_position = get(gcf,'position');
@@ -41,7 +41,7 @@ set(gcf,'position',fig_position);
 set(gca,'fontsize',16,'LineWidth',1,'YTick',[0:0.1:1]);
 hold on; plot(nan,nan,'.w');
 legend({'SEM-DIC Experiment'},'fontsize',14);
-print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff');
+print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff','-r300');
 
 %% fig 17b
 close all;
@@ -53,7 +53,7 @@ set(gcf,'position',fig_position);
 set(gca,'fontsize',16,'LineWidth',1,'YTick',[0:0.1:1]);
 hold on; plot(nan,nan,'.w');
 legend('PRISMS-Plasticity Simulation','fontsize',14);
-print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff');
+print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff','-r300');
 
 %% fig 18
 close all;
