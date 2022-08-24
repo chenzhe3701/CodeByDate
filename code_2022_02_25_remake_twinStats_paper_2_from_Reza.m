@@ -41,7 +41,7 @@ set(gcf,'position',fig_position);
 set(gca,'fontsize',16,'LineWidth',1,'YTick',[0:0.1:1]);
 hold on; plot(nan,nan,'.w');
 legend({'SEM-DIC Experiment'},'fontsize',14);
-print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff');
+print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff','-r300');
 
 %% fig 17b
 close all;
@@ -53,7 +53,7 @@ set(gcf,'position',fig_position);
 set(gca,'fontsize',16,'LineWidth',1,'YTick',[0:0.1:1]);
 hold on; plot(nan,nan,'.w');
 legend('PRISMS-Plasticity Simulation','fontsize',14);
-print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff');
+print(fullfile(working_dir, [fig_name,'.tiff']), '-dtiff','-r300');
 
 %% fig 18
 close all;
