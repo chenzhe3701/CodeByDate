@@ -5,12 +5,12 @@
 
 addChenFunction;
 clear; clc; close all;
-output_dir = 'E:\zhec umich Drive\0_temp_output\2022 gs alloy paper';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\fig 4';
 mkdir(output_dir);
 %%
 
-data_dir = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis';
-variant_dir = 'E:\zhec umich Drive\All twin variant maps cleaned'; 
+data_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis';
+variant_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\All twin variant maps cleaned'; 
 
 id_p = 101;
 id_c = [294,395,398,399,400];

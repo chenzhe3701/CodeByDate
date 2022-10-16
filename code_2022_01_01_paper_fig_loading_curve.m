@@ -2,12 +2,12 @@
 
 % Suggest to run step by step
 addChenFunction;
-output_dir = 'E:\zhec umich Drive\0_temp_output\2022 gs alloy paper';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\fig 2 stress strain curve';
 mkdir(output_dir);
 clear colors;
 colors = [0 0 0; mix_color(4)];
 
-p = 'E:\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-10-23 Mg4Al_C1 insitu curve';
 f = 'Mg4Al_C1_processed_loading_data.mat';
 % d = matfile(fullfile(p,f));
 % stress = d.stress;
@@ -16,49 +16,49 @@ f = 'Mg4Al_C1_processed_loading_data.mat';
 % legend_str = [legend_str, 'Mg4Al C1 fine grain'];
 
 %% location of all data for ref
-p = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 insitu curve\borrow some data';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 insitu curve\borrow some data';
 f = 'Mg4Al_U2_processed_loading_data';
 
-p = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
 f = 'Mg4Al_C3_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu curve';
 f = 'Mg4Al_A1_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu curve';
 f = 'Mg4Al_A2_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
 f = 'Mg4Al_B1_processed_loading_data';
 
-p = 'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu curve';
 f = 'Mg4Al_B2_processed_loading_data';
 
-% p = 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu curve';
+% p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu curve';
 % f = 'UM134_Mg_C1_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu curve';
 f = 'UM134_Mg_C2_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
 f = 'UM134_Mg_C3_processed_loading_data';
 
-% p = 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu curve';
+% p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu curve';
 % f = 'UM129_Mg_C1_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu curve';
 f = 'UM129_Mg_C2_processed_loading_data.mat';
 
-p = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
+p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
 f = 'UM129_Mg_C3_processed_loading_data.mat';
 
 %%
-for n = 1:8
+for n = [1,6,7,8]%1:8
     switch n
         case 1
             % Mg4Al, fine grain
             close all;
-            p = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu curve';
             f = 'Mg4Al_C3_processed_loading_data.mat';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -68,7 +68,7 @@ for n = 1:8
             ylim = [-150 150];
         case 2
             % Mg4Al, coarse grain
-            p = 'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu curve';
             f = 'Mg4Al_B2_processed_loading_data';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -79,7 +79,7 @@ for n = 1:8
             
         case 3
             % Pure Mg, fine grain
-            p = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu curve';
             f = 'UM134_Mg_C3_processed_loading_data';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -90,7 +90,7 @@ for n = 1:8
             
         case 4
             % Pure Mg, coarse grain
-            p = 'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu curve';
             f = 'UM129_Mg_C2_processed_loading_data.mat';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -100,7 +100,7 @@ for n = 1:8
             ylim = [-75 75];
             
         case 6
-            p = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu curve';
             f = 'Mg4Al_B1_processed_loading_data';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -111,7 +111,7 @@ for n = 1:8
             
         case 7
             % Pure Mg, fine grain
-            p = 'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu curve';
             f = 'UM134_Mg_C2_processed_loading_data.mat';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -122,7 +122,7 @@ for n = 1:8
             
         case 8
             % Pure Mg, coarse grain
-            p = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu curve';
             f = 'UM129_Mg_C3_processed_loading_data.mat';
             d = matfile(fullfile(p,f));
             stress = d.stress;
@@ -148,14 +148,14 @@ for n = 1:8
     plot(nan,nan,'.','color',colors(c1,:),'markersize',18);
     plot(nan,nan,'.','color',colors(c2,:),'markersize',18);
     
-    plot(strain(1), stress(1), 'o', 'color',colors(c1,:), 'linewidth',2);
+    plot(strain(1), stress(1), 'o', 'color',colors(c1,:), 'linewidth',2, 'markersize',10);
     
     for ii = 1:7
         ind1 = ind_stop(ii);
         ind2 = ind_stop(ii+1);        
         
         plot(strain(ind1), stress(ind1), '.', 'color',colors(c1,:));
-        plot(strain(ind2), stress(ind2), 'o', 'color',colors(c1,:), 'linewidth',2);
+        plot(strain(ind2), stress(ind2), 'o', 'color',colors(c1,:), 'linewidth',2,'markersize',10);
         
         pos_old = [strain(ind1), stress(ind1)];
         jj = ind1;
@@ -175,7 +175,7 @@ for n = 1:8
         ind2 = ind_stop(ii+1);
         
         plot(strain(ind1), stress(ind1), '.', 'color',colors(c2,:));
-        plot(strain(ind2), stress(ind2), 'o', 'color',colors(c2,:), 'linewidth',2);
+        plot(strain(ind2), stress(ind2), 'o', 'color',colors(c2,:), 'linewidth',2,'markersize',10);
         
         pos_old = [strain(ind1), stress(ind1)];
         jj = ind1;
@@ -193,7 +193,13 @@ for n = 1:8
     set(gca,'xlim',[-0.03 0.005],'ylim',ylim);
     xlabel('Strain'); ylabel('Stress (MPa)');
     legend('Cycle 1', 'Cycle 2','location','northwest');
-    title(title_str, 'fontweight','normal'); %title(' ');
+
+    % box on;
+    t = strsplit(title_str);
+    n = length(t);
+    t = [t{1},' ', t{n-1}, ' ', t{n}];
+    title(t, 'fontweight','normal'); 
+    % title(title_str, 'fontweight','normal'); 
     print(fullfile(output_dir, ['fig 2 ', title_str, '.tif']), '-dtiff');
     
 end

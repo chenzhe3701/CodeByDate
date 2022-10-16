@@ -8,24 +8,24 @@
 % 'twinned'
 
 addChenFunction;
-output_dir = 'E:\zhec umich Drive\0_temp_output\2022-01-04 all SF distribution';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all SF distribution';
 mkdir(output_dir);
 
-% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax]
-cells = {'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 300;
-    'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 300;
-    'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350;
-    'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350;
-    'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 200;
-    'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 200;
-    % 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 450;
-    'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 450;
-    'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 450;
-    % 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200;
-    'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200;
-    'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200};
+% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_label]
+cells = {'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 300, 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 300, 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 200, 'Mg4Al coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 200, 'Mg4Al coarse grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 450, 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 450, 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 450, 'Mg fine grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg coarse grain'};
 
-variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
+variant_map_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\All twin variant maps cleaned';
 plot_process = 1;
 mkdir(fullfile(output_dir, 'process'));
 
@@ -292,8 +292,8 @@ for ii = 1:size(cells,1)
 end
 close all;
 
-%% [1 plot active variant pct vs SF bins] Load each sample. Then hold on, plot curve for iEs = 0:3, 4:7, 8:10, 11:13
-mkdir(fullfile(output_dir, 'active pct'));
+%% [fig 6] [1] plot active variant pct vs SF bins] Load each sample. Then hold on, plot curve for iEs = 0:3, 4:7, 8:10, 11:13
+mkdir(fullfile(output_dir, 'fig 6 active pct'));
 close all;
 edges = -0.5:0.05:0.5;
 cs = inferno(5);
@@ -312,12 +312,13 @@ for ii=1:length(edges)-1
     xstr{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
 end
 
-for ii = 1:size(cells,1)
+for ii = [2,5,7,10] % 1:size(cells,1)
     
     sample_dir = cells{ii,1};
     sample_name = cells{ii,2};
     sample_ID = cells{ii,3};
-    
+    sample_label = cells{ii,7};
+
     clear pct;
     for iE = 0:13
         iB = iE + 1;
@@ -341,11 +342,12 @@ for ii = 1:size(cells,1)
     hbar(1).FaceColor = [.85 .85 .85];
     xlabel('Twin Variant Schmid Factor');
     ylabel('Counts');
-    print(fullfile(output_dir, 'active pct', [sample_name, ' SF distribution.tiff']),'-dtiff');
+    title(sample_label, 'fontweight', 'normal');
+    print(fullfile(output_dir, 'fig 6 active pct', [sample_name, ' SF distribution.tiff']),'-dtiff');
     
     iEs = {0:3, 4:7, 8:10, 11:13};
     
-    for ii = 1:4
+    for jj = 1:4
         figure; hold on;
         yyaxis right;
         hbar = bar(xpos, [N_nt(:)+N_t(:)], 1);
@@ -359,14 +361,15 @@ for ii = 1:size(cells,1)
         set(gca, 'ycolor', 'k', 'ylim',[0 100]);
         ylabel('Percent (%)');
         legend_str = [];
-        for iE = iEs{ii}
+        for iE = iEs{jj}
             iB = iE + 1;
             plot(edges(1:end-1)+0.025, 100*pct(iB,:), markers{iB}, 'color', colors(iB,:), 'linewidth', 1.5);
             legend_str = [legend_str, {['Load step ',num2str(iE)]}];
         end
         set(gca, 'SortMethod', 'depth');
         legend(legend_str, 'position',[0.52, 0.72, 0.27, 0.18]);
-        print(fullfile(output_dir, 'active pct', [sample_name, ' SF distribution ',num2str(ii),'.tiff']),'-dtiff');
+        title(sample_label, 'fontweight','normal');
+        print(fullfile(output_dir, 'fig 6 active pct', [sample_name, ' SF distribution ',num2str(jj),'.tiff']),'-dtiff');
     end
     close all;
 end
@@ -466,17 +469,18 @@ end
 close all;
 
 
-%% [2 box plot: twin fraction vs SF] ==> actually, this AREA-based analysis, it might be better to do based on the 'variant_pixel_mode' after twin_evolution_analysis.
-mkdir(fullfile(output_dir, 'boxplot'));
+%% [fig 7] [2 box plot: twin fraction vs SF] ==> actually, this AREA-based analysis, it might be better to do based on the 'variant_pixel_mode' after twin_evolution_analysis.
+mkdir(fullfile(output_dir, 'fig 7 boxplot'));
 close all;
 edges = -0.5:0.05:0.5;
 
-for ii = 1:size(cells,1)
+for ii = [2,5,7,10] % 1:size(cells,1)
     
     sample_dir = cells{ii,1};
     sample_name = cells{ii,2};
     sample_ID = cells{ii,3};
-    
+    sample_label = cells{ii,7};
+
     % determine resolution
     d = matfile(fullfile(sample_dir, [sample_name,'_parent_grain_file_iE_0.mat']));
     y = d.y;
@@ -507,13 +511,19 @@ for ii = 1:size(cells,1)
         for ii = 1:length(edges)-1
             labels{ii} = [num2str(edges(ii)),'-',num2str(edges(ii+1))];
         end
+        
         figure;disableDefaultInteractivity(gca);
-        boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');
+        % boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');
+        boxchart([gv; (1:nGroups)'], [vy; nan*ones(nGroups, 1)], 'LineWidth',1.5)
         xlabel('Twin Variant Schmid Factor'); ylabel(ylabel_str)
-        set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',15, 'xlim',[8.5 20.5], 'ylim', [-0.1 1.1]);
+        set(gca,'xTick',1:nGroups, 'xticklabels',labels,'xticklabelrotation',45,'fontsize',15, 'xlim',[8.5 20.5], 'ylim', [-0.1 1.1]);
+        
         title_str = [sample_ID, ' iE=',num2str(iE)];
+        if iE==3
+            title_str = [sample_label];
+        end
         title(title_str,'fontweight','normal');
-        print(fullfile(output_dir, 'boxplot', [title_str,'.tiff']), '-dtiff');
+        print(fullfile(output_dir, 'fig 7 boxplot', [title_str,'.tiff']), '-dtiff');
         
         close all;
     end
