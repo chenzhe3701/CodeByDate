@@ -3,26 +3,26 @@
 clear; clc; close all;
 addChenFunction;
 
-% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_material, ymax_for_detwin_variant_count]
-cells = {'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG', 160;
-    'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG', 160;
-    'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG', 160;
-    'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG', 160;
-    'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG', 80;
-    'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG', 80;
-    % 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG', 80;
-    'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG', 80;
-    'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG', 80;
-    % 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG', 60;
-    'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG', 60;
-    'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG', 60};
+% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_material, ymax_for_detwin_variant_count, sample_label]
+cells = {'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG', 160, 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG', 160, 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG', 160, 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG', 160, 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG', 80, 'Mg4Al coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG', 80, 'Mg4Al coarse grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG', 80, 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG', 80, 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG', 80, 'Mg fine grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG', 60, 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG', 60, 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG', 60, 'Mg coarse grain'};
 
-% variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
+% variant_map_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\All twin variant maps cleaned';
 
 % location of the twin evolution (twin detwin retwin) data
-evolution_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
+evolution_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all twin evolution analysis';
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all twin evolution analysis';
 mkdir(output_dir);
 
 %% [analyze] detwin: variant pxls, max variant pxls, SF. Variant significantly detwinned or not.
@@ -45,12 +45,13 @@ mkdir(output_dir);
 
 mkdir(fullfile(output_dir, 'detwin'));
 
-for icell = 1:size(cells,1)
+for icell = [2,5,7,10] % 1:size(cells,1)
     sample_dir = cells{icell,1};
     sample_name = cells{icell,2};
     sample_ID = cells{icell,3};
     sample_material = cells{icell,7};
-    
+    sample_label = cells{icell, 9};
+
     % load ref data at iE = 0, for SF calculation
     d = matfile(fullfile(sample_dir, [sample_name, '_parent_grain_file_iE_0.mat']));
     ID = d.ID;
@@ -157,7 +158,7 @@ for icell = 1:size(cells,1)
 end
 close all;
 
-%% [explore 1] boxplot: detwin fraction vs SF, each material, at iEs
+%% [fig 9] [explore 1] boxplot: detwin fraction vs SF, each material, at iEs
 
 edges = -0.5:0.05:0.5;
 nGroups = length(edges)-1;
@@ -171,7 +172,8 @@ for icell = [2,5,7,10] %1:size(cells,1)
     sample_name = cells{icell,2};
     sample_ID = cells{icell,3};
     sample_material = cells{icell,7};
-    
+    sample_label = cells{icell, 9};
+
     load(fullfile(output_dir, 'detwin', [sample_name,'_detwin.mat']), 'tbl');
     
     for iE = 4:7
@@ -181,11 +183,12 @@ for icell = [2,5,7,10] %1:size(cells,1)
         gv = discretize(vx, edges);
         
         figure;disableDefaultInteractivity(gca);
-        boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');
+        % boxplot([vy; nan*ones(nGroups, 1)], [gv; (1:nGroups)'],'notch','off');
+        boxchart([gv; (1:nGroups)'], [vy; nan*ones(nGroups, 1)], 'linewidth',1.5);
         xlabel('Twin Variant Schmid Factor');
         ylabel('Variant Detwin Fraction')
-        set(gca,'xticklabels',labels,'xticklabelrotation',45,'fontsize',15, 'xlim',[8.5 20.5], 'ylim', [-0.1 1.1]);
-        title_str = [sample_ID, ' iE=',num2str(iE)];
+        set(gca,'xTick',1:nGroups, 'xticklabels',labels,'xticklabelrotation',45,'fontsize',15, 'xlim',[8.5 20.5], 'ylim', [-0.1 1.1]);
+        title_str = [sample_label, ', load step ',num2str(iE)];
         title(title_str,'fontweight','normal');
         print(fullfile(output_dir, 'detwin', [sample_name,'_by_SF_iE_',num2str(iE),'.tiff']), '-dtiff');
         close all;
@@ -304,7 +307,7 @@ for icell = [2,5,7,10] %1:size(cells,1)
     end
     set(gca, 'ylim',[0 150], 'SortMethod', 'depth');
     legend(legend_str, 'Location','northwest');
-    print(fullfile(output_dir, 'detwin', [sample_name, ' sig detwin.tiff']),'-dtiff');
+    % print(fullfile(output_dir, 'detwin', [sample_name, ' sig detwin.tiff']),'-dtiff');
 
     close all;
 end
