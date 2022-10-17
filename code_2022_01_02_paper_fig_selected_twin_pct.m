@@ -1,27 +1,27 @@
 %% [Fig 5] twin pct vs global strain, selected samples
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\2022 gs alloy paper';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\fig 5';
 mkdir(output_dir);
 
 %% Mg4Al samples
-dir_Mg4Al_C3 = 'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis';
-dir_Mg4Al_U2 = 'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis';
+dir_Mg4Al_C3 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis';
+dir_Mg4Al_U2 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis';
 
 %% Mg4Al medium grain
-dir_Mg4Al_A1 = 'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis';
-dir_Mg4Al_A2 = 'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis';
+dir_Mg4Al_A1 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis';
+dir_Mg4Al_A2 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis';
 
 %% Mg4Al coarse grain
-dir_Mg4Al_B1 = 'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis';
-dir_Mg4Al_B2 = 'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis';
+dir_Mg4Al_B1 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis';
+dir_Mg4Al_B2 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis';
 
 %% UM134 unalloyed Mg samples
-dir_UM134_Mg_C2 = 'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis';
-dir_UM134_Mg_C3 = 'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis';
+dir_UM134_Mg_C2 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis';
+dir_UM134_Mg_C3 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis';
 
 % UM129 unalloyed Mg (coarse grain) samples
-dir_UM129_Mg_C2 = 'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis';
-dir_UM129_Mg_C3 = 'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis';
+dir_UM129_Mg_C2 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis';
+dir_UM129_Mg_C3 = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis';
 
 ylim = [-2 65];
 xlim = [-0.05, 0.005];
@@ -42,7 +42,7 @@ load(fullfile(dir_Mg4Al_U2, 'twin_pct'), 'tbl');
 strain_ebsd = tbl.strain_ebsd;
 tAvg = tbl.("twinPct %");
 tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 's:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor',colors(2,:));
+errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
 
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
@@ -53,29 +53,29 @@ legend('Mg4Al C3 (fine grain)','Mg4Al U2 (fine grain)');
 print(fullfile(output_dir, 'Mg4Al fine all twin pct.tiff'),'-dtiff');
 
 %% For Mg4Al medium size grain
-close all;
-figure; 
-hold on;
-
-load(fullfile(dir_Mg4Al_A1, 'twin_pct'), 'tbl');
-strain_ebsd = tbl.strain_ebsd;
-tAvg = tbl.("twinPct %");
-tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 'o:', 'linewidth',1.5,'markersize',8, 'color',colors(1,:), 'markerfacecolor',colors(1,:));
-
-load(fullfile(dir_Mg4Al_A2, 'twin_pct'), 'tbl');
-strain_ebsd = tbl.strain_ebsd;
-tAvg = tbl.("twinPct %");
-tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 's:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor',colors(2,:));
-
-set(gca,'xdir','normal','linewidth',1.5);
-set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
-xlabel('Strain (EBSD Estimated)');
-ylabel('Twin Area Percent (%)');
-legend('Mg4Al A1 (medium grain)','Mg4Al A2 (medium grain)');
-
-print(fullfile(output_dir, 'Mg4Al medium all twin pct.tiff'),'-dtiff');
+% close all;
+% figure; 
+% hold on;
+% 
+% load(fullfile(dir_Mg4Al_A1, 'twin_pct'), 'tbl');
+% strain_ebsd = tbl.strain_ebsd;
+% tAvg = tbl.("twinPct %");
+% tStd = tbl.("twinStd %");
+% errorbar(strain_ebsd, tAvg, tStd, 'o:', 'linewidth',1.5,'markersize',8, 'color',colors(1,:), 'markerfacecolor',colors(1,:));
+% 
+% load(fullfile(dir_Mg4Al_A2, 'twin_pct'), 'tbl');
+% strain_ebsd = tbl.strain_ebsd;
+% tAvg = tbl.("twinPct %");
+% tStd = tbl.("twinStd %");
+% errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
+% 
+% set(gca,'xdir','normal','linewidth',1.5);
+% set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
+% xlabel('Strain (EBSD Estimated)');
+% ylabel('Twin Area Percent (%)');
+% legend('Mg4Al A1 (medium grain)','Mg4Al A2 (medium grain)');
+% 
+% print(fullfile(output_dir, 'Mg4Al medium all twin pct.tiff'),'-dtiff');
 
 %% For Mg4Al coarse grain alloys
 close all;
@@ -92,7 +92,7 @@ load(fullfile(dir_Mg4Al_B2, 'twin_pct'), 'tbl');
 strain_ebsd = tbl.strain_ebsd;
 tAvg = tbl.("twinPct %");
 tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 's:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor',colors(2,:));
+errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
 
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
@@ -117,7 +117,7 @@ load(fullfile(dir_UM134_Mg_C3, 'twin_pct'), 'tbl');
 strain_ebsd = tbl.strain_ebsd;
 tAvg = tbl.("twinPct %");
 tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 's:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor',colors(2,:));
+errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
 
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
@@ -141,7 +141,7 @@ load(fullfile(dir_UM129_Mg_C3, 'twin_pct'), 'tbl');
 strain_ebsd = tbl.strain_ebsd;
 tAvg = tbl.("twinPct %");
 tStd = tbl.("twinStd %");
-errorbar(strain_ebsd, tAvg, tStd, 's:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor',colors(2,:));
+errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
 
 set(gca,'xdir','normal','linewidth',1.5);
 set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');

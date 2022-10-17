@@ -4,36 +4,36 @@ clear; clc; close all;
 addChenFunction;
 
 % [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_material]
-cells = {'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG';
-    'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG';
-    'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG';
-    'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG';
-    'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG';
-    'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG';
-    % 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG';
-    'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG';
-    'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG';
-    % 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG';
-    'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG';
-    'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG'};
+cells = {'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG'};
 
 % use to determine if a child grain is a twin grain
-variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
+variant_map_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\All twin variant maps cleaned';
 % use to load pretwin_id_itwin_list for polishing induced twins
-polishing_twin_dir = 'E:\zhec umich Drive\0_temp_output\2022-01-04 all SF distribution';
+polishing_twin_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all SF distribution';
 
 % location of the twin evolution (twin detwin retwin) data
-input_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
+input_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all twin evolution analysis';
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\twin thickness analysis';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\twin thickness analysis';
 mkdir(output_dir);
 mkdir(fullfile(output_dir, 'maps'));
 
 iE_max = 3; % we don't always need all load steps
-%%
+%% [fig 12]
 close all;
 
-for icell = 1:size(cells,1)
+for icell = [2,5,7,10] % 1:size(cells,1)
     
     sample_dir = cells{icell,1};
     sample_name = cells{icell,2};
@@ -221,7 +221,7 @@ for iE = 1:3
 end
 close all;
 
-%% [1A] multiple on same plot
+%% [fig 13a] [1A] multiple on same plot
 mkdir(fullfile(output_dir,'abs thick vs mater'));
 close all;
 
@@ -252,10 +252,11 @@ for icell = [2,5,7,10] %1:size(cells,1)
     end
 end
 figure;
-boxplot(thickness, gN);
+% boxplot(thickness, gN);
+boxchart(gN, thickness, 'linewidth',1.5);
 title([' '], 'fontweight', 'normal');
 ylabel('Twin Thickness (\mum)');
-set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
+set(gca,'xTick',1:length(gLabel), 'xlim',[0,length(gLabel)+1], 'ylim', [0 400], 'XTickLabel',gLabel, 'XTickLabelRotation',45);
 set(gca,'fontsize',14, 'yscale','log','YTick',[5,10,20,50,100])
 
 print(fullfile(output_dir,'abs thick vs mater', 'abs thick log.tiff'),'-dtiff');
@@ -305,7 +306,7 @@ for iE = 1:3
 end
 close all;
 
-%% [2A] multiple on same plot
+%% [fig 13b], [2A] multiple on same plot
 mkdir(fullfile(output_dir,'normalized thick vs mater'));
 close all;
 
@@ -341,10 +342,11 @@ for icell = [2,5,7,10] %1:size(cells,1)
 end
 
 figure;
-boxplot(thick_norm, gN);
+% boxplot(thick_norm, gN);
+boxchart(gN, thick_norm, 'linewidth',1.5);
 title(' ', 'fontweight', 'normal');
 ylabel(['Twin Thickness Normalized',char(10),'by 2D Grain Diameter']);
-set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45);
+set(gca,'xTick',1:length(gLabel), 'xlim',[0,length(gLabel)+1], 'XTickLabel',gLabel, 'XTickLabelRotation',45);
 set(gca,'fontsize',14, 'yTick', 0:0.1:0.8, 'ylim',[0 0.8]);
 print(fullfile(output_dir,'normalized thick vs mater', 'normlized thick.tiff'),'-dtiff');
 close all;
@@ -428,7 +430,7 @@ for icell =  [2,5,7,10] %1:size(cells,1)
     end
 end
 
-%% [explore 5 ] Twin density, # of twins per grain area
+%% [fig 15] [explore 5 ] Twin density, # of twins per grain area
 
 mkdir(fullfile(output_dir,'twin density'));
 close all;
@@ -485,9 +487,10 @@ for icell = [2,5,7,10] %1:size(cells,1)
 end
 
 figure;
-boxplot(nPerA, gN);
+% boxplot(nPerA, gN);
+boxchart(gN, nPerA, 'linewidth',1.5);
 ylabel(['# Twins per 2D Grain Area (mm^{-2})']);
-set(gca,'XTickLabel',gLabel, 'XTickLabelRotation',45, 'yTick',[10,100,1000,10000]);
+set(gca,'xTick', 1:length(gLabel), 'xlim', [0, length(gLabel)+1], 'XTickLabel',gLabel, 'XTickLabelRotation',45, 'yTick',[10,100,1000,10000]);
 set(gca,'fontsize',12,  'yscale','log');
 title(' ', 'fontweight', 'normal');
 

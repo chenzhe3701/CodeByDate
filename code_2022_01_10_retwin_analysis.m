@@ -3,32 +3,32 @@
 clear; clc; close all;
 addChenFunction;
 
-% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_material]
-cells = {'E:\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG';
-    'E:\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG';
-    'E:\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG';
-    'E:\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG';
-    'E:\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG';
-    'E:\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG';
-    % 'E:\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG';
-    'E:\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG';
-    'E:\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG';
-    % 'E:\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG';
-    'E:\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG';
-    'E:\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG'};
+% [data_dir, sample_name, sample_ID, plot_symbol, group_number, ymax, sample_material, sample_label]
+cells = {'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-02-26 Mg4Al_U2 EBSD\analysis', 'Mg4Al_U2', 'Mg4Al U2', 'o', 1, 50, 'Mg4Al FG', 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-23 Mg4Al_C3 insitu EBSD\analysis', 'Mg4Al_C3', 'Mg4Al C3', 's', 1, 50, 'Mg4Al FG', 'Mg4Al fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu EBSD\analysis', 'Mg4Al_A1', 'Mg4Al A1', 'o', 2, 350, 'Mg4Al MG', 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu EBSD\analysis', 'Mg4Al_A2', 'Mg4Al A2', 's', 2, 350, 'Mg4Al MG', 'Mg4Al medium grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-02 Mg4Al_B1 insitu EBSD\analysis', 'Mg4Al_B1', 'Mg4Al B1', 'o', 3, 100, 'Mg4Al CG', 'Mg4Al coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-12-04 Mg4Al_B2 insitu EBSD\analysis', 'Mg4Al_B2', 'Mg4Al B2', 's', 3, 100, 'Mg4Al CG', 'Mg4Al coarse grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2020-12-05 UM134_Mg_C1 insitu EBSD\analysis', 'UM134_Mg_C1', 'Mg UM134 C1', 'x', 4, 30, 'Mg FG', 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-15 UM134_Mg_C2 insitu EBSD\analysis', 'UM134_Mg_C2', 'Mg UM134 C2', 'o', 4, 30, 'Mg FG', 'Mg fine grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-01-29 UM134_Mg_C3 insitu EBSD\analysis', 'UM134_Mg_C3', 'Mg UM134 C3', 's', 4, 30, 'Mg FG', 'Mg fine grain';
+    % 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-06-29 UM129_Mg_C1 insitu EBSD\analysis', 'UM129_Mg_C1', 'Mg UM129 C1', 'x', 5, 200, 'Mg CG', 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-08-20 UM129_Mg_C2 insitu EBSD\analysis', 'UM129_Mg_C2', 'Mg UM129 C2', 'o', 5, 200, 'Mg CG', 'Mg coarse grain';
+    'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg_C3 insitu EBSD\analysis', 'UM129_Mg_C3', 'Mg UM129 C3', 's', 5, 200, 'Mg CG', 'Mg coarse grain'};
 
-% variant_map_dir = 'E:\zhec umich Drive\All twin variant maps cleaned';
+% variant_map_dir = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\All twin variant maps cleaned';
 
 % location of the twin evolution (twin detwin retwin) data
-evolution_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
+evolution_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all twin evolution analysis';
 
-output_dir = 'E:\zhec umich Drive\0_temp_output\all twin evolution analysis';
+output_dir = 'C:\Users\chenz\Work\Data\0_temp_output\all twin evolution analysis';
 mkdir(output_dir);
 
 %% [analyze] retwin
 mkdir(fullfile(output_dir, 'retwin'));
 
-for icell = 1:size(cells,1)
+for icell = [2,5,7,10] % 1:size(cells,1)
     sample_dir = cells{icell,1};
     sample_name = cells{icell,2};
     sample_ID = cells{icell,3};
@@ -99,7 +99,7 @@ for icell = 1:size(cells,1)
     save(fullfile(output_dir, 'retwin', [sample_name,'_retwin.mat']), 'N');
 end
 
-%% [plot types of pixels in retwin process]
+%% [fig 10] [plot types of pixels in retwin process]
 mkdir(fullfile(output_dir, 'retwin'));
 
 for icell = [2,5,7,10] % 1:size(cells,1)
@@ -107,7 +107,8 @@ for icell = [2,5,7,10] % 1:size(cells,1)
     sample_name = cells{icell,2};
     sample_ID = cells{icell,3};
     sample_material = cells{icell,7};
-    
+    sample_label = cells{icell, 8};
+
     load(fullfile(output_dir, 'retwin', [sample_name,'_retwin.mat']), 'N');
        
     figure;
@@ -124,10 +125,13 @@ for icell = [2,5,7,10] % 1:size(cells,1)
     ylabel('Pixel Counts');
     
     yyaxis right;
-    set(gca,'ycolor','k','ylim',[0, ymax/sum(N(1,:))]*100);
+    % set(gca,'ycolor','k','ylim',[0, ymax/sum(N(1,:))]*100);
+    set(gca,'ycolor','k','ylim',[0, 125]);
     ylabel('Percentage (%)');
     
     legend({'Detwin pixels', 'Recurring twin pixels', 'Accumulative new twin pixels'}, 'location','eastoutside');
+    title(sample_label, 'fontweight','normal');
+
     print(fullfile(output_dir, 'retwin', [sample_name,'_retwin.tiff']), '-dtiff');
     close all;
     
