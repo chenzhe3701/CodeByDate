@@ -53,29 +53,29 @@ legend('Mg4Al C3 (fine grain)','Mg4Al U2 (fine grain)');
 print(fullfile(output_dir, 'Mg4Al fine all twin pct.tiff'),'-dtiff');
 
 %% For Mg4Al medium size grain
-% close all;
-% figure; 
-% hold on;
-% 
-% load(fullfile(dir_Mg4Al_A1, 'twin_pct'), 'tbl');
-% strain_ebsd = tbl.strain_ebsd;
-% tAvg = tbl.("twinPct %");
-% tStd = tbl.("twinStd %");
-% errorbar(strain_ebsd, tAvg, tStd, 'o:', 'linewidth',1.5,'markersize',8, 'color',colors(1,:), 'markerfacecolor',colors(1,:));
-% 
-% load(fullfile(dir_Mg4Al_A2, 'twin_pct'), 'tbl');
-% strain_ebsd = tbl.strain_ebsd;
-% tAvg = tbl.("twinPct %");
-% tStd = tbl.("twinStd %");
-% errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
-% 
-% set(gca,'xdir','normal','linewidth',1.5);
-% set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
-% xlabel('Strain (EBSD Estimated)');
-% ylabel('Twin Area Percent (%)');
-% legend('Mg4Al A1 (medium grain)','Mg4Al A2 (medium grain)');
-% 
-% print(fullfile(output_dir, 'Mg4Al medium all twin pct.tiff'),'-dtiff');
+close all;
+figure; 
+hold on;
+
+load(fullfile(dir_Mg4Al_A1, 'twin_pct'), 'tbl');
+strain_ebsd = tbl.strain_ebsd;
+tAvg = tbl.("twinPct %");
+tStd = tbl.("twinStd %");
+errorbar(strain_ebsd, tAvg, tStd, 'o:', 'linewidth',1.5,'markersize',8, 'color',colors(1,:), 'markerfacecolor',colors(1,:));
+
+load(fullfile(dir_Mg4Al_A2, 'twin_pct'), 'tbl');
+strain_ebsd = tbl.strain_ebsd;
+tAvg = tbl.("twinPct %");
+tStd = tbl.("twinStd %");
+errorbar(strain_ebsd, tAvg, tStd, 'd:', 'linewidth',1.5,'markersize',8, 'color',colors(2,:), 'markerfacecolor','none');
+
+set(gca,'xdir','normal','linewidth',1.5);
+set(gca,'xlim',xlim,'ylim',ylim,'fontsize',18,'fontweight','normal');
+xlabel('Strain (EBSD Estimated)');
+ylabel('Twin Area Percent (%)');
+legend('Mg4Al A1 (medium grain)','Mg4Al A2 (medium grain)');
+
+print(fullfile(output_dir, 'Mg4Al medium all twin pct.tiff'),'-dtiff');
 
 %% For Mg4Al coarse grain alloys
 close all;

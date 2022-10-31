@@ -53,7 +53,7 @@ p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-09-03 UM129_Mg
 f = 'UM129_Mg_C3_processed_loading_data.mat';
 
 %%
-for n = [1,6,7,8]%1:8
+for n = [9,10] %[1,6,7,8]%1:8
     switch n
         case 1
             % Mg4Al, fine grain
@@ -130,6 +130,30 @@ for n = [1,6,7,8]%1:8
             ind_stop = d.ind_stop;
             title_str = 'Mg UM129 C3 coarse grain';
             ylim = [-75 75];
+
+        case 9
+            % Mg4Al, medium grain
+            close all;
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-10-28 Mg4Al_A1 insitu curve';
+            f = 'Mg4Al_A1_processed_loading_data.mat';
+            d = matfile(fullfile(p,f));
+            stress = d.stress;
+            strain = d.strain;
+            ind_stop = d.ind_stop;
+            title_str = 'Mg4Al A1 medium grain';
+            ylim = [-150 150];
+
+        case 10
+            % Mg4Al, medium grain
+            close all;
+            p = 'H:\Other computers\My Laptop w541 2022\zhec umich Drive\2021-11-05 Mg4Al_A2 insitu curve';
+            f = 'Mg4Al_A2_processed_loading_data.mat';
+            d = matfile(fullfile(p,f));
+            stress = d.stress;
+            strain = d.strain;
+            ind_stop = d.ind_stop;
+            title_str = 'Mg4Al A2 medium grain';
+            ylim = [-150 150];
     end
     
     % Normalize stress and strain, calculate the range, so that we plot data
